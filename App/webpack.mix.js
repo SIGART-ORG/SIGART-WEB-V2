@@ -12,7 +12,8 @@ const mix = require('laravel-mix');
  */
 
 mix.js('resources/js/app.js', 'public/js')
-    .copyDirectory('resources/assets/login/', 'public/assets/login/');
+    .copyDirectory('resources/assets/login/', 'public/assets/login/')
+    .copyDirectory('resources/assets/classimax/', 'public/assets/classimax/');
 
 if (mix.inProduction()) {
     mix.version();
