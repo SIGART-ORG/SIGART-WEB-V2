@@ -46,12 +46,14 @@
                     <input class="input100" type="text" name="email" placeholder="Email..." value="{{ old( 'email' ) }}">
                     <span class="focus-input100"></span>
                 </div>
+                @if( $errors->has('email') )
+                    <span class="alert alert-danger">{{ $errors->first( 'email') }}</span>
+                @endif
                 <div class="wrap-input100 validate-input" data-validate = "Se requiere contraseña">
                     <span class="label-input100">Contraseña</span>
                     <input class="input100" type="password" name="password" placeholder="*************">
                     <span class="focus-input100"></span>
                 </div>
-                {{ $errors->first( 'email', '<span class="help-block">:message</span>' ) }}
                 <div class="flex-m w-full p-b-33">
                     <div class="contact100-form-checkbox">
                         <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">

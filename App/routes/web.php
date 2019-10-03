@@ -17,9 +17,10 @@ Route::get('/terms-and-conditions', 'PublicController@termsAndConditions')->name
 Route::group(['middleware' => ['guest']], function(){
 
     Route::get('/register', 'Auth\RegisterController@showRegistrationForm')->name( 'login.register' );
-    Route::post('/register', 'Auth\RegisterController@create')->name( 'login.register.post' );
+    Route::post('/register', 'Auth\RegisterController@register')->name( 'login.register.post' );
     Route::get('/login', 'Auth\LoginController@showLoginForm')->name( 'login.form' );
     Route::post('/login', 'Auth\LoginController@login')->name( 'login.request' );
+    Route::get('/confimation/{token}', 'Auth\RegisterController@confirmation')->name( 'confirmation' );
 
 });
 

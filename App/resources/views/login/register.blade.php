@@ -41,29 +41,36 @@
                 <span class="login100-form-title p-b-59">Regístrate</span>
                 <div class="wrap-input100 validate-input" data-validate="Nombre es requerido">
                     <span class="label-input100">Nombre</span>
-                    <input class="input100" type="text" name="name" placeholder="Name...">
+                    <input class="input100" type="text" name="name" placeholder="Name..." value="{{ old( 'name' ) }}">
                     <span class="focus-input100"></span>
                 </div>
-                <div class="wrap-input100 validate-input" data-validate="Apellido es requerido">
-                    <span class="label-input100">Apellidos</span>
-                    <input class="input100" type="text" name="lastname" placeholder="Apellidos...">
-                    <span class="focus-input100"></span>
-                </div>
+                @if( $errors->has('name') )
+                    <span class="alert alert-danger">{{ $errors->first( 'name') }}</span>
+                @endif
                 <div class="wrap-input100 validate-input" data-validate = "Se requiere email válido. Ej: ex@abc.xyz">
                     <span class="label-input100">Email</span>
-                    <input class="input100" type="email" name="email" placeholder="Email...">
+                    <input class="input100" type="email" name="email" placeholder="Email..." value="{{ old( 'email' ) }}">
                     <span class="focus-input100"></span>
                 </div>
+                @if( $errors->has('email') )
+                    <span class="alert alert-danger">{{ $errors->first( 'email') }}</span>
+                @endif
                 <div class="wrap-input100 validate-input" data-validate = "Contraseña requerida">
                     <span class="label-input100">Password</span>
                     <input class="input100" type="password" name="password" placeholder="*************">
                     <span class="focus-input100"></span>
                 </div>
+                @if( $errors->has('password') )
+                    <span class="alert alert-danger">{{ $errors->first( 'password') }}</span>
+                @endif
                 <div class="wrap-input100 validate-input" data-validate = "Repetir contraseña">
                     <span class="label-input100">Repeat Password</span>
-                    <input class="input100" type="password" name="repeat-password" placeholder="*************">
+                    <input class="input100" type="password" name="passwordConfirmation" placeholder="*************">
                     <span class="focus-input100"></span>
                 </div>
+                @if( $errors->has('passwordConfirmation') )
+                    <span class="alert alert-danger">{{ $errors->first( 'passwordConfirmation') }}</span>
+                @endif
                 <div class="flex-m w-full p-b-33">
                     <div class="contact100-form-checkbox">
                         <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
