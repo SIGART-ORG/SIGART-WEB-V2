@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -26,6 +28,7 @@ class LoginController extends Controller
      * @var string
      */
     protected $redirectTo = '/home';
+    protected $guard = 'customers';
 
     /**
      * Create a new controller instance.
@@ -40,4 +43,26 @@ class LoginController extends Controller
     public function showLoginForm(){
         return view('login.index');
     }
+
+    public function register() {
+        return view( 'login.register' );
+    }
+
+    public function authenticated()
+    {
+        return redirect( '/home/home' );
+    }
+
+//    public function login(Request $request){
+//        $this->validateLogin($request);
+//
+//        if(Auth::attempt(['email' => $request->email, 'password' => $request->password, 'status' => 1])){
+//            $this->logAdmin("Ha iniciado sesión" );
+//            return redirect()->route('main');
+//        }
+//
+//        return back()
+//            ->withErrors(['email' => trans('auth.failed')])
+//            ->withInput(request(['email']));
+//    }
 }
