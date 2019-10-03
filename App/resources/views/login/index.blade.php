@@ -51,6 +51,7 @@
                     <input class="input100" type="password" name="password" placeholder="*************">
                     <span class="focus-input100"></span>
                 </div>
+                {{ $errors->first( 'email', '<span class="help-block">:message</span>' ) }}
                 <div class="flex-m w-full p-b-33">
                     <div class="contact100-form-checkbox">
                         <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
@@ -64,6 +65,7 @@
                         </label>
                     </div>
                 </div>
+                {{ $errors->first( 'password', '<span class="help-block">:message</span>' ) }}
                 <div class="container-login100-form-btn">
                     <div class="wrap-login100-form-btn">
                         <div class="login100-form-bgbtn"></div>

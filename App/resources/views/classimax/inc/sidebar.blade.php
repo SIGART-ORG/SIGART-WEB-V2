@@ -28,6 +28,7 @@
                             </li>
                         </ul>
                         <ul class="navbar-nav ml-auto mt-10">
+                            @if (Auth::guest())
                             <li class="nav-item">
                                 <a class="nav-link login-button" href="{{ route('login.form') }}">Login</a>
                             </li>
@@ -36,6 +37,23 @@
                                     <i class="fa fa-plus-circle"></i> Regístrate
                                 </a>
                             </li>
+                            @else
+                            <li class="nav-item dropdown dropdown-slide">
+                                <a class="nav-link dropdown-toggle" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{ Auth::user()->name }}</span>
+                                </a>
+                                <!-- Dropdown list -->
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fa fa-user-circle"></i>  Mi Perfil</a>
+                                    <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        <i class="fa fa-sign-in"></i>  Salir
+                                    </a>
+                                </div>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none">
+                                    {{ csrf_field() }}
+                                </form>
+                            </li>
+                            @endif
                         </ul>
                     </div>
                 </nav>
