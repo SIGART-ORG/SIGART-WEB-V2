@@ -26,6 +26,11 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="dashboard.html">Contáctanos</a>
                             </li>
+                            @if (! Auth::guest() )
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route( 'dashboard' ) }}">Dashboard</a>
+                                </li>
+                            @endif
                         </ul>
                         <ul class="navbar-nav ml-auto mt-10">
                             @if (Auth::guest())
@@ -44,7 +49,7 @@
                                 </a>
                                 <!-- Dropdown list -->
                                 <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="#"><i class="fa fa-user-circle"></i>  Mi Perfil</a>
+                                    <a class="dropdown-item" href="{{ route( 'profile' ) }}"><i class="fa fa-user-circle"></i>  Mi Perfil</a>
                                     <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                         <i class="fa fa-sign-in"></i>  Salir
                                     </a>

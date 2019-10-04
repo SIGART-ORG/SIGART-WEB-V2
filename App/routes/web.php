@@ -13,6 +13,7 @@
 
 Route::get('/', 'HomeController@index')->name( 'home.index' );
 Route::get('/terms-and-conditions', 'PublicController@termsAndConditions')->name( 'tyc' );
+Route::get('/confimation/{token}', 'DashboardController@confirmation')->name( 'confirmation' );
 
 Route::group(['middleware' => ['guest']], function(){
 
@@ -20,7 +21,6 @@ Route::group(['middleware' => ['guest']], function(){
     Route::post('/register', 'Auth\RegisterController@register')->name( 'login.register.post' );
     Route::get('/login', 'Auth\LoginController@showLoginForm')->name( 'login.form' );
     Route::post('/login', 'Auth\LoginController@login')->name( 'login.request' );
-    Route::get('/confimation/{token}', 'Auth\RegisterController@confirmation')->name( 'confirmation' );
 
 });
 
@@ -30,5 +30,6 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::prefix( 'dashboard' )->group( function() {
         Route::get( '/', 'DashboardController@index' )->name( 'dashboard' );
+        Route::get( '/profile', 'UserController@profile' )->name( 'profile' );
     });
 });

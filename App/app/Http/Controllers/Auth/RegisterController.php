@@ -132,7 +132,4 @@ class RegisterController extends Controller
         return false;
     }
 
-    public function confirmation() {
-
-    }
 }
