@@ -31,5 +31,14 @@ Route::group(['middleware' => ['auth']], function(){
     Route::prefix( 'dashboard' )->group( function() {
         Route::get( '/', 'DashboardController@index' )->name( 'dashboard' );
         Route::get( '/profile', 'UserController@profile' )->name( 'profile' );
+        Route::get( '/settings', 'DashboardController@settings' )->name( 'dashboard.settings' );
     });
+
+    Route::get( '/products', 'ProductController@getProducts' );
+
+    Route::prefix( 'service-request' )->group( function () {
+        Route::get( '/', 'ServiceController@getServiceRequest' );
+        Route::post( '/generate/', 'ServiceController@generateServiceRequest');
+    });
+
 });

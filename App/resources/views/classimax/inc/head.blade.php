@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Calssimax</title>
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <!-- PLUGINS CSS STYLE -->
     <link href="{{ asset( '/assets/classimax/plugins/jquery-ui/jquery-ui.min.css' ) }}" rel="stylesheet">
     <!-- Bootstrap -->
