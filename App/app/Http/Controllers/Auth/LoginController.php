@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class LoginController extends Controller
 {
@@ -25,7 +27,15 @@ class LoginController extends Controller
         ]);
 
         if ( Auth::attempt( $credentials ) ) {
-            return redirect()->route( 'dashboard' );
+            $session = Auth::user();
+            if( $session->status === 1 || $session->status === 3 ) {
+                return redirect()->route('dashboard');
+            } else {
+                Auth::logout();
+
+                return back()->withErrors( ['email' => 'Por favor, valida tu cuenta.'] )
+                    ->withInput( request(['email']) );
+            }
         };
 
         return back()->withErrors( ['email' => trans( 'auth.failed' )] )

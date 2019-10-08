@@ -107,4 +107,8 @@ class DashboardController extends Controller
         return response()->json( $settings );
     }
 
+    public function isCompleteRegister() {
+
+    }
+
 }
