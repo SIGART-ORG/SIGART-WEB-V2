@@ -11,13 +11,14 @@
                     <!-- User Name -->
                     <h5 class="text-center">{{ user.name }}</h5>
                     <p>Unido {{ user.joined }}</p>
-                    <a :href="user.profile" class="btn btn-main-sm">Editar Perfil</a>
+                    <a v-if="urlProfile === 'datos-del-cliente'" :href="'#' + urlProfile" class="btn btn-main-sm">Completar Información</a>
+                    <a v-else :href="'#' + urlProfile" class="btn btn-main-sm">Editar Perfil</a>
                 </div>
                 <!-- Dashboard Links -->
                 <div class="widget user-dashboard-menu">
                     <ul>
                         <li v-for=" url in urls " :key="url.id" :class="url.id === current || ( current === 'new-service-request'  && url.id === 'mis-solicitudes' )? 'active': '' ">
-                            <a @click.prevent="CHANGE_CURRENT( url.id )">
+                            <a :href="'#' + url.id" @click.prevent="CHANGE_CURRENT( url.id )">
                                 <i class="fa" :class="url.icon"></i> {{ url.name }} <span v-if="url.count > 0">{{ url.count }}</span>
                             </a>
                         </li>
@@ -25,6 +26,7 @@
                 </div>
             </div>
         </div>
+        <comp-customer-data v-if="current === 'datos-del-cliente'"></comp-customer-data>
         <servicerequest v-if="current === 'mis-solicitudes'"></servicerequest>
         <servicerequestform v-if="current === 'new-service-request'"></servicerequestform>
     </div>
@@ -47,6 +49,9 @@
             },
             current() {
                 return this.$store.state.Settings.current;
+            },
+            urlProfile() {
+                return this.$store.state.Settings.urlProfile;
             }
         },
         methods: {

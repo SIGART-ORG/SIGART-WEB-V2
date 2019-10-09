@@ -40,8 +40,10 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 import Dashboard from './components/dashboard/dashboard.vue';
 import ServiceRequestr from './components/dashboard/ServiceRequest.vue';
 import ServiceRequestForm from "./components/dashboard/ServiceRequestForm";
+import CompleteCustomerData from "./components/dashboard/complete-customer-data";
 
 Vue.component( 'dashboard', Dashboard );
+Vue.component( 'comp-customer-data', CompleteCustomerData );
 Vue.component( 'servicerequest', ServiceRequestr );
 Vue.component( 'servicerequestform', ServiceRequestForm );
 /**

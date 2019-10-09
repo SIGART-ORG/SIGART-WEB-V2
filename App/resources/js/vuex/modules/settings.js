@@ -2,7 +2,8 @@ export default {
     state: {
         userData: [],
         urlSettings: [],
-        current: ''
+        current: '',
+        urlProfile: ''
     },
 
     mutations: {
@@ -10,6 +11,7 @@ export default {
             state.userData = settings.user;
             state.urlSettings = settings.urls;
             state.current = settings.current;
+            state.urlProfile = settings.urlProfile;
         },
         CHANGE_CURRENT( state, newCurrent ) {
             state.current = newCurrent;

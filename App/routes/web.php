@@ -34,11 +34,22 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get( '/settings', 'DashboardController@settings' )->name( 'dashboard.settings' );
     });
 
-    Route::get( '/products', 'ProductController@getProducts' );
 
     Route::prefix( 'service-request' )->group( function () {
         Route::get( '/', 'ServiceController@getServiceRequest' );
         Route::post( '/generate/', 'ServiceController@generateServiceRequest');
     });
+
+    Route::prefix( 'customer' )->group( function () {
+        Route::get( '/show', 'CustomerController@show' );
+        Route::post( '/update', 'CustomerController@update');
+    });
+
+    Route::get( '/products', 'ProductController@getProducts' );
+    Route::get( '/departaments/', 'StaticController@loadDepartament' );
+    Route::get( '/provinces/{departament}', 'StaticController@loadProvince' );
+    Route::get( '/districts/{departament}/{province}/', 'StaticController@loadDistrict' );
+    Route::get( '/type-document/', 'StaticController@loadTypeDocument' );
+    Route::get( '/type-person/', 'StaticController@loadTypePerson' );
 
 });
