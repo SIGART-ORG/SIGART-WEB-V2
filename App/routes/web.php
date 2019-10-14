@@ -38,6 +38,9 @@ Route::group(['middleware' => ['auth']], function(){
     Route::prefix( 'service-request' )->group( function () {
         Route::get( '/', 'ServiceController@getServiceRequest' );
         Route::post( '/generate/', 'ServiceController@generateServiceRequest');
+        Route::get( '/{id}/edit/', 'ServiceController@edit' );
+        Route::get( '/{id}/send/', 'ServiceController@send' );
+        Route::get( '/{id}/delete/', 'ServiceController@delete' );
     });
 
     Route::prefix( 'customer' )->group( function () {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\CustomerLogin;
+use App\Models\SaleQuotation;
 use App\Models\ServiceRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -70,32 +71,33 @@ class DashboardController extends Controller
             $current    = Str::slug('Mis Solicitudes');
             $urlProfile = 'profile';
             $ServiceRequestClass = new ServiceRequest();
+            $SaleQuotationClass = new SaleQuotation();
             $url = [
                 [
                     'id' => Str::slug('Mis Solicitudes'),
                     'name' => 'Mis Solicitudes',
-                    'count' => $ServiceRequestClass->countData(1),
+                    'count' => $ServiceRequestClass->countData(),
                     'href' => '#',
                     'icon' => 'fa-clipboard'
                 ],
                 [
                     'id' => Str::slug('Cotizaciones por aprobar'),
                     'name' => 'Cotizaciones por aprobar',
-                    'count' => 23,
+                    'count' => $ServiceRequestClass->countQuotesToApprove(),
                     'href' => '#',
                     'icon' => 'fa-bolt'
                 ],
                 [
                     'id' => Str::slug('Mis Cotizaciones'),
                     'name' => 'Mis Cotizaciones',
-                    'count' => 23,
+                    'count' => $SaleQuotationClass->countSalesQuotationApproved(),
                     'href' => '#',
                     'icon' => 'fa-calculator'
                 ],
                 [
                     'id' => Str::slug('Mis cotizaciones archivadas'),
                     'name' => 'Mis cotizaciones archivadas',
-                    'count' => 12,
+                    'count' => $SaleQuotationClass->countArvhived(),
                     'href' => '#',
                     'icon' => 'fa-clipboard'
                 ],

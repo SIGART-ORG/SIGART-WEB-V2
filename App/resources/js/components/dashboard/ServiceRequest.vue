@@ -17,6 +17,8 @@
                     <th>Item</th>
                     <th>Solicitud</th>
                     <th class="text-center">Fecha registro</th>
+                    <th class="text-center">Fecha envio</th>
+                    <th class="text-center">Estado</th>
                     <th class="text-center">Acciones</th>
                 </tr>
                 </thead>
@@ -26,22 +28,33 @@
                     <td class="product-details">
                         <h3 class="title">{{ sr.description }}</h3>
                     </td>
-                    <td class="product-category"><span class="categories">{{ sr.date_reg }}</span></td>
+                    <td class="product-category"><span class="categories">{{ sr.dateRegFormat }}</span></td>
+                    <td class="product-category"><span class="categories">{{ sr.dateSendFormat }}</span></td>
+                    <td>
+                        <span v-if="sr.is_send === 0" class="badge badge-secondary">No enviado</span>
+                        <span v-if="sr.is_send === 1" class="badge badge-info">Enviado</span>
+                        <span v-if="sr.is_send === 2" class="badge badge-success">Cotizado</span>
+                    </td>
                     <td class="action" data-title="Action">
                         <div class="">
                             <ul class="list-inline justify-content-center">
+                                <li v-if="sr.is_send !== 1" class="list-inline-item">
+                                    <a data-toggle="tooltip" data-placement="top" title="Tooltip on top" class="edit" href="#" @click.prevent="sendServiceRequest( sr.id )">
+                                        <i class="fa fa-send"></i>
+                                    </a>
+                                </li>
                                 <li class="list-inline-item">
                                     <a data-toggle="tooltip" data-placement="top" title="Tooltip on top" class="view" href="">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                 </li>
-                                <li class="list-inline-item">
-                                    <a class="edit" href="">
+                                <li v-if="sr.is_send !== 1" class="list-inline-item">
+                                    <a class="edit" href="#" @click.prevent="editServiceRequest( sr.id )">
                                         <i class="fa fa-pencil"></i>
                                     </a>
                                 </li>
-                                <li class="list-inline-item">
-                                    <a class="delete" href="">
+                                <li v-if="sr.is_send !== 1" class="list-inline-item">
+                                    <a class="delete" href="#" @click.prevent="deleteServiceRequest( sr.id )">
                                         <i class="fa fa-trash"></i>
                                     </a>
                                 </li>
@@ -57,7 +70,9 @@
 </template>
 
 <script>
-    import { mapMutations } from 'vuex'
+    import { mapMutations } from 'vuex';
+    import Swal from 'sweetalert2';
+    import 'sweetalert2/src/sweetalert2.scss';
     export default {
         name: "servicerequest",
         created() {
@@ -69,7 +84,121 @@
             }
         },
         methods: {
-            ...mapMutations(['CHANGE_CURRENT'])
+            ...mapMutations(['CHANGE_CURRENT', 'CHANGE_ID_SR', 'CLEAR_DETAILS_SR']),
+            editServiceRequest( id ){
+                this.CHANGE_ID_SR( id );
+                if ( id > 0 ) {
+                    this.CHANGE_CURRENT( 'new-service-request' );
+                }
+            },
+            sendServiceRequest( id ) {
+                Swal.fire({
+                    title: '<strong>Enviar <u>Solicitud de Servicio</u></strong>',
+                    type: 'question',
+                    html: '¿Estas seguro de enviar esta solicitud de servicio?',
+                    showCloseButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="fa fa-send"></i> Enviar',
+                    cancelButtonText: '<i class="fa fa-close"></i> Cancelar',
+                    confirmButtonColor: '#5672F9',
+                    cancelButtonColor: '#FF5252',
+                }).then( ( result ) => {
+                    if ( result.value ) {
+                        this.$store.dispatch({
+                            type: 'sendSR',
+                            data: {
+                                id
+                            }
+                        }).then( response => {
+                            if( response.status ) {
+                                this.$store.dispatch( 'loadServiceRequest' );
+                                Swal.fire(
+                                    'Enviado!',
+                                    'Se envió correctamente su solicitud de servicio.',
+                                    'success'
+                                );
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    'Ocurrio un error al ejecutar esta acción.',
+                                    'error'
+                                )
+                            }
+                        }).catch( errors => {
+                            Swal.fire(
+                                'Error ',
+                                'Ocurrio un error al ejecutar esta acción.',
+                                'error'
+                            );
+                            console.log( errors );
+                        });
+
+                    }
+                }).catch( ( errors ) => {
+                    Swal.fire(
+                        'Error ',
+                        'Ocurrio un error al ejecutar esta acción.',
+                        'error'
+                    );
+                    console.log( errors );
+                });
+            },
+            deleteServiceRequest( id ) {
+                Swal.fire({
+                    title: '<strong>Eliminar <u>Solicitud de Servicio</u></strong>',
+                    type: 'question',
+                    html: '¿Estas seguro de eliminar esta solicitud de servicio?',
+                    showCloseButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="fa fa-trash"></i> ELiminar',
+                    cancelButtonText: '<i class="fa fa-close"></i> Cancelar',
+                    confirmButtonColor: '#FF5252',
+                    cancelButtonColor: '#929394',
+                }).then( ( result ) => {
+                    if ( result.value ) {
+                        this.$store.dispatch({
+                            type: 'deleteSR',
+                            data: {
+                                id
+                            }
+                        }).then( response => {
+                            if( response.status ) {
+                                this.$store.dispatch( 'loadServiceRequest' );
+                                this.$store.dispatch( 'loadSettings' );
+                                Swal.fire(
+                                    'Eliminado!',
+                                    'Se eliminó correctamente su solicitud de servicio.',
+                                    'success'
+                                );
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    response.message,
+                                    'error'
+                                )
+                            }
+                        }).catch( errors => {
+                            Swal.fire(
+                                'Error ',
+                                'Ocurrio un error al ejecutar esta acción.',
+                                'error'
+                            );
+                            console.log( errors );
+                        });
+
+                    }
+                }).catch( ( errors ) => {
+                    Swal.fire(
+                        'Error ',
+                        'Ocurrio un error al ejecutar esta acción.',
+                        'error'
+                    );
+                    console.log( errors );
+                });
+            }
+        },
+        mounted() {
+            this.CLEAR_DETAILS_SR();
         }
     }
 </script>

@@ -19,7 +19,7 @@
                     <ul>
                         <li v-for=" url in urls " :key="url.id" :class="url.id === current || ( current === 'new-service-request'  && url.id === 'mis-solicitudes' )? 'active': '' ">
                             <a :href="'#' + url.id" @click.prevent="CHANGE_CURRENT( url.id )">
-                                <i class="fa" :class="url.icon"></i> {{ url.name }} <span v-if="url.count > 0">{{ url.count }}</span>
+                                <i class="fa" :class="url.icon"></i> {{ url.name }} <span v-show="url.count > 0">{{ url.count }}</span>
                             </a>
                         </li>
                     </ul>

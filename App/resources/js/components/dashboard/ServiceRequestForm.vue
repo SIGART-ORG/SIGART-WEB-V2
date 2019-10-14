@@ -4,15 +4,31 @@
             <h3 class="widget-header">Registrar nueva solicitud de servicio</h3>
             <div class="row">
                 <div class="col-md-12">
-                    <button :disabled="details.length === 0" class="btn pull-right btn btn-transparent" @click.prevent="generateServiceRequest">
+                    <button v-if="idServiceRequest === 0" :disabled="details.length === 0" class="btn pull-right btn btn-transparent" @click.prevent="generateServiceRequest">
                         <i class="fa fa-plus-circle"></i> Generar Solicitud
+                    </button>
+                    <button v-else :disabled="details.length === 0" class="btn pull-right btn btn-transparent" @click.prevent="generateServiceRequest">
+                        <i class="fa fa-plus-circle"></i> Editar Solicitud
                     </button>
                 </div>
             </div>
             <ValidationObserver ref="registerServivceRequest" v-slot="{ invalid }">
                 <form>
                     <div class="row">
-                        <div class="col-md-10">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label>Nombre</label>
+                                <ValidationProvider name="nombre" rules="required" v-slot="{ errors }">
+                                    <input type="text" v-model="name" class="form-control">
+                                    <span class="text-danger">{{ errors[0] }}</span>
+                                </ValidationProvider>
+                            </div>
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-8">
                             <div class="form-group">
                                 <label>Item</label>
                                 <ValidationProvider name="item" rules="required" v-slot="{ errors }">
@@ -30,17 +46,24 @@
                                 </ValidationProvider>
                             </div>
                         </div>
+                        <div class="col-md-2 align-bottom">
+                            <div class="form-group">
+                                <label>Acción</label>
+                                <button class="btn btn-success text-white" :disabled="invalid" @click.prevent="addItem( row )">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <button class="btn btn-success text-white" :disabled="invalid" @click.prevent="addItem( row )">Agregar item</button>
                 </form>
             </ValidationObserver>
             <table class="table table-responsive product-dashboard-table">
                 <thead>
                 <tr>
-                    <th>Item</th>
-                    <th class="text-center">Detalle</th>
-                    <th class="text-center">Cantidad</th>
-                    <th class="text-center">Opciones</th>
+                    <th style="width: 10%">Item</th>
+                    <th style="width: 50%" class="text-center">Detalle</th>
+                    <th style="width: 20%" class="text-center">Cantidad</th>
+                    <th style="width: 20%" class="text-center">Opciones</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -85,12 +108,24 @@
             row() {
                 let newItem = {
                     'item': this.item,
-                    'count': this.count
+                    'count': this.count,
+                    'id': 0,
                 };
                 return newItem;
             },
             details() {
                 return this.$store.state.Service.arrDetServiceRequest;
+            },
+            name: {
+                get: function() {
+                    return this.$store.state.Service.nameServiceRequest;
+                },
+                set: function (newValue) {
+                    this.$store.state.Service.nameServiceRequest = newValue;
+                }
+            },
+            idServiceRequest() {
+                return this.$store.state.Service.idServiceRequest;
             }
         },
 
@@ -105,6 +140,19 @@
                 this.$store.dispatch( 'generateServiceRequest' );
                 this.CHANGE_CURRENT( 'mis-solicitudes' );
                 this.$store.dispatch( 'loadSettings' );
+            },
+            loadServiceRequest() {
+                this.$store.dispatch({
+                    type: 'getDetailServiceRequest',
+                    data: {
+                        id: this.idServiceRequest
+                    }
+                });
+            }
+        },
+        mounted() {
+            if( this.idServiceRequest > 0 ) {
+                this.loadServiceRequest();
             }
         }
     }
