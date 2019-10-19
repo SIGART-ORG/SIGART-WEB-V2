@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SaleQuotation;
 use App\Models\ServiceRequest;
 use App\Models\ServiceRequestDetail;
+use App\Models\SiteVoucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -33,6 +34,9 @@ class ServiceController extends Controller
         $name       = $request->name;
         $details    = $request->details;
 
+        $SiteVoucherClass = new SiteVoucher();
+        $typeVoucher = 2;
+
         if( ! empty( $details ) && is_array( $details ) && count( $details ) ) {
             $userSession = Auth::user();
 
@@ -56,8 +60,13 @@ class ServiceController extends Controller
 
                 }
             } else {
+                $correlative = $SiteVoucherClass->getNumberVoucherSite( $typeVoucher );
+
                 $ServiceRequestClass = new ServiceRequest();
                 $ServiceRequestClass->sites_id = 1;
+                $ServiceRequestClass->type_vouchers_id = $typeVoucher;
+                $ServiceRequestClass->date_emission = date('Y-m-d');
+                $ServiceRequestClass->num_request = $correlative['correlative'];
                 $ServiceRequestClass->customers_id = $userSession->customers_id;
                 $ServiceRequestClass->date_reg = date('Y-m-d');
                 $ServiceRequestClass->date_aproved = date('Y-m-d');
@@ -65,6 +74,8 @@ class ServiceController extends Controller
             }
 
             if( $ServiceRequestClass->save() ) {
+
+                $SiteVoucherClass->increaseCorrelative( $typeVoucher );
 
                 if( $id > 0 && $ServiceRequestClass->id > 0 ) {
                     ServiceRequestDetail::where( 'service_requests_id', $id )
