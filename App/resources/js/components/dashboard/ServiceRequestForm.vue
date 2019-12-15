@@ -15,16 +15,39 @@
             <ValidationObserver ref="registerServivceRequest" v-slot="{ invalid }">
                 <form>
                     <div class="row">
-                        <div class="col-md-8">
+                        <div class="col-md-12">
                             <div class="form-group">
-                                <label>Nombre</label>
+                                <label>Nombre <span class="text-danger">(*)</span></label>
                                 <ValidationProvider name="nombre" rules="required" v-slot="{ errors }">
                                     <input type="text" v-model="name" class="form-control">
                                     <span class="text-danger">{{ errors[0] }}</span>
                                 </ValidationProvider>
                             </div>
                         </div>
-                        <div class="col-md-4"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Adjuntar <span class="text-danger">(*)</span></label>
+                                <ValidationProvider name="adjunto" rules="mimes:image/*,application/pdf|size:2048" v-slot="{ errors, validate }">
+                                    <input type="file" @change="handleFileChange( $event ) || validate( $event )" class="form-control-file">
+                                    <span class="text-danger">{{ errors[0] }}</span>
+                                </ValidationProvider>
+                                <small>Archivos permitidos: JPG, JPEG, PNG, PDF</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="attachment" class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Archivo adjunto</label>
+                                <span class="badge badge-primary">
+                                    <a class="text-white" :href="attachment" target="_blank">
+                                        <i class="fa fa-link"></i> {{ attachment }}
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                     <hr>
                     <div class="row">
@@ -94,7 +117,16 @@
 </template>
 
 <script>
-    import { mapMutations } from 'vuex'
+    import { mapMutations } from 'vuex';
+
+    const typePermits     = [
+        'image/gif',
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'application/pdf'
+    ];
+
     export default {
         name: "ServiceRequestForm",
         data() {
@@ -124,6 +156,9 @@
                     this.$store.state.Service.nameServiceRequest = newValue;
                 }
             },
+            attachment() {
+                return this.$store.state.Service.attachment;
+            },
             idServiceRequest() {
                 return this.$store.state.Service.idServiceRequest;
             }
@@ -148,6 +183,18 @@
                         id: this.idServiceRequest
                     }
                 });
+            },
+            handleFileChange( e ) {
+
+                let fileName = e.target.files[0];
+                if( typePermits.includes( fileName.type ) ){
+                    this.$store.commit(
+                        'SET_FILE',
+                        {
+                            value: fileName
+                        }
+                    )
+                }
             }
         },
         mounted() {
