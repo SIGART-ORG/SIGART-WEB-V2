@@ -6,7 +6,7 @@
                 <!-- About -->
                 <div class="block about">
                     <!-- footer logo -->
-                    <img src="{{ asset( '/assets/classimax/images/logo-footer.png' ) }}" alt="">
+                    <img src="{{ asset( '/images/theme/logo.png' ) }}" width="193" height="38" alt="{{ env( 'PROJECT_NAME' ) }}">
                     <!-- description -->
                     <p class="alt-color">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
                 </div>

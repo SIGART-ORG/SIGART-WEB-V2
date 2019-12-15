@@ -4,7 +4,16 @@ export default {
         serviceRequestDetails: [],
         arrDetServiceRequest: [],
         idServiceRequest: 0,
-        nameServiceRequest: ''
+        nameServiceRequest: '',
+        attachmentServiceRequest: null,
+        attachment: null
+    },
+
+    getters:{
+        attachmentServiceRequest: state =>  {
+            return state.attachmentServiceRequest
+        },
+
     },
 
     mutations: {
@@ -28,6 +37,7 @@ export default {
         LOAD_DATA_SERVICE_REQUEST( state, data ) {
             if( data.status ) {
                 state.nameServiceRequest = data.serviceRequest.name;
+                state.attachment = data.serviceRequest.attachment;
                 let detail = data.serviceRequest.detail;
                 detail.map( function( e ) {
                     state.arrDetServiceRequest.push({
@@ -40,7 +50,10 @@ export default {
         },
         SEND_SR( state, id ) {
 
-        }
+        },
+        SET_FILE( state, payload ) {
+            state.attachmentServiceRequest = payload.value;
+        },
     },
 
     actions: {
@@ -57,10 +70,18 @@ export default {
             context.commit( 'DELETE_DETAILS', idx );
         },
         generateServiceRequest( { commit, state } ) {
-            axios.post( '/service-request/generate/', {
-                id: state.idServiceRequest,
-                name: state.nameServiceRequest,
-                details: state.arrDetServiceRequest,
+            let formData = new FormData();
+            formData.append('id', state.idServiceRequest );
+            formData.append('name', state.nameServiceRequest );
+            formData.append('attachment', state.attachmentServiceRequest );
+            state.arrDetServiceRequest.forEach( ( detail, i ) =>
+                formData.append( `details[${i}]`, JSON.stringify( detail ) )
+            );
+
+            axios.post( '/service-request/generate/', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
             }).then(
                 response => {
                     if( response.status ) {
