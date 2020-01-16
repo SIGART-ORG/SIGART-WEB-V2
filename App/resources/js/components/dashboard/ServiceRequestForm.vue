@@ -1,5 +1,5 @@
 <template>
-    <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-0">
+    <div class="col-md-10 offset-md-1 col-lg-9 offset-lg-0">
         <div class="widget dashboard-container my-adslist">
             <h3 class="widget-header">Registrar nueva solicitud de servicio</h3>
             <div class="row">

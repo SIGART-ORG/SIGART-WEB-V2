@@ -65,15 +65,11 @@ class ServiceRequest extends Model
 
     public function countQuotesToApprove() {
 
-        $SaleQuotation = new SaleQuotation();
+        $user = Auth::user();
+        $customerId = $user->customers_id;
 
-        $data = DB::table( self::TABLE_NAME )
-            ->join( $SaleQuotation::TABLE_NAME, $SaleQuotation::TABLE_NAME . '.service_requests_id', '=', self::TABLE_NAME . '.id' )
-            ->where( self::TABLE_NAME . '.status', 1 )
-            ->where( self::TABLE_NAME . '.is_send', 1 )
-            ->where( $SaleQuotation::TABLE_NAME . '.status', 1 )
-            ->where( $SaleQuotation::TABLE_NAME . '.is_approved_customer', 0 )
-            ->where( $SaleQuotation::TABLE_NAME . '.customer_login_id', 0 )
+        $data = SaleQuotation::where( 'status', 6 )
+            ->where( 'customers_id', $customerId )
             ->count();
 
         return $data;

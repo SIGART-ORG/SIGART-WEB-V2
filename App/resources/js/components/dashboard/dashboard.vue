@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div class="col-md-10 offset-md-1 col-lg-4 offset-lg-0">
+        <div class="col-md-10 offset-md-1 col-lg-3 offset-lg-0">
             <div class="sidebar">
                 <!-- User Widget -->
                 <div class="widget user-dashboard-profile">
@@ -29,6 +29,7 @@
         <comp-customer-data v-if="current === 'datos-del-cliente'"></comp-customer-data>
         <servicerequest v-if="current === 'mis-solicitudes'"></servicerequest>
         <servicerequestform v-if="current === 'new-service-request'"></servicerequestform>
+        <sale-quotation-list v-if="current === 'cotizaciones-por-aprobar'"></sale-quotation-list>
     </div>
 </template>
 

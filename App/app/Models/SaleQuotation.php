@@ -20,6 +20,10 @@ class SaleQuotation extends Model
         $this->user = Auth::user();
     }
 
+    public function serviceRequest() {
+        return $this->belongsTo( 'App\Models\ServiceRequest', 'service_requests_id', 'id' );
+    }
+
     public function countSalesQuotationApproved() {
 
         return DB::table( self::TABLE_NAME )
