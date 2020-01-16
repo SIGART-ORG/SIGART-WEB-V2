@@ -48,6 +48,10 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post( '/update', 'CustomerController@update');
     });
 
+    Route::prefix( 'sale-quotation' )->group( function () {
+        Route::get( '/', 'SaleQuotationController@listData' );
+    });
+
     Route::get( '/products', 'ProductController@getProducts' );
     Route::get( '/departaments/', 'StaticController@loadDepartament' );
     Route::get( '/provinces/{departament}', 'StaticController@loadProvince' );

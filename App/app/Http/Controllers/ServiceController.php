@@ -193,6 +193,7 @@ class ServiceController extends Controller
         if( ! empty( $serviceRequest ) ) {
 
             $serviceRequest->is_send = 1;
+            $serviceRequest->date_send = date( 'Y-m-d H:i:s' );
             $serviceRequest->save();
 
             return response()->json([
