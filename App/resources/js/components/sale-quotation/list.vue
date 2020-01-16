@@ -1,3 +1,4 @@
+import Swal from "sweetalert2";
 <template>
     <div class="col-md-10 offset-md-1 col-lg-9 offset-lg-0">
         <!-- Recently Favorited -->
@@ -45,6 +46,25 @@
                     <td>S/. {{ item.subTotal }}</td>
                     <td>S/. {{ item.discount }}<br/><small>({{ item.discountPorc }}% Total)</small></td>
                     <td>S/. {{ item.total }}</td>
+                    <td class="action" data-title="Action">
+                        <ul class="list-inline justify-content-center">
+                            <li class="list-inline-item">
+                                <a data-toggle="tooltip" data-placement="top" title="Ver Información" class="view btn-custom" href="#">
+                                    <i class="fa fa-info"></i>&nbsp;Detalle
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a class="edit btn-custom" href="#" @click="actionButton( item, 'aproval' )">
+                                    <i class="fa fa-check"></i>&nbsp;Aprobar
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a class="delete btn-custom" href="#" @click="actionButton( item, 'cancel' )">
+                                    <i class="fa fa-close"></i>&nbsp;Rechazar
+                                </a>
+                            </li>
+                        </ul>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -55,6 +75,8 @@
 
 <script>
     import { mapMutations } from 'vuex';
+    import Swal from 'sweetalert2';
+    import 'sweetalert2/src/sweetalert2.scss';
     export default {
         name: "list",
         created() {
@@ -66,11 +88,40 @@
             }
         },
         methods: {
-
+            actionButton( data, action ) {
+                Swal.fire({
+                    title: '<strong>Eliminar <u>Solicitud de Servicio</u></strong>',
+                    type: 'question',
+                    html: '¿Estas seguro de eliminar esta solicitud de servicio?',
+                    showCloseButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="fa fa-trash"></i> ELiminar',
+                    cancelButtonText: '<i class="fa fa-close"></i> Cancelar',
+                    confirmButtonColor: '#FF5252',
+                    cancelButtonColor: '#929394',
+                }).then( response => {
+                    if ( response.value ) {
+                        console.log( response );
+                    }
+                })
+            }
         }
     }
 </script>
 
 <style scoped>
-
+    .btn-custom {
+        width: unset !important;
+        height: unset !important;
+        padding: 3px 10px;
+        font-size: 11px !important;
+        line-height: 1;
+        white-space: nowrap;
+    }
+    .delete:hover {
+        color: #ff5252 !important;
+        background: #fff !important;
+        border-radius: 40px !important;
+        border: 2px solid #ff5252 !important;
+    }
 </style>

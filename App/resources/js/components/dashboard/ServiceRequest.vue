@@ -46,12 +46,12 @@
                         <div class="">
                             <ul class="list-inline justify-content-center">
                                 <li v-if="sr.is_send !== 1" class="list-inline-item">
-                                    <a data-toggle="tooltip" data-placement="top" title="Tooltip on top" class="edit" href="#" @click.prevent="sendServiceRequest( sr.id )">
+                                    <a data-toggle="tooltip" data-placement="top" title="Enviar Solicitud" class="edit" href="#" @click.prevent="sendServiceRequest( sr.id )">
                                         <i class="fa fa-send"></i>
                                     </a>
                                 </li>
                                 <li class="list-inline-item">
-                                    <a data-toggle="tooltip" data-placement="top" title="Tooltip on top" class="view" href="">
+                                    <a data-toggle="tooltip" data-placement="top" title="Ver detalle" class="view" href="">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                 </li>
