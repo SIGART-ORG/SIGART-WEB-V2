@@ -18,6 +18,7 @@
                     <th>Solicitud</th>
                     <th class="text-center">Fecha registro</th>
                     <th class="text-center">Fecha envio</th>
+                    <th class="text-center">Adjunto</th>
                     <th class="text-center">Estado</th>
                     <th class="text-center">Acciones</th>
                 </tr>
@@ -30,6 +31,12 @@
                     </td>
                     <td class="product-category"><span class="categories">{{ sr.dateRegFormat }}</span></td>
                     <td class="product-category"><span class="categories">{{ sr.dateSendFormat }}</span></td>
+                    <td>
+                        <a v-if="sr.attachment" class="edit" :href="sr.attachment" target="_blank">
+                            <i class="fa fa-clipboard"></i>&nbsp;Adjunto
+                        </a>
+                        <span v-else class="badge badge-danger"><i class="fa fa-ban"></i>&nbsp;Sin Adjunto</span>
+                    </td>
                     <td>
                         <span v-if="sr.is_send === 0" class="badge badge-secondary">No enviado</span>
                         <span v-if="sr.is_send === 1" class="badge badge-info">Enviado</span>

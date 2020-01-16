@@ -12,6 +12,8 @@ use Illuminate\Support\Str;
 
 class ServiceController extends Controller
 {
+    const PATH_UPLOAD_SR = 'uploads/service-request/';
+
     public function getServiceRequest() {
 
         $ServiceRequestClass = new ServiceRequest();
@@ -73,6 +75,10 @@ class ServiceController extends Controller
                 $ServiceRequestClass->description = $name;
             }
 
+            if( $request->hasFile( 'attachment' ) ) {
+                $ServiceRequestClass->attachment = $this->uploadAttachment( $request->file( 'attachment' ) );
+            }
+
             if( $ServiceRequestClass->save() ) {
 
                 $SiteVoucherClass->increaseCorrelative( $typeVoucher );
@@ -83,23 +89,24 @@ class ServiceController extends Controller
                         ->update( ['status' => 2] );
                 }
 
-                foreach( $details as $detail ) {
+                foreach( $details as $item ) {
 
-                    if( $id > 0 && $detail['id'] > 0 ) {
+                    $detail = json_decode( $item );
+                    if( $id > 0 && $detail->id > 0 ) {
 
-                        $ServiceRequestDetailClass = ServiceRequestDetail::where( 'id', $detail['id'] )->first();
-                        $ServiceRequestDetailClass->name                = Str::limit( $detail['item'], 17, '...' );
-                        $ServiceRequestDetailClass->description         = $detail['item'];
-                        $ServiceRequestDetailClass->quantity            = $detail['count'];
+                        $ServiceRequestDetailClass = ServiceRequestDetail::where( 'id', $detail->id )->first();
+                        $ServiceRequestDetailClass->name                = Str::limit( $detail->item, 17, '...' );
+                        $ServiceRequestDetailClass->description         = $detail->item;
+                        $ServiceRequestDetailClass->quantity            = $detail->count;
                         $ServiceRequestDetailClass->status            = 1;
 
                     } else {
 
                         $ServiceRequestDetailClass = new ServiceRequestDetail();
                         $ServiceRequestDetailClass->service_requests_id = $ServiceRequestClass->id;
-                        $ServiceRequestDetailClass->name                = Str::limit( $detail['item'], 17, '...' );
-                        $ServiceRequestDetailClass->description         = $detail['item'];
-                        $ServiceRequestDetailClass->quantity            = $detail['count'];
+                        $ServiceRequestDetailClass->name                = Str::limit( $detail->item, 17, '...' );
+                        $ServiceRequestDetailClass->description         = $detail->item;
+                        $ServiceRequestDetailClass->quantity            = $detail->count;
                         $ServiceRequestDetailClass->assumed_customer    = 0;
 
                     }
@@ -118,6 +125,14 @@ class ServiceController extends Controller
             'status'    => false,
             'message'   => 'No se pudo generar la solicitud de servicio.'
         ]);
+    }
+
+    private function uploadAttachment( $file ) {
+        $destinationPath = public_path(self::PATH_UPLOAD_SR );
+        $newImage = 'service-request-' . time() . '.' . $file->getClientOriginalExtension();
+        $file->move( $destinationPath, $newImage );
+
+        return asset( self::PATH_UPLOAD_SR . $newImage);
     }
 
     public function edit( Request $request ) {
@@ -157,7 +172,8 @@ class ServiceController extends Controller
                 'dateReg'   => $serviceRequest->date_reg,
                 'isSend'    => $serviceRequest->is_send,
                 'name'      => $serviceRequest->description,
-                'detail'    => $arrDetail
+                'detail'    => $arrDetail,
+                'attachment'=> $serviceRequest->attachment
             ];
 
         }
