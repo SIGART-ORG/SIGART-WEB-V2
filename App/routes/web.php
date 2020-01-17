@@ -49,7 +49,8 @@ Route::group(['middleware' => ['auth']], function(){
     });
 
     Route::prefix( 'sale-quotation' )->group( function () {
-        Route::get( '/', 'SaleQuotationController@listData' );
+        Route::get( '/{type?}', 'SaleQuotationController@listData' );
+        Route::post( '/action/', 'SaleQuotationController@action' );
     });
 
     Route::get( '/products', 'ProductController@getProducts' );

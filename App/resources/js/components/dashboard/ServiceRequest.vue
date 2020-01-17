@@ -31,15 +31,16 @@
                     </td>
                     <td class="product-category"><span class="categories">{{ sr.dateRegFormat }}</span></td>
                     <td class="product-category"><span class="categories">{{ sr.dateSendFormat }}</span></td>
-                    <td>
+                    <td class="text-center">
                         <a v-if="sr.attachment" class="edit" :href="sr.attachment" target="_blank">
                             <i class="fa fa-clipboard"></i>&nbsp;Adjunto
                         </a>
                         <span v-else class="badge badge-danger"><i class="fa fa-ban"></i>&nbsp;Sin Adjunto</span>
                     </td>
-                    <td>
+                    <td class="text-center">
                         <span v-if="sr.is_send === 0" class="badge badge-secondary">No enviado</span>
-                        <span v-if="sr.is_send === 1" class="badge badge-info">Enviado</span>
+                        <span v-if="sr.is_send === 1 && sr.status === 1" class="badge badge-info">Enviado</span>
+                        <span v-if="sr.is_send === 1 && sr.status === 3" class="badge badge-warning">Cotizando</span>
                         <span v-if="sr.is_send === 2" class="badge badge-success">Cotizado</span>
                     </td>
                     <td class="action" data-title="Action">

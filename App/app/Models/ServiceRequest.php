@@ -42,7 +42,7 @@ class ServiceRequest extends Model
         $user = Auth::user();
 
         $data = DB::table( self::TABLE_NAME )
-            ->where( self::TABLE_NAME . '.status', 1 )
+            ->whereIn( self::TABLE_NAME . '.status', [1, 3] )
             ->where( self::TABLE_NAME . '.customers_id', $user->customers_id )
             ->whereIn( self::TABLE_NAME . '.is_send', [0, 1, 2])
             ->orderBy( self::TABLE_NAME . '.created_at', 'desc')
@@ -55,7 +55,7 @@ class ServiceRequest extends Model
         $user = Auth::user();
 
         $data = DB::table( self::TABLE_NAME )
-            ->where( self::TABLE_NAME . '.status', 1 )
+            ->whereIn( self::TABLE_NAME . '.status', [1, 3] )
             ->whereIn( self::TABLE_NAME . '.is_send', [0, 1, 2])
             ->where( self::TABLE_NAME . '.customers_id', $user->customers_id )
             ->count();

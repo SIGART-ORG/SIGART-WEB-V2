@@ -11,13 +11,17 @@
                     <!-- User Name -->
                     <h5 class="text-center">{{ user.name }}</h5>
                     <p>Unido {{ user.joined }}</p>
-                    <a v-if="urlProfile === 'datos-del-cliente'" :href="'#' + urlProfile" class="btn btn-main-sm">Completar Información</a>
+                    <a v-if="urlProfile === 'datos-del-cliente'" :href="'#' + urlProfile" class="btn btn-main-sm">Completar
+                        Información</a>
                     <a v-else :href="'#' + urlProfile" class="btn btn-main-sm">Editar Perfil</a>
                 </div>
                 <!-- Dashboard Links -->
                 <div class="widget user-dashboard-menu">
                     <ul>
-                        <li v-for=" url in urls " :key="url.id" :class="url.id === current || ( current === 'new-service-request'  && url.id === 'mis-solicitudes' )? 'active': '' ">
+                        <li v-for="url in urls" :key="url.id"
+                            :class="url.id === current || ( current === 'new-service-request'  && url.id === 'mis-solicitudes' )? 'active': '' "
+                            class="custom-sidebar-item"
+                        >
                             <a :href="'#' + url.id" @click.prevent="CHANGE_CURRENT( url.id )">
                                 <i class="fa" :class="url.icon"></i> {{ url.name }} <span v-show="url.count > 0">{{ url.count }}</span>
                             </a>
@@ -29,17 +33,19 @@
         <comp-customer-data v-if="current === 'datos-del-cliente'"></comp-customer-data>
         <servicerequest v-if="current === 'mis-solicitudes'"></servicerequest>
         <servicerequestform v-if="current === 'new-service-request'"></servicerequestform>
-        <sale-quotation-list v-if="current === 'cotizaciones-por-aprobar'"></sale-quotation-list>
+        <sale-quotation-list v-if="current === 'cotizaciones-por-aprobar'" ></sale-quotation-list>
+        <sale-quotation-list-approved v-if="current === 'mis-cotizaciones'" ></sale-quotation-list-approved>
     </div>
 </template>
 
 <script>
-    import { mapMutations } from 'vuex'
+    import {mapMutations} from 'vuex'
+
     export default {
         name: "dashboard",
         created() {
-            this.$store.dispatch( 'loadSettings' );
-            this.$store.dispatch( 'loadProducts' );
+            this.$store.dispatch('loadSettings');
+            this.$store.dispatch('loadProducts');
         },
         computed: {
             user() {
@@ -62,5 +68,11 @@
 </script>
 
 <style scoped>
-
+    .custom-sidebar-item a {
+        position: relative;
+    }
+    .custom-sidebar-item span {
+        position: absolute;
+        right: 5px;
+    }
 </style>

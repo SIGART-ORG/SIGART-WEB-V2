@@ -15,6 +15,18 @@ class SaleQuotationController extends Controller
 
         $user = Auth()->user();
         $customerId = $user->customers_id;
+        $type = $request->type;
+
+        $statusIds = [6];
+
+        switch ( $type ) {
+            case 'approved':
+                $statusIds = [8];
+                break;
+            case 'cancel':
+                $statusIds = [0,2,5,7,9];
+                break;
+        }
 
         $response = [
             'status' => true,
@@ -22,7 +34,7 @@ class SaleQuotationController extends Controller
             'pagination' => []
         ];
 
-        $salesQuotations = SaleQuotation::where( 'status', 6 )
+        $salesQuotations = SaleQuotation::whereIn( 'status', $statusIds )
             ->where( 'customers_id', $customerId )
             ->orderBy( 'date_reply_second', 'desc' )
             ->paginate( 20 );
@@ -59,5 +71,80 @@ class SaleQuotationController extends Controller
         ];
 
         return response()->json( $response );
+    }
+
+    public function action( Request $request ) {
+        $id = $request->id ? $request->id : 0;
+        $action = $request->action ? $request->action : '';
+
+        $response = [
+            'status' => false,
+            'msg' => 'No se pudo realizar la operación'
+        ];
+
+        switch ( $action ) {
+            case 'aproval':
+                $response = $this->aproval( $id );
+                break;
+            case 'cancel' :
+                $response = $this->cancel( $id );
+                break;
+        }
+
+        return response()->json( $response );
+    }
+
+    private function aproval( $id ) {
+        $user = Auth()->user();
+        $customerId = $user->customers_id;
+
+        $response = [
+            'status' => false,
+            'msg' => 'No se pudo realizar la operación'
+        ];
+
+        $saleQuotation = SaleQuotation::findOrfail( $id );
+        if( $saleQuotation->status === 6 ) {
+            $saleQuotation->status = 8;
+            $saleQuotation->is_approved_customer = 1;
+            $saleQuotation->customer_login_id = $customerId;
+            $saleQuotation->date_approved_customer = date( 'Y-m-d H:i:s' );
+
+            if( $saleQuotation->save() ){
+                $serviceRequest = $saleQuotation->serviceRequest;
+                $serviceRequest->status = 4;
+                if(  $serviceRequest->save() ) {
+                    $response['status'] = true;
+                    $response['msg'] = 'OK';
+                }
+            }
+        }
+
+        return $response;
+    }
+
+    private function cancel( $id ) {
+        $user = Auth()->user();
+        $customerId = $user->customers_id;
+
+        $response = [
+            'status' => false,
+            'msg' => 'No se pudo realizar la operación'
+        ];
+
+        $saleQuotation = SaleQuotation::findOrfail( $id );
+        if( $saleQuotation->status === 6 ) {
+            $saleQuotation->status = 7;
+            $saleQuotation->is_approved_customer = 2;
+            $saleQuotation->customer_login_id = $customerId;
+            $saleQuotation->date_approved_customer = date( 'Y-m-d H:i:s' );
+
+            if( $saleQuotation->save() ) {
+                $response['status'] = true;
+                $response['msg'] = 'OK';
+            }
+        }
+
+        return $response;
     }
 }

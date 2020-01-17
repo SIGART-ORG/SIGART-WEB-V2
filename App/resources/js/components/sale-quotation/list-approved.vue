@@ -1,9 +1,8 @@
-import Swal from "sweetalert2";
 <template>
     <div class="col-md-10 offset-md-1 col-lg-9 offset-lg-0">
         <!-- Recently Favorited -->
         <div class="widget dashboard-container my-adslist">
-            <h3 class="widget-header">Cotizaciones por aprobar</h3>
+            <h3 class="widget-header">Mis cotizaciones</h3>
 
             <table class="table table-responsive product-dashboard-table">
                 <thead>
@@ -53,16 +52,6 @@ import Swal from "sweetalert2";
                                     <i class="fa fa-info"></i>&nbsp;Detalle
                                 </a>
                             </li>
-                            <li class="list-inline-item">
-                                <a class="edit btn-custom" href="#" @click="actionButton( item, 'aproval' )">
-                                    <i class="fa fa-check"></i>&nbsp;Aprobar
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a class="delete btn-custom" href="#" @click="actionButton( item, 'cancel' )">
-                                    <i class="fa fa-close"></i>&nbsp;Rechazar
-                                </a>
-                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -78,7 +67,7 @@ import Swal from "sweetalert2";
     import Swal from 'sweetalert2';
     import 'sweetalert2/src/sweetalert2.scss';
     export default {
-        name: "list",
+        name: "list-approved",
         created() {
             this.$store.dispatch( 'loadSalesQuotations' );
         },
@@ -88,65 +77,7 @@ import Swal from "sweetalert2";
             }
         },
         methods: {
-            actionButton( data, action ) {
 
-                let title = 'Aprobar&nbsp;<strong>Cotización <u>' + data.document + '</u></strong>';
-                let text = '¿Estas seguro de <strong>aprobar</strong> la cotización <strong><u>' + data.document + '</u></strong>?';
-                let buttonConfirm = '<i class="fa fa-check"></i> Aprobar';
-                let confirmBtn = '#59D659';
-
-                if( action === 'cancel' ) {
-                    title = 'Rechazar&nbsp;<strong>Cotización <u>' + data.document + '</u></strong>';
-                    text = '¿Estas seguro de <strong>rechazar</strong> la cotización <strong><u>' + data.document + '</u></strong>?';
-                    buttonConfirm = '<i class="fa fa-close"></i> Rechazar';
-                    confirmBtn = '#FF5252';
-                }
-
-                Swal.fire({
-                    title: title,
-                    type: 'question',
-                    html: text,
-                    showCloseButton: true,
-                    showCancelButton: true,
-                    confirmButtonText: buttonConfirm,
-                    cancelButtonText: '<i class="fa fa-reply"></i> Cancelar',
-                    confirmButtonColor: confirmBtn,
-                    cancelButtonColor: '#929394',
-                }).then( response => {
-                    if ( response.value ) {
-                        this.$store.dispatch({
-                            type: 'toAction',
-                            data: {
-                                id: data.id,
-                                action: action
-                            }
-                        }).then( response => {
-                            if( response.status ) {
-                                Swal.fire(
-                                    title + '!',
-                                    'Se realizó correctamente la operación.',
-                                    'success'
-                                );
-                                this.$store.dispatch( 'loadSalesQuotations' );
-                                this.$store.dispatch( 'loadSettings' );
-                            } else {
-                                Swal.fire(
-                                    'Error!',
-                                    response.msg,
-                                    'error'
-                                );
-                            }
-                        }).catch( errors => {
-                            Swal.fire(
-                                'Error!',
-                                'Ocurrio un error al ejecutar esta acción.',
-                                'error'
-                            );
-                            console.log( errors );
-                        })
-                    }
-                })
-            }
         }
     }
 </script>
