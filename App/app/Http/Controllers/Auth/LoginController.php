@@ -16,7 +16,7 @@ class LoginController extends Controller
     }
 
     public function showLoginForm() {
-        return view( 'login.index' );
+        return view( 'classimax.pages.login' );
     }
 
     public function login() {
