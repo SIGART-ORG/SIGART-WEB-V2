@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\SaleQuotation;
 use App\Models\ServiceRequest;
 use App\Models\ServiceRequestDetail;
@@ -32,9 +33,14 @@ class ServiceController extends Controller
     }
 
     public function generateServiceRequest( Request $request ) {
+        $type         = $request->type;
         $id         = $request->id;
         $name       = $request->name;
         $details    = $request->details;
+        $dateDelivery    = $request->dateDelivery ? date( 'Y-m-d', strtotime( $request->dateDelivery ) ) : null;
+        $address    = $request->address;
+        $ubigeo     = json_decode( $request->ubigeo );
+        $district   = $ubigeo->district;
 
         $SiteVoucherClass = new SiteVoucher();
         $typeVoucher = 2;
@@ -52,6 +58,14 @@ class ServiceController extends Controller
                 if( ! empty( $ServiceRequestClass ) && $ServiceRequestClass->id > 0 ) {
 
                     $ServiceRequestClass->description = $name;
+                    $ServiceRequestClass->description_corrected = $name;
+                    $ServiceRequestClass->address = $address;
+                    $ServiceRequestClass->district_id = $district;
+                    $ServiceRequestClass->delivery_date = $dateDelivery;
+                    if( $type === 'send' ) {
+                        $ServiceRequestClass->is_send = 1;
+                        $ServiceRequestClass->date_send = date( 'Y-m-d H:i:s' );
+                    }
 
                 } else {
 
@@ -73,6 +87,14 @@ class ServiceController extends Controller
                 $ServiceRequestClass->date_reg = date('Y-m-d');
                 $ServiceRequestClass->date_aproved = date('Y-m-d');
                 $ServiceRequestClass->description = $name;
+                $ServiceRequestClass->description_corrected = $name;
+                $ServiceRequestClass->address = $address;
+                $ServiceRequestClass->district_id = $district;
+                $ServiceRequestClass->delivery_date = $dateDelivery;
+                if( $type === 'send' ) {
+                    $ServiceRequestClass->is_send = 1;
+                    $ServiceRequestClass->date_send = date( 'Y-m-d H:i:s' );
+                }
             }
 
             if( $request->hasFile( 'attachment' ) ) {
@@ -97,6 +119,7 @@ class ServiceController extends Controller
                         $ServiceRequestDetailClass = ServiceRequestDetail::where( 'id', $detail->id )->first();
                         $ServiceRequestDetailClass->name                = Str::limit( $detail->item, 17, '...' );
                         $ServiceRequestDetailClass->description         = $detail->item;
+                        $ServiceRequestDetailClass->description_corrected         = $detail->item;
                         $ServiceRequestDetailClass->quantity            = $detail->count;
                         $ServiceRequestDetailClass->status            = 1;
 
@@ -106,6 +129,7 @@ class ServiceController extends Controller
                         $ServiceRequestDetailClass->service_requests_id = $ServiceRequestClass->id;
                         $ServiceRequestDetailClass->name                = Str::limit( $detail->item, 17, '...' );
                         $ServiceRequestDetailClass->description         = $detail->item;
+                        $ServiceRequestDetailClass->description_corrected         = $detail->item;
                         $ServiceRequestDetailClass->quantity            = $detail->count;
                         $ServiceRequestDetailClass->assumed_customer    = 0;
 
@@ -153,11 +177,30 @@ class ServiceController extends Controller
             ->where( $serviceRequestClass::TABLE_NAME . '.customers_id', $user->customers_id )
             ->first();
 
+
+        $district = $serviceRequest->district_id ? $serviceRequest->district_id : '';
+        $address = $serviceRequest->address;
+
+        if( $district === '' || $address === '' ) {
+            $customer = Customer::find($user->customers_id);
+
+            if ($customer) {
+                $district = $district === '' ? $customer->district_id : $district;
+                $address = $address === '' ? $customer->address : $address;
+            }
+        }
+
+        $ubigeoBD = \FormatUbigeo::ubigeo( $district );
+
+        $ubigeo = new \stdClass();
+        $ubigeo->district = $ubigeoBD['district_id'];
+        $ubigeo->province = $ubigeoBD['province_id'];
+        $ubigeo->departament = $ubigeoBD['departament_id'];
+
         if ( $serviceRequest ) {
 
             $serviceRequestDetail = $serviceRequestDetailClass::where( $serviceRequestDetailClass::TABLE_NAME . '.status', 1 )
                 ->where( $serviceRequestDetailClass::TABLE_NAME . '.service_requests_id', $serviceRequest->id )
-                ->select( 'id', 'description', 'quantity' )
                 ->get();
 
             $arrDetail = [];
@@ -166,12 +209,21 @@ class ServiceController extends Controller
                 $arrDetail[] = $detail;
             }
 
+            $dataUbigeo = [
+                'departaments' => [],
+                'provinces' => [],
+                'districts' => [],
+            ];
+
             $response['status'] = true;
             $response['serviceRequest'] = [
                 'id'        => $serviceRequest->id,
                 'dateReg'   => $serviceRequest->date_reg,
                 'isSend'    => $serviceRequest->is_send,
                 'name'      => $serviceRequest->description,
+                'dateDelivery'      => $serviceRequest->delivery_date ? $serviceRequest->delivery_date : '',
+                'address'   => $address,
+                'ubigeo'    => $ubigeo,
                 'detail'    => $arrDetail,
                 'attachment'=> $serviceRequest->attachment
             ];
