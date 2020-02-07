@@ -37,6 +37,14 @@ class ServiceRequest extends Model
         'status'
     ];
 
+    public function services() {
+        return $this->hasMany('App\Models\Service', 'service_requests_id', 'id' );
+    }
+
+    public function saleQuotations() {
+        return $this->hasMany( 'App\Models\SaleQuotation', 'service_requests_id', 'id' );
+    }
+
     public function listData( $numPerPage ) {
 
         $user = Auth::user();

@@ -1,4 +1,3 @@
-import Swal from "sweetalert2";
 <template>
     <div class="col-md-10 offset-md-1 col-lg-9 offset-lg-0">
         <!-- Recently Favorited -->

@@ -35,6 +35,7 @@
         <servicerequestform v-if="current === 'new-service-request'"></servicerequestform>
         <sale-quotation-list v-if="current === 'cotizaciones-por-aprobar'" ></sale-quotation-list>
         <sale-quotation-list-approved v-if="current === 'mis-cotizaciones'" ></sale-quotation-list-approved>
+        <service v-if="current === 'mis-servicios'"></service>
     </div>
 </template>
 

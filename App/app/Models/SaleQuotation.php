@@ -24,6 +24,10 @@ class SaleQuotation extends Model
         return $this->belongsTo( 'App\Models\ServiceRequest', 'service_requests_id', 'id' );
     }
 
+    public function referenceTerms() {
+        return $this->hasMany( 'App\Models\Referenceterm', 'sales_quotations_id', 'id' );
+    }
+
     public function countSalesQuotationApproved() {
 
         $user = Auth::user();

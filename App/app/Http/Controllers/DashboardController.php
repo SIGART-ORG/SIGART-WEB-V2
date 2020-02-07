@@ -95,6 +95,13 @@ class DashboardController extends Controller
                     'icon' => 'fa-calculator'
                 ],
                 [
+                    'id' => Str::slug('Mis Servicios'),
+                    'name' => 'Mis Servicios',
+                    'count' => 0,
+                    'href' => '#',
+                    'icon' => 'fa-calculator'
+                ],
+                [
                     'id' => Str::slug('Mis cotizaciones archivadas'),
                     'name' => 'Mis cotizaciones archivadas',
                     'count' => $SaleQuotationClass->countArvhived(),

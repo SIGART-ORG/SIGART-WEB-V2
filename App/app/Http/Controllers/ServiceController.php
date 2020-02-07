@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\SaleQuotation;
+use App\Models\Service;
 use App\Models\ServiceRequest;
 use App\Models\ServiceRequestDetail;
 use App\Models\SiteVoucher;
@@ -290,6 +291,55 @@ class ServiceController extends Controller
             'status' => false,
             'message' => 'No se puede eliminar esta solicitud de servicio.'
         ]);
+
+    }
+
+    public function listServices( Request $request ) {
+
+        $user = Auth::user();
+        $customer = $user->customers_id;
+
+        $response = [
+            'pagination' => [],
+            'data' => []
+        ];
+
+        $services = Service::whereHas('serviceRequest', function ($query) use( $customer ) {
+                $query->where( 'customers_id', $customer );
+            })
+            ->whereNotIn( 'status', [0,2] )
+            ->orderBy( 'date_reg', 'desc' )
+            ->paginate( 15 );
+
+
+        foreach( $services as $service ) {
+            $row = new \stdClass();
+            $row->id = $service->id;
+            $row->status = $service->status;
+            $row->subTotal = $service->sub_total;
+            $row->igv = $service->igv;
+            $row->total = $service->total;
+            $row->document = $service->serial_doc . '-' . $service->number_doc;
+
+            $servicerequest = $service->serviceRequest;
+            $row->servicerequest = new \stdClass();
+            $row->servicerequest->id = $servicerequest->id;
+            $row->servicerequest->document = $servicerequest->num_request;
+            $row->servicerequest->name = $servicerequest->description;
+            $row->servicerequest->send = $servicerequest->date_send ? date( 'Y-m-d', strtotime( $servicerequest->date_send ) ) : '---';
+
+            $saleQuotation = $servicerequest->saleQuotations->sortByDesc( 'created_at' )->first();
+            $referenceterm = $saleQuotation->referenceTerms->sortByDesc( 'created_at' )->first();
+            $row->referenceTerm = new \stdClass();
+            $row->referenceTerm->id = $referenceterm->id;
+            $row->referenceTerm->pdf = $referenceterm->pdf_os;
+            $row->referenceTerm->approved = $referenceterm->os_type_approved_customer;
+            $row->referenceTerm->ejecution = $referenceterm->execution_time_days;
+
+            $response['data'][] = $row;
+        }
+
+        return response()->json( $response );
 
     }
 }

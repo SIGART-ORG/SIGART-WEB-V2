@@ -53,6 +53,10 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post( '/action/', 'SaleQuotationController@action' );
     });
 
+    Route::prefix( 'service' )->group( function () {
+        Route::get( '/', 'ServiceController@listServices' )->name('service');
+    });
+
     Route::get( '/products', 'ProductController@getProducts' );
     Route::get( '/departaments/', 'StaticController@loadDepartament' );
     Route::get( '/provinces/{departament}', 'StaticController@loadProvince' );
