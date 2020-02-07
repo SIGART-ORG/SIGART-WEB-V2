@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\Referenceterm;
 use App\Models\SaleQuotation;
 use App\Models\Service;
 use App\Models\ServiceRequest;
@@ -301,7 +302,7 @@ class ServiceController extends Controller
 
         $response = [
             'pagination' => [],
-            'data' => []
+            'services' => []
         ];
 
         $services = Service::whereHas('serviceRequest', function ($query) use( $customer ) {
@@ -336,10 +337,55 @@ class ServiceController extends Controller
             $row->referenceTerm->approved = $referenceterm->os_type_approved_customer;
             $row->referenceTerm->ejecution = $referenceterm->execution_time_days;
 
-            $response['data'][] = $row;
+            $response['services'][] = $row;
         }
 
         return response()->json( $response );
 
+    }
+
+    public function approvedSO( Request $request ) {
+        $service = $request->id ? $request->id : 0;
+        $referenceterm = $request->referenceterm ? $request->referenceterm : 0;
+        $action = $request->action ? $request->action : '';
+
+        $response = $this->aproval( $referenceterm, $action, $service );
+
+        return response()->json( $response );
+    }
+
+    private function aproval( $id, $action, $service ) {
+        $user = Auth()->user();
+        $customerId = $user->customers_id;
+
+        $referenceTerm = Referenceterm::find( $id );
+        $response = [
+            'status' => false,
+            'msg' => 'No se pudo realizar la operación'
+        ];
+
+        if( $referenceTerm && $referenceTerm->os_type_approved_customer === 0 ) {
+            $referenceTerm->os_type_approved_customer = $action === 'aproval' ? 1: 0;
+            $referenceTerm->os_date_approved_customer = date( 'Y-m-d H:i:s');
+            $referenceTerm->os_user_approved_customer = $customerId;
+            $referenceTerm->os_user_login_approved_customer = $user->id;
+            if( $referenceTerm->save() ) {
+                $this->changeToStatus( $service, $action );
+                $response['status'] = true;
+                $response['msg'] = 'OK';
+            }
+        }
+
+        return $response;
+    }
+
+    private function changeToStatus( $id, $action ) {
+        $service = Service::find( $id );
+        if( $service && $service->status === 1 ) {
+            $service->status = $action === 'aproval' ? 3: 0;
+            $service->is_aproved_customer = $action === 'aproval' ? 1: 2;
+            $service->date_aproved_customer = date( 'Y-m-d' );
+            $service->save();
+        }
     }
 }

@@ -26,6 +26,9 @@ export default {
     },
 
     mutations: {
+        LOAD_SERVICES( state, data ) {
+            state.services = data.services;
+        },
         LOAD_SERVICE_REQUEST( state, data ) {
             state.serviceRequests = data.serviceRequest.data;
         },
@@ -77,6 +80,28 @@ export default {
     },
 
     actions: {
+        loadServices( context ) {
+            axios.get( '/service/' )
+                .then( response => {
+                    context.commit( 'LOAD_SERVICES', response.data );
+                });
+        },
+        toActionSO( { commit }, params ) {
+            return new Promise( ( resolve, reject ) => {
+                let data = params.data;
+                let url = '/service/service-order-action/';
+
+                axios.post( url, {
+                    id: data.id,
+                    referenceterm: data.referenceterm,
+                    action: data.action
+                }).then( response => {
+                    resolve( response.data );
+                }).catch( errors => {
+                    reject( errors );
+                })
+            })
+        },
         loadServiceRequest( context ) {
             axios.get( '/service-request/' )
                 .then( response => {

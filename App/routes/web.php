@@ -55,6 +55,7 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::prefix( 'service' )->group( function () {
         Route::get( '/', 'ServiceController@listServices' )->name('service');
+        Route::post( '/service-order-action/', 'ServiceController@approvedSO' )->name('service.service-order.approved');
     });
 
     Route::get( '/products', 'ProductController@getProducts' );
