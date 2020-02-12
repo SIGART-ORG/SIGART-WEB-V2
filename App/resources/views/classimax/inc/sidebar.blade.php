@@ -11,23 +11,23 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav ml-auto main-nav ">
-                            <li class="nav-item active">
-                                <a class="nav-link" href="{{ route('home.index') }}">Home</a>
+                            <li class="nav-item @if( $activeSide === 'home' ) active @endif">
+                                <a class="nav-link" href="{{ route('home.index') }}">Inicio</a>
+                            </li>
+                            <li class="nav-item @if( $activeSide === 'about-us' ) active @endif">
+                                <a class="nav-link" href="{{ route('about-us') }}">¿Quiénes somos?</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="dashboard.html">¿Quiénes somos?</a>
+                                <a class="nav-link" href="#">Servicios</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="dashboard.html">Servicios</a>
+                                <a class="nav-link" href="#">Blog</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="dashboard.html">Blog</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="dashboard.html">Contáctanos</a>
+                                <a class="nav-link" href="#">Contáctanos</a>
                             </li>
                             @if (! Auth::guest() )
-                                <li class="nav-item">
+                                <li class="nav-item @if( $activeSide === 'dashboard' ) active @endif">
                                     <a class="nav-link" href="{{ route( 'dashboard' ) }}">Dashboard</a>
                                 </li>
                             @endif

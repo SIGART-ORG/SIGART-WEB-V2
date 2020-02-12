@@ -44,12 +44,12 @@ class SaleQuotationController extends Controller
             $row->id = $saleQuotation->id;
             $row->document = $saleQuotation->num_serie . '-' . $saleQuotation->num_doc;
             $row->approved = $saleQuotation->date_reply_second ? date( 'd/m/Y', strtotime( $saleQuotation->date_reply_second ) ) : '---';
-            $row->start = $saleQuotation->date_start ? date( 'd/m/Y', strtotime( $saleQuotation->date_start ) ) : '---';
-            $row->end = $saleQuotation->date_end ? date( 'd/m/Y', strtotime( $saleQuotation->date_end ) ) : '---';
+            $row->expiration = $saleQuotation->date_expiration ? date( 'd/m/Y', strtotime( $saleQuotation->date_expiration ) ) : '---';
             $row->subTotal = $saleQuotation->subtot_sale;
             $row->discount = $saleQuotation->tot_dscto;
             $row->discountPorc = $saleQuotation->porc_dscto;
             $row->total = $saleQuotation->tot_gral;
+            $row->execution = $saleQuotation->execution_time_days;
 
             $serviceRequest = $saleQuotation->serviceRequest;
             $row->serviceRequest = new \stdClass();

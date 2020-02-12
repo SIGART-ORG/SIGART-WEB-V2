@@ -14,8 +14,8 @@
                     <th class="text-center">Sub Total<br>( S/ )</th>
                     <th class="text-center">IGV<br>( 18% )</th>
                     <th class="text-center">Total<br>( S/ )</th>
-                    <th class="text-center">Pagos</th>
-                    <th class="text-center">Acciones</th>
+                    <th class="text-center">Estado</th>
+                    <th class="text-center"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -55,6 +55,8 @@
                                 </a>
                             </li>
                         </ul>
+                        <br v-if="item.referenceTerm.approved === 0">
+                        <span v-if="item.orderPay === 1" class="badge badge-warning">Pendiento de pago</span>
                     </td>
                 </tr>
                 </tbody>

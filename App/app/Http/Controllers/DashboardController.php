@@ -36,7 +36,10 @@ class DashboardController extends Controller
     }
 
     public function index() {
-        return view( 'classimax.pages.dashboard' );
+        $data = [
+            'activeSide' => 'dashboard'
+        ];
+        return view( 'classimax.pages.dashboard', $data );
     }
 
     public function settings() {
@@ -144,10 +147,25 @@ class DashboardController extends Controller
             'user'          => $user,
             'urls'          => $url,
             'current'       => $current,
-            'urlProfile'    => $urlProfile
+            'urlProfile'    => $urlProfile,
+            'minday'        => $this->minday()
         ];
 
         return response()->json( $settings );
     }
 
+    private function minday() {
+        $day = date( 'Y-m-d', strtotime( '+1 WEEK' ) );
+        $dayNumWeek = date( 'N', strtotime( $day ) );
+
+        if( $dayNumWeek === '6' ){
+            $day = date( 'Y-m-d', strtotime( $day . ' +2 DAY' ) );
+        }
+
+        if( $dayNumWeek === '7' ){
+            $day = date( 'Y-m-d', strtotime( $day . ' +1 DAY' ) );
+        }
+
+        return $day;
+    }
 }

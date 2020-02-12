@@ -16,8 +16,11 @@ class LoginController extends Controller
     }
 
     public function showLoginForm() {
-//        return view( 'classimax.pages.login' );
-        return view( 'login.index' );
+        $data = [
+            'activeSide' => 'login'
+        ];
+        return view( 'classimax.pages.login', $data );
+//        return view( 'login.index' );
     }
 
     public function login() {

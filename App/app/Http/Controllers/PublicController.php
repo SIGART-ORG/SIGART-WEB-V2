@@ -7,6 +7,16 @@ use Illuminate\Http\Request;
 class PublicController extends Controller
 {
     public function termsAndConditions() {
-        dd( 'Términos y condiciones' );
+        $data = [
+            'activeSide' => 'tyc'
+        ];
+        return view('classimax.pages.tyc', $data);
+    }
+
+    public function aboutUs() {
+        $data = [
+            'activeSide' => 'about-us'
+        ];
+        return view('classimax.pages.about-us', $data);
     }
 }

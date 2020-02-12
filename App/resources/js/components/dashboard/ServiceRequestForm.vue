@@ -34,6 +34,7 @@ import Swal from "sweetalert2";
                                     v-model="dateDelivery"
                                     title="Fecha de entrega"
                                     :use12-hour="true"
+                                    :min-datetime="minDayWork"
                                 ></datetime>
                                 <small class="form-text text-muted">Fecha de entrega.</small>
                             </div>
@@ -219,6 +220,9 @@ import Swal from "sweetalert2";
                     'id': 0,
                 };
                 return newItem;
+            },
+            minDayWork() {
+                return this.$store.state.Settings.minDayWork;
             },
             details() {
                 return this.$store.state.Service.arrDetServiceRequest;

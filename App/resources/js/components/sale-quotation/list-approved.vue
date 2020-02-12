@@ -27,6 +27,7 @@
                         <small>{{ item.serviceRequest.document }}</small>
                         <br/>
                         <small>{{ item.serviceRequest.send }}</small>
+                        <span class="badge badge-danger text-white">Fec Exp. {{ item.expiration }}</span>
                     </td>
                     <td class="product-category">
                         <span class="categories">{{ item.document }}</span>
@@ -34,7 +35,7 @@
                         <small>{{ item.approved }}</small>
                     </td>
                     <td class="product-category">
-                        <mark>{{ item.start }}</mark> a <mark>{{ item.end }}</mark>
+                        {{ item.execution }} día(s)
                     </td>
                     <td>
                         <a v-if="item.attachment" class="edit" :href="item.attachment" target="_blank">

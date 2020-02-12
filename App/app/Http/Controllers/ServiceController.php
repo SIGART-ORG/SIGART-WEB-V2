@@ -321,6 +321,7 @@ class ServiceController extends Controller
             $row->igv = $service->igv;
             $row->total = $service->total;
             $row->document = $service->serial_doc . '-' . $service->number_doc;
+            $row->orderPay = $service->is_send_order_pay;
 
             $servicerequest = $service->serviceRequest;
             $row->servicerequest = new \stdClass();
