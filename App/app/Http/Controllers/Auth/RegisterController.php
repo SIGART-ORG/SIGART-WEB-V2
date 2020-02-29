@@ -45,7 +45,10 @@ class RegisterController extends Controller
 
     public function showRegistrationForm()
     {
-        return view( 'login.register' );
+        $data = [
+            'activeSide' => 'register'
+        ];
+        return view( 'classimax.pages.register', $data );
     }
 
     public function register( Request $request ) {

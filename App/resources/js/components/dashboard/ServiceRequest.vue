@@ -31,27 +31,28 @@
                     </td>
                     <td class="product-category"><span class="categories">{{ sr.dateRegFormat }}</span></td>
                     <td class="product-category"><span class="categories">{{ sr.dateSendFormat }}</span></td>
-                    <td>
+                    <td class="text-center">
                         <a v-if="sr.attachment" class="edit" :href="sr.attachment" target="_blank">
                             <i class="fa fa-clipboard"></i>&nbsp;Adjunto
                         </a>
                         <span v-else class="badge badge-danger"><i class="fa fa-ban"></i>&nbsp;Sin Adjunto</span>
                     </td>
-                    <td>
+                    <td class="text-center">
                         <span v-if="sr.is_send === 0" class="badge badge-secondary">No enviado</span>
-                        <span v-if="sr.is_send === 1" class="badge badge-info">Enviado</span>
+                        <span v-if="sr.is_send === 1 && sr.status === 1" class="badge badge-info">Enviado</span>
+                        <span v-if="sr.is_send === 1 && sr.status === 3" class="badge badge-warning">Cotizando</span>
                         <span v-if="sr.is_send === 2" class="badge badge-success">Cotizado</span>
                     </td>
                     <td class="action" data-title="Action">
                         <div class="">
                             <ul class="list-inline justify-content-center">
                                 <li v-if="sr.is_send !== 1" class="list-inline-item">
-                                    <a data-toggle="tooltip" data-placement="top" title="Tooltip on top" class="edit" href="#" @click.prevent="sendServiceRequest( sr.id )">
+                                    <a data-toggle="tooltip" data-placement="top" title="Enviar Solicitud" class="edit" href="#" @click.prevent="sendServiceRequest( sr.id )">
                                         <i class="fa fa-send"></i>
                                     </a>
                                 </li>
                                 <li class="list-inline-item">
-                                    <a data-toggle="tooltip" data-placement="top" title="Tooltip on top" class="view" href="">
+                                    <a data-toggle="tooltip" data-placement="top" title="Ver detalle" class="view" href="">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                 </li>

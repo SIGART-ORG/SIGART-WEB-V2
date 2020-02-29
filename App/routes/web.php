@@ -13,6 +13,7 @@
 
 Route::get('/', 'HomeController@index')->name( 'home.index' );
 Route::get('/terms-and-conditions', 'PublicController@termsAndConditions')->name( 'tyc' );
+Route::get('/about-us', 'PublicController@aboutUs')->name( 'about-us' );
 Route::get('/confimation/{token}', 'DashboardController@confirmation')->name( 'confirmation' );
 
 Route::group(['middleware' => ['guest']], function(){
@@ -46,6 +47,16 @@ Route::group(['middleware' => ['auth']], function(){
     Route::prefix( 'customer' )->group( function () {
         Route::get( '/show', 'CustomerController@show' );
         Route::post( '/update', 'CustomerController@update');
+    });
+
+    Route::prefix( 'sale-quotation' )->group( function () {
+        Route::get( '/{type?}', 'SaleQuotationController@listData' );
+        Route::post( '/action/', 'SaleQuotationController@action' );
+    });
+
+    Route::prefix( 'service' )->group( function () {
+        Route::get( '/', 'ServiceController@listServices' )->name('service');
+        Route::post( '/service-order-action/', 'ServiceController@approvedSO' )->name('service.service-order.approved');
     });
 
     Route::get( '/products', 'ProductController@getProducts' );

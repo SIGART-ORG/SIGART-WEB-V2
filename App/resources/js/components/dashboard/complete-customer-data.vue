@@ -1,5 +1,5 @@
 <template>
-    <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-0">
+    <div class="col-md-10 offset-md-1 col-lg-9 offset-lg-0">
         <div class="widget personal-info">
             <h3 class="widget-header user">Información de cliente</h3>
             <ValidationObserver ref="completeCustomer" v-slot="{ invalid }">
