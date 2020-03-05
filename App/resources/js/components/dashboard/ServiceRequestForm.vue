@@ -303,7 +303,7 @@ import Swal from "sweetalert2";
             generateServiceRequest() {
                 let me = this;
                 Swal.fire({
-                    title: '<strong>Guardar <u>Solicitud de Servicio</u></strong>',
+                    title: '<strong>Guardar<br/><u>Solicitud de cotización</u></strong>',
                     type: 'question',
                     html: 'Desea guardar y enviar su solicitud para que pueda ser cotizada?<br><small class="form-text text-muted">* Recuerda que una vez enviada la solicitud no puede ser editada hasta que se responda dicha solicitud.</small>',
                     showCloseButton: true,
