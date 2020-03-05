@@ -115,7 +115,7 @@ class RegisterController extends Controller
             $customerLogin->email = $data['email'];
             $customerLogin->password = Hash::make($data['password']);
             $customerLogin->customers_id = $customers->id;
-            $customerLogin->remember_token = $token;
+            $customerLogin->valid_code = $token;
 
             if( $customerLogin->save() ) {
 

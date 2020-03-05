@@ -20,7 +20,6 @@ class LoginController extends Controller
             'activeSide' => 'login'
         ];
         return view( 'classimax.pages.login', $data );
-//        return view( 'login.index' );
     }
 
     public function login() {

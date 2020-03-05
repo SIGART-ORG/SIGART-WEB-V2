@@ -20,14 +20,14 @@ class DashboardController extends Controller
     public function confirmation( Request $request ) {
         $hash = $request->token;
 
-        $customerLogin = CustomerLogin::where('remember_token', $hash)->first();
+        $customerLogin = CustomerLogin::where('valid_code', $hash)->first();
 
         if( $customerLogin ) {
             if( $customerLogin->status == 0 ) {
 
                 $customerLogin->status = 3;
                 $customerLogin->email_verified_at = date( 'Y-m-d H:i:s' );
-                $customerLogin->remember_token = NULL;
+                $customerLogin->valid_code = NULL;
                 $customerLogin->save();
             }
         }
