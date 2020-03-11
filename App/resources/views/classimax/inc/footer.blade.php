@@ -8,32 +8,44 @@
                     <!-- footer logo -->
                     <img src="{{ asset( '/images/theme/logo.png' ) }}" width="193" height="38" alt="{{ env( 'PROJECT_NAME' ) }}">
                     <!-- description -->
-                    <p class="alt-color">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <p class="alt-color">
+                        Ser una empresa altamente competitiva en cuanto a diseño, fabricación y servicios de carpintería y ebanistería. Ofrecer excelente calidad en productos de línea clásica, innovadora y de arte sacro a nivel comercial, residencial e institucional.
+                    </p>
                 </div>
             </div>
             <!-- Link list -->
             <div class="col-lg-2 offset-lg-1 col-md-3">
                 <div class="block">
-                    <h4>Site Pages</h4>
+                    <h4>Páginas del sitio</h4>
                     <ul>
-                        <li><a href="#">Boston</a></li>
-                        <li><a href="#">How It works</a></li>
-                        <li><a href="#">Deals & Coupons</a></li>
-                        <li><a href="#">Articls & Tips</a></li>
-                        <li><a href="#">Terms of Services</a></li>
+                        <li>
+                            <a class="nav-link" href="{{ route('home.index') }}">Inicio</a>
+                        </li>
+                        <li>
+                            <a class="nav-link" href="{{ route('about-us') }}">¿Quiénes somos?</a>
+                        </li>
+                        <li>
+                            <a class="nav-link" href="#">Servicios</a>
+                        </li>
+                        <li>
+                            <a class="nav-link" href="{{ route( 'contact-us' ) }}">Contáctanos</a>
+                        </li>
                     </ul>
                 </div>
             </div>
             <!-- Link list -->
             <div class="col-lg-2 col-md-3 offset-md-1 offset-lg-0">
                 <div class="block">
-                    <h4>Admin Pages</h4>
+                    <h4>Cliente</h4>
                     <ul>
-                        <li><a href="#">Boston</a></li>
-                        <li><a href="#">How It works</a></li>
-                        <li><a href="#">Deals & Coupons</a></li>
-                        <li><a href="#">Articls & Tips</a></li>
-                        <li><a href="#">Terms of Services</a></li>
+                        @if (! Auth::guest() )
+                            <li>
+                                <a class="nav-link" href="{{ route( 'dashboard' ) }}">Dashboard</a>
+                            </li>
+                        @else
+                            <li><a href="{{ route('login.form') }}">Ingrese a su cuenta</a></li>
+                        @endif
+                        <li><a href="{{ route('login.register') }}">Regístrate</a></li>
                     </ul>
                 </div>
             </div>
@@ -45,7 +57,7 @@
                         <!-- Icon -->
                         <img src="{{ asset( '/assets/classimax/images/footer/phone-icon.png' ) }}" alt="mobile-icon">
                     </a>
-                    <p>Get the Dealsy Mobile App and Save more</p>
+                    <p>Muy pronto podrá descargar la App {{ env( 'PROJECT_NAME' ) }}</p>
                 </div>
             </div>
         </div>
@@ -59,7 +71,7 @@
             <div class="col-sm-6 col-12">
                 <!-- Copyright -->
                 <div class="copyright">
-                    <p>Copyright © 2016. All Rights Reserved</p>
+                    <p>Copyright © {{ date( 'Y' ) }}. Todos los derechos reservados</p>
                 </div>
             </div>
             <div class="col-sm-6 col-12">
