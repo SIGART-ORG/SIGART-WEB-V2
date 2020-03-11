@@ -20,11 +20,8 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="#">Servicios</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Blog</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Contáctanos</a>
+                            <li class="nav-item @if( $activeSide === 'contact-us' ) active @endif">
+                                <a class="nav-link" href="{{ route( 'contact-us' ) }}">Contáctanos</a>
                             </li>
                             @if (! Auth::guest() )
                                 <li class="nav-item @if( $activeSide === 'dashboard' ) active @endif">
