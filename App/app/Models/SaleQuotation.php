@@ -20,20 +20,30 @@ class SaleQuotation extends Model
         $this->user = Auth::user();
     }
 
+    public function serviceRequest() {
+        return $this->belongsTo( 'App\Models\ServiceRequest', 'service_requests_id', 'id' );
+    }
+
+    public function referenceTerms() {
+        return $this->hasMany( 'App\Models\Referenceterm', 'sales_quotations_id', 'id' );
+    }
+
     public function countSalesQuotationApproved() {
 
-        return DB::table( self::TABLE_NAME )
-            ->where( self::TABLE_NAME . '.status', 1 )
-            ->where( self::TABLE_NAME . '.customers_id', $this->user->customers_id )
-            ->where( self::TABLE_NAME . '.is_approved_customer', 1 )
-            ->where( self::TABLE_NAME . '.customer_login_id', '>', 0 )
+        $user = Auth::user();
+        $customerId = $user->customers_id;
+
+        return self::where( 'status', 8 )
+            ->where( 'customers_id', $customerId )
             ->count();
     }
 
     public function countArvhived() {
-        return DB::table( self::TABLE_NAME )
-            ->where( self::TABLE_NAME . '.status', 2 )
-            ->where( self::TABLE_NAME . '.customers_id', $this->user->customers_id )
+        $user = Auth::user();
+        $customerId = $user->customers_id;
+
+        return self::where( 'status', 9 )
+            ->where( 'customers_id', $customerId )
             ->count();
     }
 }

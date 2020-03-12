@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 class HomeController extends Controller
 {
     public function index() {
-        return view('classimax.pages.home');
+        $data = [
+            'activeSide' => 'home'
+        ];
+        return view('classimax.pages.home', $data);
     }
 }

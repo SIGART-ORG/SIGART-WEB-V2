@@ -45,7 +45,10 @@ class RegisterController extends Controller
 
     public function showRegistrationForm()
     {
-        return view( 'login.register' );
+        $data = [
+            'activeSide' => 'register'
+        ];
+        return view( 'classimax.pages.register', $data );
     }
 
     public function register( Request $request ) {
@@ -112,7 +115,7 @@ class RegisterController extends Controller
             $customerLogin->email = $data['email'];
             $customerLogin->password = Hash::make($data['password']);
             $customerLogin->customers_id = $customers->id;
-            $customerLogin->remember_token = $token;
+            $customerLogin->valid_code = $token;
 
             if( $customerLogin->save() ) {
 

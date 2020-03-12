@@ -20,14 +20,14 @@ class DashboardController extends Controller
     public function confirmation( Request $request ) {
         $hash = $request->token;
 
-        $customerLogin = CustomerLogin::where('remember_token', $hash)->first();
+        $customerLogin = CustomerLogin::where('valid_code', $hash)->first();
 
         if( $customerLogin ) {
             if( $customerLogin->status == 0 ) {
 
                 $customerLogin->status = 3;
                 $customerLogin->email_verified_at = date( 'Y-m-d H:i:s' );
-                $customerLogin->remember_token = NULL;
+                $customerLogin->valid_code = NULL;
                 $customerLogin->save();
             }
         }
@@ -36,7 +36,10 @@ class DashboardController extends Controller
     }
 
     public function index() {
-        return view( 'classimax.pages.dashboard' );
+        $data = [
+            'activeSide' => 'dashboard'
+        ];
+        return view( 'classimax.pages.dashboard', $data );
     }
 
     public function settings() {
@@ -95,6 +98,13 @@ class DashboardController extends Controller
                     'icon' => 'fa-calculator'
                 ],
                 [
+                    'id' => Str::slug('Mis Servicios'),
+                    'name' => 'Mis Servicios',
+                    'count' => 0,
+                    'href' => '#',
+                    'icon' => 'fa-calculator'
+                ],
+                [
                     'id' => Str::slug('Mis cotizaciones archivadas'),
                     'name' => 'Mis cotizaciones archivadas',
                     'count' => $SaleQuotationClass->countArvhived(),
@@ -137,10 +147,25 @@ class DashboardController extends Controller
             'user'          => $user,
             'urls'          => $url,
             'current'       => $current,
-            'urlProfile'    => $urlProfile
+            'urlProfile'    => $urlProfile,
+            'minday'        => $this->minday()
         ];
 
         return response()->json( $settings );
     }
 
+    private function minday() {
+        $day = date( 'Y-m-d', strtotime( '+1 WEEK' ) );
+        $dayNumWeek = date( 'N', strtotime( $day ) );
+
+        if( $dayNumWeek === '6' ){
+            $day = date( 'Y-m-d', strtotime( $day . ' +2 DAY' ) );
+        }
+
+        if( $dayNumWeek === '7' ){
+            $day = date( 'Y-m-d', strtotime( $day . ' +1 DAY' ) );
+        }
+
+        return $day;
+    }
 }

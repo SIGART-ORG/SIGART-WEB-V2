@@ -23,6 +23,7 @@
     <link href="{{ asset( '/assets/classimax/plugins/seiyria-bootstrap-slider/dist/css/bootstrap-slider.min.css' ) }}" rel="stylesheet">
     <!-- CUSTOM CSS -->
     <link href="{{ asset( '/assets/classimax/css/style.css' ) }}" rel="stylesheet">
+    <link href="{{ asset( '/css/app.css' ) }}" rel="stylesheet">
 
     <!-- FAVICON -->
     <link href="{{ asset( '/assets/classimax/img/favicon.png' ) }}" rel="shortcut icon">
