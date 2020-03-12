@@ -37,12 +37,20 @@ class ServiceRequest extends Model
         'status'
     ];
 
+    public function services() {
+        return $this->hasMany('App\Models\Service', 'service_requests_id', 'id' );
+    }
+
+    public function saleQuotations() {
+        return $this->hasMany( 'App\Models\SaleQuotation', 'service_requests_id', 'id' );
+    }
+
     public function listData( $numPerPage ) {
 
         $user = Auth::user();
 
         $data = DB::table( self::TABLE_NAME )
-            ->where( self::TABLE_NAME . '.status', 1 )
+            ->whereIn( self::TABLE_NAME . '.status', [1, 3] )
             ->where( self::TABLE_NAME . '.customers_id', $user->customers_id )
             ->whereIn( self::TABLE_NAME . '.is_send', [0, 1, 2])
             ->orderBy( self::TABLE_NAME . '.created_at', 'desc')
@@ -55,7 +63,7 @@ class ServiceRequest extends Model
         $user = Auth::user();
 
         $data = DB::table( self::TABLE_NAME )
-            ->where( self::TABLE_NAME . '.status', 1 )
+            ->whereIn( self::TABLE_NAME . '.status', [1, 3] )
             ->whereIn( self::TABLE_NAME . '.is_send', [0, 1, 2])
             ->where( self::TABLE_NAME . '.customers_id', $user->customers_id )
             ->count();
@@ -65,15 +73,11 @@ class ServiceRequest extends Model
 
     public function countQuotesToApprove() {
 
-        $SaleQuotation = new SaleQuotation();
+        $user = Auth::user();
+        $customerId = $user->customers_id;
 
-        $data = DB::table( self::TABLE_NAME )
-            ->join( $SaleQuotation::TABLE_NAME, $SaleQuotation::TABLE_NAME . '.service_requests_id', '=', self::TABLE_NAME . '.id' )
-            ->where( self::TABLE_NAME . '.status', 1 )
-            ->where( self::TABLE_NAME . '.is_send', 1 )
-            ->where( $SaleQuotation::TABLE_NAME . '.status', 1 )
-            ->where( $SaleQuotation::TABLE_NAME . '.is_approved_customer', 0 )
-            ->where( $SaleQuotation::TABLE_NAME . '.customer_login_id', 0 )
+        $data = SaleQuotation::where( 'status', 6 )
+            ->where( 'customers_id', $customerId )
             ->count();
 
         return $data;

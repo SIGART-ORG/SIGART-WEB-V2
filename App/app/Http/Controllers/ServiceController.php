@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
+use App\Models\Referenceterm;
 use App\Models\SaleQuotation;
+use App\Models\Service;
 use App\Models\ServiceRequest;
 use App\Models\ServiceRequestDetail;
 use App\Models\SiteVoucher;
@@ -32,9 +35,14 @@ class ServiceController extends Controller
     }
 
     public function generateServiceRequest( Request $request ) {
+        $type         = $request->type;
         $id         = $request->id;
         $name       = $request->name;
         $details    = $request->details;
+        $dateDelivery    = $request->dateDelivery ? date( 'Y-m-d', strtotime( $request->dateDelivery ) ) : null;
+        $address    = $request->address;
+        $ubigeo     = json_decode( $request->ubigeo );
+        $district   = $ubigeo->district;
 
         $SiteVoucherClass = new SiteVoucher();
         $typeVoucher = 2;
@@ -52,6 +60,14 @@ class ServiceController extends Controller
                 if( ! empty( $ServiceRequestClass ) && $ServiceRequestClass->id > 0 ) {
 
                     $ServiceRequestClass->description = $name;
+                    $ServiceRequestClass->description_corrected = $name;
+                    $ServiceRequestClass->address = $address;
+                    $ServiceRequestClass->district_id = $district;
+                    $ServiceRequestClass->delivery_date = $dateDelivery;
+                    if( $type === 'send' ) {
+                        $ServiceRequestClass->is_send = 1;
+                        $ServiceRequestClass->date_send = date( 'Y-m-d H:i:s' );
+                    }
 
                 } else {
 
@@ -73,6 +89,14 @@ class ServiceController extends Controller
                 $ServiceRequestClass->date_reg = date('Y-m-d');
                 $ServiceRequestClass->date_aproved = date('Y-m-d');
                 $ServiceRequestClass->description = $name;
+                $ServiceRequestClass->description_corrected = $name;
+                $ServiceRequestClass->address = $address;
+                $ServiceRequestClass->district_id = $district;
+                $ServiceRequestClass->delivery_date = $dateDelivery;
+                if( $type === 'send' ) {
+                    $ServiceRequestClass->is_send = 1;
+                    $ServiceRequestClass->date_send = date( 'Y-m-d H:i:s' );
+                }
             }
 
             if( $request->hasFile( 'attachment' ) ) {
@@ -97,6 +121,7 @@ class ServiceController extends Controller
                         $ServiceRequestDetailClass = ServiceRequestDetail::where( 'id', $detail->id )->first();
                         $ServiceRequestDetailClass->name                = Str::limit( $detail->item, 17, '...' );
                         $ServiceRequestDetailClass->description         = $detail->item;
+                        $ServiceRequestDetailClass->description_corrected         = $detail->item;
                         $ServiceRequestDetailClass->quantity            = $detail->count;
                         $ServiceRequestDetailClass->status            = 1;
 
@@ -106,6 +131,7 @@ class ServiceController extends Controller
                         $ServiceRequestDetailClass->service_requests_id = $ServiceRequestClass->id;
                         $ServiceRequestDetailClass->name                = Str::limit( $detail->item, 17, '...' );
                         $ServiceRequestDetailClass->description         = $detail->item;
+                        $ServiceRequestDetailClass->description_corrected         = $detail->item;
                         $ServiceRequestDetailClass->quantity            = $detail->count;
                         $ServiceRequestDetailClass->assumed_customer    = 0;
 
@@ -153,11 +179,30 @@ class ServiceController extends Controller
             ->where( $serviceRequestClass::TABLE_NAME . '.customers_id', $user->customers_id )
             ->first();
 
+
+        $district = $serviceRequest->district_id ? $serviceRequest->district_id : '';
+        $address = $serviceRequest->address;
+
+        if( $district === '' || $address === '' ) {
+            $customer = Customer::find($user->customers_id);
+
+            if ($customer) {
+                $district = $district === '' ? $customer->district_id : $district;
+                $address = $address === '' ? $customer->address : $address;
+            }
+        }
+
+        $ubigeoBD = \FormatUbigeo::ubigeo( $district );
+
+        $ubigeo = new \stdClass();
+        $ubigeo->district = $ubigeoBD['district_id'];
+        $ubigeo->province = $ubigeoBD['province_id'];
+        $ubigeo->departament = $ubigeoBD['departament_id'];
+
         if ( $serviceRequest ) {
 
             $serviceRequestDetail = $serviceRequestDetailClass::where( $serviceRequestDetailClass::TABLE_NAME . '.status', 1 )
                 ->where( $serviceRequestDetailClass::TABLE_NAME . '.service_requests_id', $serviceRequest->id )
-                ->select( 'id', 'description', 'quantity' )
                 ->get();
 
             $arrDetail = [];
@@ -166,12 +211,21 @@ class ServiceController extends Controller
                 $arrDetail[] = $detail;
             }
 
+            $dataUbigeo = [
+                'departaments' => [],
+                'provinces' => [],
+                'districts' => [],
+            ];
+
             $response['status'] = true;
             $response['serviceRequest'] = [
                 'id'        => $serviceRequest->id,
                 'dateReg'   => $serviceRequest->date_reg,
                 'isSend'    => $serviceRequest->is_send,
                 'name'      => $serviceRequest->description,
+                'dateDelivery'      => $serviceRequest->delivery_date ? $serviceRequest->delivery_date : '',
+                'address'   => $address,
+                'ubigeo'    => $ubigeo,
                 'detail'    => $arrDetail,
                 'attachment'=> $serviceRequest->attachment
             ];
@@ -193,6 +247,7 @@ class ServiceController extends Controller
         if( ! empty( $serviceRequest ) ) {
 
             $serviceRequest->is_send = 1;
+            $serviceRequest->date_send = date( 'Y-m-d H:i:s' );
             $serviceRequest->save();
 
             return response()->json([
@@ -238,5 +293,100 @@ class ServiceController extends Controller
             'message' => 'No se puede eliminar esta solicitud de servicio.'
         ]);
 
+    }
+
+    public function listServices( Request $request ) {
+
+        $user = Auth::user();
+        $customer = $user->customers_id;
+
+        $response = [
+            'pagination' => [],
+            'services' => []
+        ];
+
+        $services = Service::whereHas('serviceRequest', function ($query) use( $customer ) {
+                $query->where( 'customers_id', $customer );
+            })
+            ->whereNotIn( 'status', [0,2] )
+            ->orderBy( 'date_reg', 'desc' )
+            ->paginate( 15 );
+
+
+        foreach( $services as $service ) {
+            $row = new \stdClass();
+            $row->id = $service->id;
+            $row->status = $service->status;
+            $row->subTotal = $service->sub_total;
+            $row->igv = $service->igv;
+            $row->total = $service->total;
+            $row->document = $service->serial_doc . '-' . $service->number_doc;
+            $row->orderPay = $service->is_send_order_pay;
+
+            $servicerequest = $service->serviceRequest;
+            $row->servicerequest = new \stdClass();
+            $row->servicerequest->id = $servicerequest->id;
+            $row->servicerequest->document = $servicerequest->num_request;
+            $row->servicerequest->name = $servicerequest->description;
+            $row->servicerequest->send = $servicerequest->date_send ? date( 'Y-m-d', strtotime( $servicerequest->date_send ) ) : '---';
+
+            $saleQuotation = $servicerequest->saleQuotations->sortByDesc( 'created_at' )->first();
+            $referenceterm = $saleQuotation->referenceTerms->sortByDesc( 'created_at' )->first();
+            $row->referenceTerm = new \stdClass();
+            $row->referenceTerm->id = $referenceterm->id;
+            $row->referenceTerm->pdf = $referenceterm->pdf_os;
+            $row->referenceTerm->approved = $referenceterm->os_type_approved_customer;
+            $row->referenceTerm->ejecution = $referenceterm->execution_time_days;
+
+            $response['services'][] = $row;
+        }
+
+        return response()->json( $response );
+
+    }
+
+    public function approvedSO( Request $request ) {
+        $service = $request->id ? $request->id : 0;
+        $referenceterm = $request->referenceterm ? $request->referenceterm : 0;
+        $action = $request->action ? $request->action : '';
+
+        $response = $this->aproval( $referenceterm, $action, $service );
+
+        return response()->json( $response );
+    }
+
+    private function aproval( $id, $action, $service ) {
+        $user = Auth()->user();
+        $customerId = $user->customers_id;
+
+        $referenceTerm = Referenceterm::find( $id );
+        $response = [
+            'status' => false,
+            'msg' => 'No se pudo realizar la operación'
+        ];
+
+        if( $referenceTerm && $referenceTerm->os_type_approved_customer === 0 ) {
+            $referenceTerm->os_type_approved_customer = $action === 'aproval' ? 1: 0;
+            $referenceTerm->os_date_approved_customer = date( 'Y-m-d H:i:s');
+            $referenceTerm->os_user_approved_customer = $customerId;
+            $referenceTerm->os_user_login_approved_customer = $user->id;
+            if( $referenceTerm->save() ) {
+                $this->changeToStatus( $service, $action );
+                $response['status'] = true;
+                $response['msg'] = 'OK';
+            }
+        }
+
+        return $response;
+    }
+
+    private function changeToStatus( $id, $action ) {
+        $service = Service::find( $id );
+        if( $service && $service->status === 1 ) {
+            $service->status = $action === 'aproval' ? 3: 0;
+            $service->is_aproved_customer = $action === 'aproval' ? 1: 2;
+            $service->date_aproved_customer = date( 'Y-m-d' );
+            $service->save();
+        }
     }
 }

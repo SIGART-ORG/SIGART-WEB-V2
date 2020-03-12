@@ -41,11 +41,17 @@ import Dashboard from './components/dashboard/dashboard.vue';
 import ServiceRequestr from './components/dashboard/ServiceRequest.vue';
 import ServiceRequestForm from "./components/dashboard/ServiceRequestForm";
 import CompleteCustomerData from "./components/dashboard/complete-customer-data";
+import SaleQuotationList from './components/sale-quotation/list';
+import SaleQuotationListApproved from './components/sale-quotation/list-approved';
+import Service from './components/service/service';
 
 Vue.component( 'dashboard', Dashboard );
 Vue.component( 'comp-customer-data', CompleteCustomerData );
 Vue.component( 'servicerequest', ServiceRequestr );
 Vue.component( 'servicerequestform', ServiceRequestForm );
+Vue.component( 'SaleQuotationList', SaleQuotationList );
+Vue.component( 'SaleQuotationListApproved', SaleQuotationListApproved );
+Vue.component( 'Service', Service );
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

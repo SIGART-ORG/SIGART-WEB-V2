@@ -3,7 +3,8 @@ export default {
         userData: [],
         urlSettings: [],
         current: '',
-        urlProfile: ''
+        urlProfile: '',
+        minDayWork: ''
     },
 
     mutations: {
@@ -12,6 +13,7 @@ export default {
             state.urlSettings = settings.urls;
             state.current = settings.current;
             state.urlProfile = settings.urlProfile;
+            state.minDayWork = settings.minday;
         },
         CHANGE_CURRENT( state, newCurrent ) {
             state.current = newCurrent;

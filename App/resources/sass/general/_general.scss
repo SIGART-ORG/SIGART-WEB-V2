@@ -1,0 +1,12 @@
+.table-responsive {
+    @media screen and (min-width: $break-small) {
+        display: inline-table !important;
+    }
+}
+
+.form-control {
+    height: unset;
+    &-file {
+        max-width: 100%;
+    }
+}

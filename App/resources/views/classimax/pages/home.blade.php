@@ -7,24 +7,15 @@
                 <div class="col-md-12">
                     <!-- Header Contetnt -->
                     <div class="content-block">
-                        <h1>Buy & Sell Near You </h1>
-                        <p>Join the millions who buy and sell from each other <br> everyday in local communities around the world</p>
+                        <h1>D' Pintart</h1>
+                        <p>Experiencia y calidad.<br>La experiancia es importante para realizar trabajos de calidad.</p>
                         <div class="short-popular-category-list text-center">
-                            <h2>Popular Category</h2>
+                            <h2>Servicios</h2>
                             <ul class="list-inline">
                                 <li class="list-inline-item">
-                                    <a href=""><i class="fa fa-bed"></i> Hotel</a></li>
+                                    <a href=""><i class="fa fa-bed"></i> Carpinteria</a></li>
                                 <li class="list-inline-item">
-                                    <a href=""><i class="fa fa-grav"></i> Fitness</a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href=""><i class="fa fa-car"></i> Cars</a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href=""><i class="fa fa-cutlery"></i> Restaurants</a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href=""><i class="fa fa-coffee"></i> Cafe</a>
+                                    <a href=""><i class="fa fa-paint-brush"></i> Pintura</a>
                                 </li>
                             </ul>
                         </div>
@@ -35,16 +26,11 @@
                         <form action="#">
                             <div class="row">
                                 <!-- Store Search -->
-                                <div class="col-lg-6 col-md-12">
+                                <div class="col-lg-12 col-md-12">
                                     <div class="block d-flex">
-                                        <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="search" placeholder="Search for store">
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 col-md-12">
-                                    <div class="block d-flex">
-                                        <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="search" placeholder="Search for store">
+                                        <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="Buscar" placeholder="Buscar">
                                         <!-- Search Button -->
-                                        <button class="btn btn-main">SEARCH</button>
+                                        <button class="btn btn-main">Buscar</button>
                                     </div>
                                 </div>
                             </div>
@@ -63,8 +49,8 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="section-title">
-                        <h2>Trending Ads</h2>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas, magnam.</p>
+                        <h2>Tendencias</h2>
+{{--                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas, magnam.</p>--}}
                     </div>
                 </div>
             </div>
