@@ -23,6 +23,7 @@ class Controller extends BaseController
     ];
     protected $metaTagSocials = [
         'facebook' => [
+            ['property' => 'fb:app_id', 'content' => ''],
             ['property' => 'og:type', 'content' => 'website'],
             ['property' => 'og:url', 'content' => ''],
             ['property' => 'og:title', 'content' => ''],
