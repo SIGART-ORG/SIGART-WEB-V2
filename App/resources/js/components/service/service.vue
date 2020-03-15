@@ -1,5 +1,5 @@
 <template>
-    <div class="col-md-10 offset-md-1 col-lg-9 offset-lg-0">
+    <div id="service" class="service col-md-10 offset-md-1 col-lg-9 offset-lg-0">
         <!-- Recently Favorited -->
         <div class="widget dashboard-container my-adslist">
             <h3 class="widget-header">Mis Servicios</h3>
@@ -41,17 +41,30 @@
                         <span v-if="item.status === 1" class="badge badge-info">Por Aprobar</span>
                         <span v-if="item.status === 3" class="badge badge-primary">Por Iniciar</span>
                         <span v-if="item.status === 4" class="badge badge-success">En Proceso</span>
+                        <div class="content-traffic-light">
+                            <div class="red active border-right"></div>
+                            <div class="red active border-right"></div>
+                            <div class="yellow active border-right"></div>
+                            <div class="yellow active border-right"></div>
+                            <div class="green active border-right"></div>
+                            <div class="green"></div>
+                        </div>
                     </td>
                     <td class="action" data-title="Action">
-                        <ul class="list-inline justify-content-center" v-if="item.referenceTerm.approved === 0">
-                            <li class="list-inline-item">
+                        <ul class="list-inline justify-content-center">
+                            <li class="list-inline-item" v-if="item.referenceTerm.approved === 0">
                                 <a class="edit btn-custom" href="#" @click="approvedSO( item, 'aproval' )">
                                     <i class="fa fa-check"></i>&nbsp;Aprobar
                                 </a>
                             </li>
-                            <li class="list-inline-item">
+                            <li class="list-inline-item" v-if="item.referenceTerm.approved === 0">
                                 <a class="delete btn-custom" href="#" @click="approvedSO( item, 'cancel' )">
                                     <i class="fa fa-close"></i>&nbsp;Rechazar
+                                </a>
+                            </li>
+                            <li class="list-inline-item" v-if="item.referenceTerm.approved === 1">
+                                <a class="view btn-custom" href="#service" @click="viewService( item.id )">
+                                    <i class="fa fa-eye"></i>
                                 </a>
                             </li>
                         </ul>
@@ -69,6 +82,7 @@
 <script>
     import Swal from 'sweetalert2';
     import 'sweetalert2/src/sweetalert2.scss';
+    import {mapMutations} from "vuex";
     export default {
         name: "service",
         created() {
@@ -80,6 +94,7 @@
             }
         },
         methods: {
+            ...mapMutations(['CHANGE_CURRENT']),
             approvedSO( data, action ) {
                 let actionTitle = 'Aprobar Orden de Servicio';
                 let text = '¿Estas seguro de <strong>APROBAR</strong> la orden de servicio <u>' + data.document + '</u>';
@@ -138,6 +153,9 @@
                         })
                     }
                 })
+            },
+            viewService( id ) {
+                this.CHANGE_CURRENT( 'service-detail' );
             }
         }
     }
