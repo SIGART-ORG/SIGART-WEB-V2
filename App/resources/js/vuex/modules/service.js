@@ -1,6 +1,7 @@
 export default {
     state: {
         services: [],
+        serviceDetail: {},
         serviceRequests: [],
         serviceRequestDetails: [],
         arrDetServiceRequest: [],
@@ -178,6 +179,9 @@ export default {
                     reject( errors );
                 })
             });
+        },
+        loadServiceDetail() {
+
         }
     }
 }
