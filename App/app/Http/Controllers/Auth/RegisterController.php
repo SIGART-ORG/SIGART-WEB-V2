@@ -38,15 +38,45 @@ class RegisterController extends Controller
      *
      * @return void
      */
+    protected $_meta = [];
+    protected $_metaTagSocials = [];
+    protected $_title = 'Regístrate';
+
     public function __construct()
     {
+        $this->_meta = [
+            'key' => 'description',
+            'value' => $this->description
+        ];
+
+        $this->setTitle( $this->_title );
+        $this->setMetaTags( $this->_meta );
         $this->middleware('guest');
+    }
+
+    private function initialMetaTagSocial() {
+        $this->_metaTagSocials[] = [ 'social' => 'facebook', 'property' => 'fb:app_id', 'content' => env('FACEBOOK_APP_ID')];
+        $this->_metaTagSocials[] = [ 'social' => 'facebook', 'property' => 'og:url', 'content' => route('login.register')];
+        $this->_metaTagSocials[] = [ 'social' => 'facebook', 'property' => 'og:title', 'content' => $this->title . env( 'PROJECT_NAME' )];
+        $this->_metaTagSocials[] = [ 'social' => 'facebook', 'property' => 'og:description', 'content' => $this->description];
+        $this->_metaTagSocials[] = [ 'social' => 'facebook', 'property' => 'og:image', 'content' => asset( self::PATH_IMAGES . $this->logoSocial)];
+
+        $this->_metaTagSocials[] = [ 'social' => 'twitter', 'property' => 'twitter:url', 'content' => route('login.register')];
+        $this->_metaTagSocials[] = [ 'social' => 'twitter', 'property' => 'twitter:title', 'content' => $this->title . env( 'PROJECT_NAME' )];
+        $this->_metaTagSocials[] = [ 'social' => 'twitter', 'property' => 'twitter:description', 'content' => $this->description];
+        $this->_metaTagSocials[] = [ 'social' => 'twitter', 'property' => 'twitter:image', 'content' => asset( self::PATH_IMAGES . $this->logoSocial)];
     }
 
     public function showRegistrationForm()
     {
+        $this->initialMetaTagSocial();
+        $this->setMetaTagSocial( $this->_metaTagSocials );
+
         $data = [
-            'activeSide' => 'register'
+            'activeSide' => 'register',
+            'title' => $this->title,
+            'metaTags' => $this->metaTags,
+            'metaTagSocials' => $this->metaTagSocials
         ];
         return view( 'classimax.pages.register', $data );
     }
