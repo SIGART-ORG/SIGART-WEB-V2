@@ -4,7 +4,7 @@
         display: flex;
         flex-wrap: nowrap;
         width: 100%;
-        border: 1px #000 solid;
+        border: 1px $gray-dark solid;
 
         & > div {
             height: 10px;
@@ -16,19 +16,19 @@
         }
 
         .border-right {
-            border-right: 1px #000 solid;
+            border-right: 1px $gray-dark solid;
         }
 
         .red.active {
-            background-color: #ff0000;
+            background-color: $red;
         }
 
         .yellow.active {
-            background-color: #FFEB1D;
+            background-color: $yellow;
         }
 
         .green.active {
-            background-color: #2FB45A;
+            background-color: $green;
         }
     }
 }

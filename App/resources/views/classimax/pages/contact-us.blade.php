@@ -1,10 +1,10 @@
 @extends( 'classimax.main' )
 @section( 'content' )
-    <section class="page-title">
+    <section class="page-title contact-us">
         <div class="container">
             <div class="row">
                 <div class="col-md-8 offset-md-2 text-center">
-                    <h3>Contáctanos</h3>
+                    <h1>Contáctanos</h1>
                 </div>
             </div>
         </div>
@@ -14,8 +14,8 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="contact-us-content p-4">
+                        <h2 class="pt-3">Contáctanos</h2>
                         <h5>{{ env( 'PROJECT_NAME' ) }}</h5>
-                        <h1 class="pt-3">Contáctanos</h1>
                         <p class="pt-3 pb-5">
                             <strong class="text-uppercase">{{ env( 'PROJECT_NAME' ) }}</strong> está cerca de ti, en donde te encuentres y a la hora que lo necesites.
                             Con gusto nuestros colaboradores especializados atenderán tus dudas, recibirán tus comentarios y te brindarán el servicio que requieres. Ponemos a tu alcance el medio de comunicación más cómodo para ti.

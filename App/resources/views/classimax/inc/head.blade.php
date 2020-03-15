@@ -3,8 +3,22 @@
     <!-- SITE TITTLE -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ env( 'PROJECT_NAME' ) }}</title>
+    <title>{{ $title ?? '' }}{{ env( 'PROJECT_NAME' ) }}</title>
+    <meta name="title" content="{{ $title ?? '' }}{{ env( 'PROJECT_NAME' ) }}">
+    @if( $metaTags )
+        @foreach( $metaTags as $idx => $mt )
+            <meta name="{{ $idx }}" content="{{ $mt }}">
+        @endforeach
+    @endif
+    @if( $metaTagSocials ?? '' )
+        @foreach( $metaTagSocials as $idx => $social )
+            @if( $idx === 'facebook' ) <!-- Open Graph / Facebook --> @endif
+            @if( $idx === 'twitter' ) <!-- Twitter --> @endif
+            @foreach( $social as $idS => $mts )
+                    <meta property="{{ $mts['property'] }}" content="{{ $mts['content'] }}">
+            @endforeach
+        @endforeach
+    @endif
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
