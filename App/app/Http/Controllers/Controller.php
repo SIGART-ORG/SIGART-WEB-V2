@@ -15,6 +15,7 @@ class Controller extends BaseController
     const PATH_IMAGES = 'images/theme/';
 
     protected $title = '';
+    protected $description = 'Somos una empresa altamente competitiva en cuanto a diseño, fabricación y servicios de carpintería y ebanistería. Ofrecer excelente calidad en productos de línea clásica, innovadora y de arte sacro a nivel comercial, residencial e institucional.';
     protected $logoSocial = 'logo-social.png';
     protected $metaTags = [
         'description' => '',

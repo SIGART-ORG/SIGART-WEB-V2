@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>{{ $title ?? '' }}{{ env( 'PROJECT_NAME' ) }}</title>
     <meta name="title" content="{{ $title ?? '' }}{{ env( 'PROJECT_NAME' ) }}">
-    @if( $metaTags )
+    @if( $metaTags ?? '' )
         @foreach( $metaTags as $idx => $mt )
             <meta name="{{ $idx }}" content="{{ $mt }}">
         @endforeach
