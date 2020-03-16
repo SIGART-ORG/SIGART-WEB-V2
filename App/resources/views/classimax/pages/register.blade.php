@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 @include( 'classimax.inc.head' )
-
-<body class="body-wrapper">
-@include( 'classimax.inc.sidebar' )
 <style>
     .btn-xs {
         padding: 9px 30px !important;
     }
 </style>
+<body class="body-wrapper">
+@include( 'classimax.inc.sidebar' )
 <section class="hero-area bg-1 text-center overly">
     <div class="container">
         <div class="row">
@@ -55,9 +54,9 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        <label for="remember-me" class="text-dark">
+                        <label for="cbx-tyc" class="text-dark">
                             <span>
-                                <input type="checkbox" id="ckb1" type="checkbox"  >
+                                <input type="checkbox" id="cbx-tyc" />
                             </span>
                             <span>Acepto los <a href="{{ route('tyc') }}" target="_blank" class="text-info">términos y condiciones</a>.</span>
                         </label>

@@ -1,15 +1,15 @@
 <template>
-    <div id="service" class="col-md-10 offset-md-1 col-lg-9 offset-lg-0">
+    <div id="service" class="col-md-10 offset-md-1 col-lg-9 offset-lg-0 service-detail">
         <div class="widget dashboard-container my-adslist">
-            <h3 class="widget-header">Detalle de servicio - <strong>SERV001-550</strong></h3>
+            <h1 class="widget-header title">Detalle de servicio - <strong>SERV001-550</strong></h1>
             <div class="row">
                 <div class="col-md-12">
 
                 </div>
             </div>
-            <h3>Tareas</h3>
-            <h4>Por Iniciar</h4>
-            <table class="table table-responsive product-dashboard-table">
+            <h2>Tareas</h2>
+            <h3>Por Iniciar</h3>
+            <table class="table table-responsive product-dashboard-table service-detail__table">
                 <thead>
                 <tr>
                     <th>Item</th>
@@ -20,27 +20,31 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>1</td>
+                        <td class="item">1</td>
                         <td>Lijar Pared</td>
                         <td>Proceso de lijado para que la nueva pintura tenga fuerte agarre y no se descascaré.</td>
                         <td>
-                            Luis Alfredo Rosales Echevarrría<br>
-                            José Luis Zarate
+                            <ul>
+                                <li>Luis Alfredo Rosales Echevarrría</li>
+                                <li>José Luis Zarate</li>
+                            </ul>
                         </td>
                     </tr>
                     <tr>
-                        <td>2</td>
+                        <td class="item">2</td>
                         <td>Lijar Pared</td>
                         <td>Proceso de lijado para que la nueva pintura tenga fuerte agarre y no se descascaré.</td>
                         <td>
-                            Luis Alfredo Rosales Echevarrría<br>
-                            José Luis Zarate
+                            <ul>
+                                <li>Luis Alfredo Rosales Echevarrría</li>
+                                <li>José Luis Zarate</li>
+                            </ul>
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <h4>En Proceso</h4>
-            <table class="table table-responsive product-dashboard-table">
+            <h3>En Proceso</h3>
+            <table class="table table-responsive product-dashboard-table service-detail__table">
                 <thead>
                 <tr>
                     <th>Item</th>
@@ -52,19 +56,21 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>1</td>
+                    <td class="item">1</td>
                     <td>Lijar Pared</td>
                     <td>Proceso de lijado para que la nueva pintura tenga fuerte agarre y no se descascaré.</td>
                     <td>
-                        Luis Alfredo Rosales Echevarrría<br>
-                        José Luis Zarate
+                        <ul>
+                            <li>Luis Alfredo Rosales Echevarrría</li>
+                            <li>José Luis Zarate</li>
+                        </ul>
                     </td>
                     <td>15/03/2020 06:00 pm</td>
                 </tr>
                 </tbody>
             </table>
-            <h4>Terminado</h4>
-            <table class="table table-responsive product-dashboard-table">
+            <h3>Terminado</h3>
+            <table class="table table-responsive product-dashboard-table service-detail__table">
                 <thead>
                 <tr>
                     <th>Item</th>
@@ -78,12 +84,14 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>1</td>
+                    <td class="item">1</td>
                     <td>Lijar Pared</td>
                     <td>Proceso de lijado para que la nueva pintura tenga fuerte agarre y no se descascaré.</td>
                     <td>
-                        Luis Alfredo Rosales Echevarrría<br>
-                        José Luis Zarate
+                        <ul>
+                            <li>Luis Alfredo Rosales Echevarrría</li>
+                            <li>José Luis Zarate</li>
+                        </ul>
                     </td>
                     <td>15/03/2020 06:00 pm</td>
                     <td>16/03/2020 06:00 pm</td>
@@ -104,8 +112,8 @@
                 </tr>
                 </tbody>
             </table>
-            <h4>Tareas en observación</h4>
-            <table class="table table-responsive product-dashboard-table">
+            <h3>Tareas en observación</h3>
+            <table class="table table-responsive product-dashboard-table service-detail__table">
                 <thead>
                 <tr>
                     <th>Item</th>
@@ -117,12 +125,14 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>1</td>
+                    <td class="item">1</td>
                     <td>Lijar Pared</td>
                     <td>Proceso de lijado para que la nueva pintura tenga fuerte agarre y no se descascaré.</td>
                     <td>
-                        Luis Alfredo Rosales Echevarrría<br>
-                        José Luis Zarate
+                        <ul>
+                            <li>Luis Alfredo Rosales Echevarrría</li>
+                            <li>José Luis Zarate</li>
+                        </ul>
                     </td>
                     <td>
                         <a class="text-danger" href="javascript:;">
@@ -132,8 +142,8 @@
                 </tr>
                 </tbody>
             </table>
-            <h4>Tareas Finalizadas</h4>
-            <table class="table table-responsive product-dashboard-table">
+            <h3>Tareas Finalizadas</h3>
+            <table class="table table-responsive product-dashboard-table service-detail__table">
                 <thead>
                 <tr>
                     <th>Item</th>
@@ -147,12 +157,14 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>1</td>
+                    <td class="item">1</td>
                     <td>Lijar Pared</td>
                     <td>Proceso de lijado para que la nueva pintura tenga fuerte agarre y no se descascaré.</td>
                     <td>
-                        Luis Alfredo Rosales Echevarrría<br>
-                        José Luis Zarate
+                        <ul>
+                            <li>Luis Alfredo Rosales Echevarrría</li>
+                            <li>José Luis Zarate</li>
+                        </ul>
                     </td>
                     <td>15/03/2020 06:00 pm</td>
                     <td>16/03/2020 06:00 pm</td>

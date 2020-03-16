@@ -32,3 +32,56 @@
         }
     }
 }
+
+.service-detail {
+
+    color: $gray-light2;
+
+    h1 {
+        font-size: 25px !important;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    h2 {
+        font-size: 20px !important;
+        text-transform: capitalize;
+    }
+
+    h3 {
+        font-size: 18px !important;
+        text-transform: capitalize;
+    }
+
+    .title {
+        strong {
+            color: $blue-dark;
+        }
+    }
+
+    &__table {
+        thead th {
+            color: $black;
+            font-size: 12px !important;
+            background-color: $blue-light;
+        }
+        tbody td {
+            padding: 10px 5px !important;
+            font-size: 13px !important;
+        }
+
+        td.item {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        ul > li {
+            font-style: oblique;
+            font-size: 13px;
+        }
+
+        .action {
+            width: auto !important;
+        }
+    }
+}
