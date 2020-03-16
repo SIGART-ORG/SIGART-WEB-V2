@@ -13,6 +13,7 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     const PATH_IMAGES = 'images/theme/';
+    const FORMAT_DATE = 'd/m/Y';
 
     protected $title = '';
     protected $description = 'Somos una empresa altamente competitiva en cuanto a diseño, fabricación y servicios de carpintería y ebanistería. Ofrecer excelente calidad en productos de línea clásica, innovadora y de arte sacro a nivel comercial, residencial e institucional.';
@@ -73,5 +74,105 @@ class Controller extends BaseController
         $dataMail->vars      = $vars;
 
         \Mail::to( $to )->send( new SendMail( $dataMail, $template ) );
+    }
+
+    protected function getDate( $date ) {
+        return $date ? date( self::FORMAT_DATE, strtotime( $date ) ) : '---';
+    }
+
+    protected function getStatus( $type, $status ) {
+        $statusName = '';
+
+        switch ( $type ) {
+            case 'service':
+                switch ( $status ) {
+                    case 0:
+                        $statusName = 'Desactivado';
+                        break;
+                    case 1:
+                        $statusName = 'Generado';
+                        break;
+                    case 2:
+                        $statusName = 'Eliminado';
+                        break;
+                    case 3:
+                        $statusName = 'Por Iniciar';
+                        break;
+                    case 4:
+                        $statusName = 'En proceso';
+                        break;
+                    case 5:
+                        $statusName = 'Terminado';
+                        break;
+                    case 6:
+                        $statusName = 'Finalizado';
+                        break;
+                    case 7:
+                        $statusName = 'Pagado';
+                        break;
+                }
+                break;
+            case 'purchase':
+                switch ( $status ) {
+                    case 0:
+                        $statusName = 'Desactivado';
+                        break;
+                    case 1:
+                        $statusName = 'Pendiente';
+                        break;
+                    case 2:
+                        $statusName = 'Anulado';
+                        break;
+                    case 3:
+                        $statusName = 'Recepcionado';
+                        break;
+                    case 4:
+                        $statusName = 'Pagado';
+                        break;
+                }
+                break;
+            case 'task':
+                switch ( $status ) {
+                    case 0:
+                        $statusName = 'Desactivado';
+                        break;
+                    case 1:
+                        $statusName = 'Por Iniciar';
+                        break;
+                    case 2:
+                        $statusName = 'Eliminado';
+                        break;
+                    case 3:
+                        $statusName = 'En proceso';
+                        break;
+                    case 4:
+                        $statusName = 'Terminado';
+                        break;
+                    case 5:
+                        $statusName = 'Observado';
+                        break;
+                    case 6:
+                        $statusName = 'Cerrado';
+                        break;
+                }
+                break;
+        }
+
+        return $statusName;
+    }
+
+    public function getDataUser( $user ) {
+        $data = [
+            'name' => '',
+            'document' => '',
+            'role' => ''
+        ];
+
+        if( $user ) {
+            $data['name'] = $user->name . ' ' . $user->last_name;
+            $data['document'] = $user->document;
+        }
+
+        return $data;
     }
 }
