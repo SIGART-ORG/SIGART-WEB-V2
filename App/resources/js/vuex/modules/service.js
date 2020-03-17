@@ -1,11 +1,41 @@
 export default {
     state: {
         services: [],
-        serviceDetail: {},
+        serviceDetail: {
+            id: 0,
+            document: '',
+            start: '',
+            end: '',
+            total: 0,
+            trafficLight: 0,
+        },
+        tasks: {
+            toStart: {
+                total: 0,
+                records: [],
+            },
+            inProcess: {
+                total: 0,
+                records: [],
+            },
+            finished: {
+                total: 0,
+                records: [],
+            },
+            observed: {
+                total: 0,
+                records: [],
+            },
+            finalized: {
+                total: 0,
+                records: [],
+            }
+        },
         serviceRequests: [],
         serviceRequestDetails: [],
         arrDetServiceRequest: [],
         idServiceRequest: 0,
+        idService: 0,
         nameServiceRequest: '',
         formDate: '',
         ubigeo: {
@@ -78,6 +108,18 @@ export default {
         SET_FILE( state, payload ) {
             state.attachmentServiceRequest = payload.value;
         },
+        SET_SERVICE_ID( state, id ) {
+            state.idService = id;
+        },
+        LOAD_DATA_SERVICE_DETAIL( state, data ) {
+            state.serviceDetail.id = data.id;
+            state.serviceDetail.document = data.document;
+            state.serviceDetail.start = data.start;
+            state.serviceDetail.end = data.end;
+            state.serviceDetail.total = data.total;
+            state.serviceDetail.trafficLight = data.project.trafficLight;
+            state.tasks = data.project.tasks;
+        }
     },
 
     actions: {
@@ -180,8 +222,18 @@ export default {
                 })
             });
         },
-        loadServiceDetail() {
-
+        loadServiceDetail({ commit, state }) {
+            let url = '/service/' + state.idService + '/detail/all/';
+            axios.get( url ).then( response => {
+                let result = response.data;
+                if( result.status ) {
+                    commit( 'LOAD_DATA_SERVICE_DETAIL', result.service );
+                } else {
+                    console.log( result.msg );
+                }
+            }).catch( errors => {
+                console.log( errors );
+            })
         }
     }
 }

@@ -14,6 +14,7 @@ class Controller extends BaseController
 
     const PATH_IMAGES = 'images/theme/';
     const FORMAT_DATE = 'd/m/Y';
+    const FORMAT_DATE_COMPLETE = 'd/m/Y h:i a';
 
     protected $title = '';
     protected $description = 'Somos una empresa altamente competitiva en cuanto a diseño, fabricación y servicios de carpintería y ebanistería. Ofrecer excelente calidad en productos de línea clásica, innovadora y de arte sacro a nivel comercial, residencial e institucional.';
@@ -78,6 +79,10 @@ class Controller extends BaseController
 
     protected function getDate( $date ) {
         return $date ? date( self::FORMAT_DATE, strtotime( $date ) ) : '---';
+    }
+
+    protected function getDateComplete( $date ) {
+        return $date ? date( self::FORMAT_DATE_COMPLETE, strtotime( $date ) ) : '---';
     }
 
     protected function getStatus( $type, $status ) {
@@ -169,6 +174,7 @@ class Controller extends BaseController
         ];
 
         if( $user ) {
+            $data['id'] = $user->id;
             $data['name'] = $user->name . ' ' . $user->last_name;
             $data['document'] = $user->document;
         }

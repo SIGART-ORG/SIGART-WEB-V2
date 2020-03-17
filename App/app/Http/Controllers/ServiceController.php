@@ -411,8 +411,7 @@ class ServiceController extends Controller
             $data->total = $service->total;
             $data->project = new \stdClass();
             $data->project->trafficLight = $dataTasks['trafficLight'];
-            $data->project->taks = $dataTasks['tasks'];
-
+            $data->project->tasks = $dataTasks['tasks'];
 
             $response['status'] = true;
             $response['service'] = $data;
@@ -450,6 +449,11 @@ class ServiceController extends Controller
                 $row->status = $data_task->status;
                 $row->statusName = $this->getStatus( 'task', $data_task->status );
                 $row->users = $this->assignedWorkers( $data_task );
+                $row->start = $this->getDateComplete( $data_task->date_start );
+                $row->end = $this->getDateComplete( $data_task->date_end );
+                $row->observed = $this->getDateComplete( $data_task->date_observed );
+                $row->observed = $this->getDateComplete( $data_task->date_observed );
+                $row->validate = $this->getDateComplete( $data_task->date_validate_customer );
 
                 switch ( $data_task->status ) {
                     case 1:
