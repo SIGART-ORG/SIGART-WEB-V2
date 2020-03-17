@@ -60,6 +60,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post( '/service-order-action/', 'ServiceController@approvedSO' )->name('service.service-order.approved');
 
         Route::get( '/{id}/detail/all', 'ServiceController@detailAll' );
+        Route::post( '/task/{task}/observation', 'TaskObservedController@store' );
     });
 
     Route::get( '/products', 'ProductController@getProducts' );

@@ -13,4 +13,8 @@ class Task extends Model
     public function assignedWorkers() {
         return $this->hasMany( 'App\Models\AssignedWorker', 'tasks_id', 'id' );
     }
+
+    public function taskObserveds() {
+        return $this->hasMany( 'App\Models\TaskObserved', 'tasks_id', 'id' );
+    }
 }

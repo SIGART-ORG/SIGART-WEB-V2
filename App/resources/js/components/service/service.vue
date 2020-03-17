@@ -94,7 +94,7 @@
             }
         },
         methods: {
-            ...mapMutations(['CHANGE_CURRENT']),
+            ...mapMutations(['CHANGE_CURRENT', 'SET_SERVICE_ID']),
             approvedSO( data, action ) {
                 let actionTitle = 'Aprobar Orden de Servicio';
                 let text = '¿Estas seguro de <strong>APROBAR</strong> la orden de servicio <u>' + data.document + '</u>';
@@ -156,6 +156,7 @@
             },
             viewService( id ) {
                 this.CHANGE_CURRENT( 'service-detail' );
+                this.SET_SERVICE_ID( id );
             }
         }
     }
