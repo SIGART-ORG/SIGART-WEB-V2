@@ -452,8 +452,8 @@ class ServiceController extends Controller
                 $row->start = $this->getDateComplete( $data_task->date_start );
                 $row->end = $this->getDateComplete( $data_task->date_end );
                 $row->observed = $this->getDateComplete( $data_task->date_observed );
-                $row->observed = $this->getDateComplete( $data_task->date_observed );
                 $row->validate = $this->getDateComplete( $data_task->date_validate_customer );
+                $row->observeds = $this->observeds( $data_task );
 
                 switch ( $data_task->status ) {
                     case 1:
@@ -523,6 +523,15 @@ class ServiceController extends Controller
             $data->total++;
             $data->records[] = $this->getDataUser( $assigned_worker->user );
         }
+
+        return $data;
+    }
+
+    public function observeds( $task ) {
+        $data = new \stdClass();
+        $data->sent = $task ? $task->taskObserveds->where('status', 1)->count() : 0;
+        $data->solved = $task ? $task->taskObserveds->where('status', 3)->count() : 0;;
+        $data->denied = $task ? $task->taskObserveds->where('status', 4)->count() : 0;;
 
         return $data;
     }
