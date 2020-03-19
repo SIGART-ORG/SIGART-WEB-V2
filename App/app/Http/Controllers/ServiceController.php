@@ -192,6 +192,7 @@ class ServiceController extends Controller
             }
         }
 
+        $district = \FormatUbigeo::complete( $district );
         $ubigeoBD = \FormatUbigeo::ubigeo( $district );
 
         $ubigeo = new \stdClass();
@@ -388,5 +389,154 @@ class ServiceController extends Controller
             $service->date_aproved_customer = date( 'Y-m-d' );
             $service->save();
         }
+    }
+
+    public function detailAll( Request $request ) {
+        $response = [
+            'status' => false,
+            'service' => []
+        ];
+
+        $id = $request->id ? $request->id : 0;
+
+        $service = Service::find( $id );
+
+        if( $service ) {
+            $dataTasks = $this->getTasKs( $service );
+
+            $data = new \stdClass();
+            $data->id = $service->id;
+            $data->document = $service->serial_doc . '-' . $service->number_doc;
+            $data->start = $this->getDate( $service->start_date );
+            $data->end = $this->getDate( $service->end_date );
+            $data->total = $service->total;
+            $data->project = new \stdClass();
+            $data->project->trafficLight = $dataTasks['trafficLight'];
+            $data->project->percent = $dataTasks['percent'];
+            $data->project->tasks = $dataTasks['tasks'];
+
+            $response['status'] = true;
+            $response['service'] = $data;
+        }
+
+        return response()->json( $response );
+    }
+
+    public function getTasKs( $service ) {
+
+        $stageTask = [
+            0 => 0,/*Finalized*/
+            1 => 0/*Total*/
+        ];
+
+        $tasks = [
+            'toStart' => ['total' => 0, 'records' => []],
+            'inProcess' => ['total' => 0, 'records' => []],
+            'finished' => ['total' => 0, 'records' => []],
+            'observed' => ['total' => 0, 'records' => []],
+            'finalized' => ['total' => 0, 'records' => []],
+        ];
+
+        $stages = $service->serviceStages->whereNotIn('status', [0,2]);
+
+        foreach ( $stages as $stage ) {
+            $dataTasks = $stage->tasks->whereNotIn('status', [0,2]);
+
+            foreach ( $dataTasks as $data_task ) {
+                $row = new \stdClass();
+                $row->id = $data_task->id;
+                $row->stage = $stage->name;
+                $row->name = $data_task->name;
+                $row->description = $data_task->description;
+                $row->status = $data_task->status;
+                $row->statusName = $this->getStatus( 'task', $data_task->status );
+                $row->users = $this->assignedWorkers( $data_task );
+                $row->start = $this->getDateComplete( $data_task->date_start );
+                $row->end = $this->getDateComplete( $data_task->date_end );
+                $row->observed = $this->getDateComplete( $data_task->date_observed );
+                $row->validate = $this->getDateComplete( $data_task->date_validate_customer );
+                $row->observeds = $this->observeds( $data_task );
+
+                switch ( $data_task->status ) {
+                    case 1:
+                        $tasks['toStart']['total']++;
+                        $tasks['toStart']['records'][] = $row;
+                        break;
+                    case 3:
+                        $tasks['inProcess']['total']++;
+                        $tasks['inProcess']['records'][] = $row;
+                        $stageTask[1]++;
+                        break;
+                    case 4:
+                        $tasks['finished']['total']++;
+                        $tasks['finished']['records'][] = $row;
+                        $stageTask[1]++;
+                        break;
+                    case 5:
+                        $tasks['observed']['total']++;
+                        $tasks['observed']['records'][] = $row;
+                        $stageTask[1]++;
+                        break;
+                    case 6:
+                        $tasks['finalized']['total']++;
+                        $tasks['finalized']['records'][] = $row;
+                        $stageTask[0]++;
+                        $stageTask[1]++;
+                        break;
+                }
+            }
+        }
+
+        $trafficLight = 0;
+        $percent = 0;
+
+        if( $stageTask[1] > 0 ) {
+            $percent = round( ( $stageTask[0]/$stageTask[1] ) * 100, 2 );
+            if( $percent <= 16.67 ) {
+                $trafficLight = 1;
+            } else if( $percent > 16.67 && $percent <= 33.33 ) {
+                $trafficLight = 2;
+            } else if( $percent > 33.33 && $percent <= 50 ) {
+                $trafficLight = 3;
+            } else if( $percent > 50 && $percent <= 66.6 ) {
+                $trafficLight = 4;
+            } else if( $percent > 66.66 && $percent <= 83.33 ) {
+                $trafficLight = 5;
+            } else {
+                $trafficLight = 6;
+            }
+        }
+
+        $data = [
+            'trafficLight' => $trafficLight,
+            'tasks' => $tasks,
+            'percent' => $percent
+        ];
+
+        return $data;
+    }
+
+    public function assignedWorkers( $task ) {
+        $assignedWorkers = $task->assignedWorkers->where( 'status', 1 );
+
+        $data = new \stdClass();
+        $data->total = 0;
+        $data->records = [];
+
+        foreach ( $assignedWorkers as $assigned_worker ) {
+            $data->total++;
+            $data->records[] = $this->getDataUser( $assigned_worker->user );
+        }
+
+        return $data;
+    }
+
+    public function observeds( $task ) {
+        $data = new \stdClass();
+        $data->sent = $task ? $task->taskObserveds->where('status', 1)->count() : 0;
+        $data->solved = $task ? $task->taskObserveds->where('status', 3)->count() : 0;;
+        $data->denied = $task ? $task->taskObserveds->where('status', 4)->count() : 0;;
+
+        return $data;
     }
 }

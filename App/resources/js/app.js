@@ -14,6 +14,14 @@ import es from "vee-validate/dist/locale/es.json";
 
 window.Vue = require('vue');
 
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
+
+Vue.use(BootstrapVue);
+Vue.use(IconsPlugin);
+
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -59,6 +67,7 @@ Vue.component( 'Service', Service );
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
+require( './src/helper' );
 
 const app = new Vue({
     store,

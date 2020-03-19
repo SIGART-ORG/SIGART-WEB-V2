@@ -4,8 +4,8 @@
         <div class="widget dashboard-container my-adslist">
             <h3 class="widget-header">Mis solicitudes de servicios</h3>
             <div class="row">
-                <div class="col-md-12">
-                    <button class="btn btn-success pull-right btn btn-transparent" @click.prevent="CHANGE_CURRENT( 'new-service-request' )">
+                <div class="col-md-12 mb-10">
+                    <button class="btn pull-right custom__btn" @click.prevent="CHANGE_CURRENT( 'new-service-request' )">
                         <i class="fa fa-plus-circle"></i> Solicitud
                     </button>
                 </div>
