@@ -192,6 +192,7 @@ class ServiceController extends Controller
             }
         }
 
+        $district = \FormatUbigeo::complete( $district );
         $ubigeoBD = \FormatUbigeo::ubigeo( $district );
 
         $ubigeo = new \stdClass();
@@ -411,6 +412,7 @@ class ServiceController extends Controller
             $data->total = $service->total;
             $data->project = new \stdClass();
             $data->project->trafficLight = $dataTasks['trafficLight'];
+            $data->project->percent = $dataTasks['percent'];
             $data->project->tasks = $dataTasks['tasks'];
 
             $response['status'] = true;
@@ -486,6 +488,7 @@ class ServiceController extends Controller
         }
 
         $trafficLight = 0;
+        $percent = 0;
 
         if( $stageTask[1] > 0 ) {
             $percent = round( ( $stageTask[0]/$stageTask[1] ) * 100, 2 );
@@ -506,7 +509,8 @@ class ServiceController extends Controller
 
         $data = [
             'trafficLight' => $trafficLight,
-            'tasks' => $tasks
+            'tasks' => $tasks,
+            'percent' => $percent
         ];
 
         return $data;

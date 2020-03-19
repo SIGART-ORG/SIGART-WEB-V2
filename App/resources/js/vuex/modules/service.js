@@ -8,6 +8,7 @@ export default {
             end: '',
             total: 0,
             trafficLight: 0,
+            percent: 0,
         },
         tasks: {
             toStart: {
@@ -118,6 +119,7 @@ export default {
             state.serviceDetail.end = data.end;
             state.serviceDetail.total = data.total;
             state.serviceDetail.trafficLight = data.project.trafficLight;
+            state.serviceDetail.percent = data.project.percent;
             state.tasks = data.project.tasks;
         }
     },
@@ -191,9 +193,8 @@ export default {
                 });
             });
         },
-        getDetailServiceRequest( { commit }, parameters ) {
-            let id = parameters.data.id;
-            let url = '/service-request/' + id + '/edit/';
+        getDetailServiceRequest( { commit, state } ) {
+            let url = '/service-request/' + state.idServiceRequest + '/edit/';
             axios.get( url ).then( response => {
                 commit( 'LOAD_DATA_SERVICE_REQUEST', response.data );
             });

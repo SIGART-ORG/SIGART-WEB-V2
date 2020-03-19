@@ -4,12 +4,12 @@ import Swal from "sweetalert2";
         <div class="widget dashboard-container my-adslist">
             <h3 class="widget-header">Registrar nueva solicitud de servicio</h3>
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-12 mb-10">
                     <button v-if="idServiceRequest === 0" :disabled="details.length === 0"
-                            class="btn pull-right btn btn-transparent" @click.prevent="generateServiceRequest">
+                            class="btn pull-right custom__btn" @click.prevent="generateServiceRequest">
                         <i class="fa fa-plus-circle"></i> Generar Solicitud
                     </button>
-                    <button v-else :disabled="details.length === 0" class="btn pull-right btn btn-transparent"
+                    <button v-else :disabled="details.length === 0" class="btn pull-right custom__btn"
                             @click.prevent="generateServiceRequest">
                         <i class="fa fa-plus-circle"></i> Editar Solicitud
                     </button>
@@ -210,7 +210,7 @@ import Swal from "sweetalert2";
             datetime: Datetime
         },
         created() {
-            this.$store.dispatch('loadDepartaments');
+            this.$store.dispatch('loadDepartamentsV2');
         },
         computed: {
             row() {
@@ -280,7 +280,7 @@ import Swal from "sweetalert2";
             ...mapMutations(['ADD_DET_SERVICE_REQUEST', 'DELETE_DETAILS', 'CHANGE_CURRENT', 'LOAD_SETTINGS', 'CHANGE_TYPE_SEND']),
             loadProvince() {
                 this.$store.dispatch({
-                    type: 'loadProvinces',
+                    type: 'loadProvincesv2',
                     data: {
                         departament: this.ubigeo.departament
                     },
@@ -288,7 +288,7 @@ import Swal from "sweetalert2";
             },
             loadDistrict() {
                 this.$store.dispatch({
-                    type: 'loadDistrict',
+                    type: 'loadDistrictv2',
                     data: {
                         departament: this.ubigeo.departament,
                         province: this.ubigeo.province,
@@ -354,10 +354,9 @@ import Swal from "sweetalert2";
             }
         },
         mounted() {
-            if (this.idServiceRequest > 0) {
-                this.loadServiceRequest();
-            }
             let me = this;
+            this.$store.dispatch('getDetailServiceRequest');
+
             setTimeout(function () {
                 me.loadProvince();
                 me.loadDistrict();

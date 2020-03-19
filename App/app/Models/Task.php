@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
+    const TABLE_NAME = 'tasks';
+    protected $table = self::TABLE_NAME;
+
     public function stage() {
         return $this->belongsTo( 'App\Models\ServiceStage', 'service_stages_id', 'id' );
     }

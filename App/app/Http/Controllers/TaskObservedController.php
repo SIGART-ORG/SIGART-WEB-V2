@@ -40,4 +40,32 @@ class TaskObservedController extends Controller
         $count = TaskObserved::where( 'tasks_id', $task )->count();
         return 'OBS-' . $task . '-' . ( $count + 1 );
     }
+
+    public function listObservations( Request $request ) {
+        $response = [
+            'status' => true,
+            'msg' => 'OK.',
+            'observations' => []
+        ];
+
+        $taskID = $request->task ? $request->task : 0;
+        $dataObervations = TaskObserved::whereNotIn( 'status', [0,2] )
+            ->where( 'tasks_id', $taskID )
+            ->orderBy( 'created_at', 'desc' )
+            ->get();
+
+        foreach( $dataObervations as $dataObervation ) {
+            $row = new \stdClass();
+            $row->id = $dataObervation->id;
+            $row->created = $this->getDateComplete( $dataObervation->created_at );
+            $row->name = $dataObervation->name;
+            $row->description = $dataObervation->description;
+            $row->reply = $dataObervation->reply;
+            $row->status = $dataObervation->status;
+            $row->statusName = $this->getStatus( 'observation', $dataObervation->status );
+            $row->badge = $this->getClassBadge( $dataObervation->status );
+            $response['observations'][] = $row;
+        }
+        return response()->json( $response );
+    }
 }
