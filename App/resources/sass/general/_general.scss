@@ -10,3 +10,21 @@
         max-width: 100%;
     }
 }
+
+.mb-10 {
+    margin-bottom: 10px !important;
+}
+
+.custom {
+    &__btn {
+        background-color: $blue !important;
+        color: $white !important;
+        &:hover {
+            text-decoration: none;
+            background-color: $white !important;
+            color: $blue !important;
+            border-color: $blue !important;
+            transition: background 0.2s ease, padding 0.8s linear;
+        }
+    }
+}

@@ -61,12 +61,17 @@ Route::group(['middleware' => ['auth']], function(){
 
         Route::get( '/{id}/detail/all', 'ServiceController@detailAll' );
         Route::post( '/task/{task}/observation', 'TaskObservedController@store' );
+        Route::post( '/task/{task}/approved', 'TaskController@approved' );
+        Route::get( '/task/{task}/observations', 'TaskObservedController@listObservations' );
     });
 
     Route::get( '/products', 'ProductController@getProducts' );
     Route::get( '/departaments/', 'StaticController@loadDepartament' );
+    Route::get( '/departaments/v2', 'StaticController@loadDepartamentV2' );
     Route::get( '/provinces/{departament}', 'StaticController@loadProvince' );
+    Route::get( '/provinces/{departament}/v2', 'StaticController@loadProvinceV2' );
     Route::get( '/districts/{departament}/{province}/', 'StaticController@loadDistrict' );
+    Route::get( '/districts/{departament}/{province}/v2', 'StaticController@loadDistrictV2' );
     Route::get( '/type-document/', 'StaticController@loadTypeDocument' );
     Route::get( '/type-person/', 'StaticController@loadTypePerson' );
 

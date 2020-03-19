@@ -161,6 +161,25 @@ class Controller extends BaseController
                         break;
                 }
                 break;
+            case 'observation':
+                switch ( $status ) {
+                    case 0:
+                        $statusName = 'Desactivado';
+                        break;
+                    case 1:
+                        $statusName = 'Pendiente de revisión';
+                        break;
+                    case 2:
+                        $statusName = 'Eliminado';
+                        break;
+                    case 3:
+                        $statusName = 'Obs. Aceptada';
+                        break;
+                    case 4:
+                        $statusName = 'Obs. Denegada';
+                        break;
+                }
+                break;
         }
 
         return $statusName;
@@ -180,5 +199,28 @@ class Controller extends BaseController
         }
 
         return $data;
+    }
+
+    public function getClassBadge( $status ) {
+        $classbadge = '';
+        switch ( $status ) {
+            case 0:
+                $classbadge = 'badge-secondary';
+                break;
+            case 1:
+                $classbadge = 'badge-info';
+                break;
+            case 2:
+                $classbadge = 'badge-warning';
+                break;
+            case 3:
+                $classbadge = 'badge-success';
+                break;
+            case 4:
+                $classbadge = 'badge-danger';
+                break;
+        }
+
+        return $classbadge;
     }
 }

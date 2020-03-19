@@ -1,35 +1,44 @@
 .service {
-    .content-traffic-light {
-        margin-top: 10px;
-        display: flex;
-        flex-wrap: nowrap;
-        width: 100%;
-        border: 1px $gray-dark solid;
 
-        & > div {
-            height: 10px;
-            width: 16.66%;
-        }
+}
 
-        .red,.yellow,.green {
-            background-color: #c0c0c0;
-        }
+.content-traffic-light {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    border: 1px $gray-dark solid;
 
-        .border-right {
-            border-right: 1px $gray-dark solid;
-        }
+    & > div {
+        height: 10px;
+        width: 16.66%;
+    }
 
-        .red.active {
-            background-color: $red;
-        }
+    .red,.yellow,.green {
+        background-color: #c0c0c0;
+    }
 
-        .yellow.active {
-            background-color: $yellow;
-        }
+    .border-right {
+        border-right: 1px $gray-dark solid !important;
+    }
 
-        .green.active {
-            background-color: $green;
-        }
+    .red.active {
+        background-color: $red;
+    }
+
+    .yellow.active {
+        background-color: $yellow;
+    }
+
+    .green.active {
+        background-color: $green;
+    }
+
+    &__head {
+        padding: 20px 0 0 0;
+        font-size: 25px;
+        font-weight: bold;
+        color: $blue;
     }
 }
 
@@ -83,5 +92,11 @@
         .action {
             width: auto !important;
         }
+    }
+
+    .content-obsevarvations {
+        max-width: 100%;
+        display: flex;
+        justify-content: space-around;
     }
 }
