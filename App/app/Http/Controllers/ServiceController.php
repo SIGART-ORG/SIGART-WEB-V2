@@ -425,8 +425,12 @@ class ServiceController extends Controller
     public function getTasKs( $service ) {
 
         $stageTask = [
-            0 => 0,/*Finalized*/
-            1 => 0/*Total*/
+            0 => 0,/*Total*/
+            1 => 0,/*toStart*/
+            2 => 0,/*inProcess*/
+            3 => 0,/*finished*/
+            4 => 0,/*observed*/
+            5 => 0,/*finalized*/
         ];
 
         $tasks = [
@@ -461,27 +465,32 @@ class ServiceController extends Controller
                     case 1:
                         $tasks['toStart']['total']++;
                         $tasks['toStart']['records'][] = $row;
+                        $stageTask[0]++;
+                        $stageTask[1]++;
                         break;
                     case 3:
                         $tasks['inProcess']['total']++;
                         $tasks['inProcess']['records'][] = $row;
-                        $stageTask[1]++;
+                        $stageTask[0]++;
+                        $stageTask[2]++;
                         break;
                     case 4:
                         $tasks['finished']['total']++;
                         $tasks['finished']['records'][] = $row;
-                        $stageTask[1]++;
+                        $stageTask[0]++;
+                        $stageTask[3]++;
                         break;
                     case 5:
                         $tasks['observed']['total']++;
                         $tasks['observed']['records'][] = $row;
-                        $stageTask[1]++;
+                        $stageTask[0]++;
+                        $stageTask[4]++;
                         break;
                     case 6:
                         $tasks['finalized']['total']++;
                         $tasks['finalized']['records'][] = $row;
                         $stageTask[0]++;
-                        $stageTask[1]++;
+                        $stageTask[5]++;
                         break;
                 }
             }
@@ -490,8 +499,13 @@ class ServiceController extends Controller
         $trafficLight = 0;
         $percent = 0;
 
-        if( $stageTask[1] > 0 ) {
-            $percent = round( ( $stageTask[0]/$stageTask[1] ) * 100, 2 );
+        if( $stageTask[0] > 0 ) {
+            $totalPoint = $stageTask[0] * 3;
+            $points = ( $stageTask[1] * 0 ) + ( $stageTask[2] * 1 ) + ( $stageTask[3] * 2 ) + ( $stageTask[4] * 2 ) + ( $stageTask[5] * 3 );
+
+            if( $totalPoint > 0 ) {
+                $percent = round( ( $points/ $totalPoint ) * 100, 2 );
+            }
             if( $percent <= 16.67 ) {
                 $trafficLight = 1;
             } else if( $percent > 16.67 && $percent <= 33.33 ) {
