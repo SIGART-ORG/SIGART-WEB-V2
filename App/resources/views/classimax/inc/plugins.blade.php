@@ -1,4 +1,7 @@
 <!-- JAVASCRIPTS -->
+<script>
+    var API_URL = '{{ env( 'API_NOTIFICATION') }}'
+</script>
 <script src="{{ asset( '/assets/classimax/plugins/jquery/jquery.min.js' ) }}"></script>
 <script src="{{ asset( '/assets/classimax/plugins/jquery-ui/jquery-ui.min.js' ) }}"></script>
 <script src="{{ asset( '/assets/classimax/plugins/tether/js/tether.min.js' ) }}"></script>
