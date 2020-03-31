@@ -81,6 +81,8 @@
     import { mapMutations } from 'vuex';
     import Swal from 'sweetalert2';
     import 'sweetalert2/src/sweetalert2.scss';
+    import io from 'socket.io-client';
+    const socket = io( API_URL );
     export default {
         name: "servicerequest",
         created() {
@@ -89,6 +91,11 @@
         computed: {
             serviceRequests() {
                 return this.$store.state.Service.serviceRequests;
+            },
+            userData: {
+                get:function() {
+                    return this.$store.state.Settings.userData;
+                }
             }
         },
         methods: {
@@ -119,6 +126,7 @@
                             }
                         }).then( response => {
                             if( response.status ) {
+                                socket.emit( 'create-notification-client', 'sendServiceRequest', this.userData.id, 'Nuevo solicitud de cotización servicio' );
                                 this.$store.dispatch( 'loadServiceRequest' );
                                 Swal.fire(
                                     'Enviado!',
