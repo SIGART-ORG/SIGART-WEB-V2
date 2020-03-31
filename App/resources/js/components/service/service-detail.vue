@@ -59,7 +59,20 @@
                 <tr v-if="taskInProcess.total > 0" v-for="( e, i ) in taskInProcess.records" :key="e.id">
                     <td class="item">{{ i + 1 }}</td>
                     <td>{{ e.name }}</td>
-                    <td>{{ e.description }}</td>
+                    <td>
+                        {{ e.description }}
+                        <div class="content-obsevarvations">
+                            <a v-if="e.observeds.sent > 0" class="text-warning" href="javascript:;" @click.prevent="openObervations( e.id, e.name )">
+                                <i class="fa fa-exclamation-triangle"></i>&nbsp;{{ e.observeds.sent }}
+                            </a>
+                            <a v-if="e.observeds.solved > 0" class="text-success" href="javascript:;" @click.prevent="openObervations( e.id, e.name )">
+                                <i class="fa fa-check"></i>&nbsp;{{ e.observeds.solved }}
+                            </a>
+                            <a v-if="e.observeds.denied > 0" class="text-danger" href="javascript:;" @click.prevent="openObervations( e.id, e.name )">
+                                <i class="fa fa-close"></i>&nbsp;{{ e.observeds.denied }}
+                            </a>
+                        </div>
+                    </td>
                     <td>
                         <ul v-if="e.users.total > 0">
                             <li v-for="u in e.users.records" :key="u.id">{{ u.name }}</li>
@@ -86,7 +99,20 @@
                 <tr v-if="taskFinished.total > 0" v-for="( e, i ) in taskFinished.records" :key="e.id">
                     <td class="item">{{ i + 1 }}</td>
                     <td>{{ e.name }}</td>
-                    <td>{{ e.description }}</td>
+                    <td>
+                        {{ e.description }}
+                        <div class="content-obsevarvations">
+                            <a v-if="e.observeds.sent > 0" class="text-warning" href="javascript:;" @click.prevent="openObervations( e.id, e.name )">
+                                <i class="fa fa-exclamation-triangle"></i>&nbsp;{{ e.observeds.sent }}
+                            </a>
+                            <a v-if="e.observeds.solved > 0" class="text-success" href="javascript:;" @click.prevent="openObervations( e.id, e.name )">
+                                <i class="fa fa-check"></i>&nbsp;{{ e.observeds.solved }}
+                            </a>
+                            <a v-if="e.observeds.denied > 0" class="text-danger" href="javascript:;" @click.prevent="openObervations( e.id, e.name )">
+                                <i class="fa fa-close"></i>&nbsp;{{ e.observeds.denied }}
+                            </a>
+                        </div>
+                    </td>
                     <td>
                         <ul v-if="e.users.total > 0">
                             <li v-for="u in e.users.records" :key="u.id">{{ u.name }}</li>
@@ -143,7 +169,7 @@
                             <a v-if="e.observeds.solved > 0" class="text-success" href="javascript:;" @click.prevent="openObervations( e.id, e.name )">
                                 <i class="fa fa-check"></i>&nbsp;{{ e.observeds.solved }}
                             </a>
-                            <a v-if="e.observeds.denied > 0" class="text-success" href="javascript:;" @click.prevent="openObervations( e.id, e.name )">
+                            <a v-if="e.observeds.denied > 0" class="text-danger" href="javascript:;" @click.prevent="openObervations( e.id, e.name )">
                                 <i class="fa fa-close"></i>&nbsp;{{ e.observeds.denied }}
                             </a>
                         </div>
@@ -168,7 +194,20 @@
                 <tr v-if="taskFinalized.total > 0" v-for="( e, i ) in taskFinalized.records" :key="e.id">
                     <td class="item">{{ i + 1 }}</td>
                     <td>{{ e.name }}</td>
-                    <td>{{ e.description }}</td>
+                    <td>
+                        {{ e.description }}
+                        <div class="content-obsevarvations">
+                            <a v-if="e.observeds.sent > 0" class="text-warning" href="javascript:;" @click.prevent="openObervations( e.id, e.name )">
+                                <i class="fa fa-exclamation-triangle"></i>&nbsp;{{ e.observeds.sent }}
+                            </a>
+                            <a v-if="e.observeds.solved > 0" class="text-success" href="javascript:;" @click.prevent="openObervations( e.id, e.name )">
+                                <i class="fa fa-check"></i>&nbsp;{{ e.observeds.solved }}
+                            </a>
+                            <a v-if="e.observeds.denied > 0" class="text-danger" href="javascript:;" @click.prevent="openObervations( e.id, e.name )">
+                                <i class="fa fa-close"></i>&nbsp;{{ e.observeds.denied }}
+                            </a>
+                        </div>
+                    </td>
                     <td>
                         <ul v-if="e.users.total > 0">
                             <li v-for="u in e.users.records" :key="u.id">{{ u.name }}</li>
@@ -212,7 +251,20 @@
                     <td class="item" v-text="i + 1"></td>
                     <td v-text="o.created"></td>
                     <td v-text="o.name"></td>
-                    <td>{{ o.description }}</td>
+                    <td>
+                        {{ o.description }}
+                        <div v-if="o.reply" class="bd-callout" :class="o.status === 3 ? 'bd-callout-primary' : 'bd-callout-danger'">
+                            <h6>Rpta:</h6>
+                            <p v-if="typeof o.replyLong === 'undefined' || o.replyLong === false">
+                                <code v-text="o.replyDate"></code> - {{ o.reply.slice( 0, 200 ) }}
+                                <a v-if="o.reply.length > 200" href="javascript:;" @click="expandText( i )">Ver más</a>
+                            </p>
+                            <p v-if="o.replyLong === true" >
+                                <code v-text="o.replyDate"></code> - {{ o.reply }}
+                                <a href="javascript:;" @click="contractText( i )">Ver menos</a>
+                            </p>
+                        </div>
+                    </td>
                     <td>
                         <span class="badge" :class="o.badge">{{ o.statusName }}</span>
                     </td>
@@ -357,6 +409,12 @@
                 }).catch( errors => {
                     console.log( errors );
                 });
+            },
+            expandText( index ) {
+                this.observations[index].replyLong = true;
+            },
+            contractText( index ) {
+                this.observations[index].replyLong = false;
             }
         }
     }

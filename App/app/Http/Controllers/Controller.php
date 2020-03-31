@@ -13,6 +13,7 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     const PATH_IMAGES = 'images/theme/';
+    const PATH_VOUCHER = 'uploads/voucher/';
     const FORMAT_DATE = 'd/m/Y';
     const FORMAT_DATE_COMPLETE = 'd/m/Y h:i a';
 
