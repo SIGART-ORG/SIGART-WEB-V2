@@ -6,6 +6,7 @@ use App\Models\Customer;
 use App\Models\Referenceterm;
 use App\Models\SaleQuotation;
 use App\Models\Service;
+use App\Models\ServiceAttachment;
 use App\Models\ServiceRequest;
 use App\Models\ServiceRequestDetail;
 use App\Models\SiteVoucher;
@@ -315,6 +316,8 @@ class ServiceController extends Controller
 
 
         foreach( $services as $service ) {
+            $dataTasks = $this->getTasKs( $service, true );
+
             $row = new \stdClass();
             $row->id = $service->id;
             $row->status = $service->status;
@@ -323,6 +326,9 @@ class ServiceController extends Controller
             $row->total = $service->total;
             $row->document = $service->serial_doc . '-' . $service->number_doc;
             $row->orderPay = $service->is_send_order_pay;
+            $row->start = $this->getDate( $service->start_date );
+            $row->end = $this->getDate( $service->end_date );
+            $row->voucherFiles = $service->serviceAttachment->whereIn( 'type', [1, 2] )->where( 'status', 1 )->count();
 
             $servicerequest = $service->serviceRequest;
             $row->servicerequest = new \stdClass();
@@ -338,6 +344,11 @@ class ServiceController extends Controller
             $row->referenceTerm->pdf = $referenceterm->pdf_os;
             $row->referenceTerm->approved = $referenceterm->os_type_approved_customer;
             $row->referenceTerm->ejecution = $referenceterm->execution_time_days;
+
+            $row->project = new \stdClass();
+            $row->project->trafficLight = $dataTasks['trafficLight'];
+            $row->project->percent = $dataTasks['percent'];
+            $row->project->tasks = $dataTasks['tasks'];
 
             $response['services'][] = $row;
         }
@@ -422,7 +433,7 @@ class ServiceController extends Controller
         return response()->json( $response );
     }
 
-    public function getTasKs( $service ) {
+    public function getTasKs( $service, $onlyTotal = false ) {
 
         $stageTask = [
             0 => 0,/*Total*/
@@ -448,18 +459,20 @@ class ServiceController extends Controller
 
             foreach ( $dataTasks as $data_task ) {
                 $row = new \stdClass();
-                $row->id = $data_task->id;
-                $row->stage = $stage->name;
-                $row->name = $data_task->name;
-                $row->description = $data_task->description;
-                $row->status = $data_task->status;
-                $row->statusName = $this->getStatus( 'task', $data_task->status );
-                $row->users = $this->assignedWorkers( $data_task );
-                $row->start = $this->getDateComplete( $data_task->date_start );
-                $row->end = $this->getDateComplete( $data_task->date_end );
-                $row->observed = $this->getDateComplete( $data_task->date_observed );
-                $row->validate = $this->getDateComplete( $data_task->date_validate_customer );
-                $row->observeds = $this->observeds( $data_task );
+                if( !$onlyTotal ) {
+                    $row->id = $data_task->id;
+                    $row->stage = $stage->name;
+                    $row->name = $data_task->name;
+                    $row->description = $data_task->description;
+                    $row->status = $data_task->status;
+                    $row->statusName = $this->getStatus('task', $data_task->status);
+                    $row->users = $this->assignedWorkers($data_task);
+                    $row->start = $this->getDateComplete($data_task->date_start);
+                    $row->end = $this->getDateComplete($data_task->date_end);
+                    $row->observed = $this->getDateComplete($data_task->date_observed);
+                    $row->validate = $this->getDateComplete($data_task->date_validate_customer);
+                    $row->observeds = $this->observeds($data_task);
+                }
 
                 switch ( $data_task->status ) {
                     case 1:
@@ -552,5 +565,49 @@ class ServiceController extends Controller
         $data->denied = $task ? $task->taskObserveds->where('status', 4)->count() : 0;;
 
         return $data;
+    }
+
+    public function uploadVoucher( Request $request ) {
+        $response = [
+            'status' => false,
+            'msg' => 'No se puede realizar la operación.'
+        ];
+
+        $id = $request->id ? $request->id : 0;
+        $file = $request->hasFile( 'voucherFile' ) ? $request->file( 'voucherFile' ) : null;
+        $orderPayTemp = $request->orderPayTemp ? $request->orderPayTemp : 0;
+
+        $type = 0;
+        switch( $orderPayTemp ) {
+            case 1:
+            case 2:
+                $type = 1;/*Primera orden de pago*/
+                break;
+            case 3:
+            case 4:
+                $type = 2;/*Primera orden de pago*/
+                break;
+        }
+
+        if( $id > 0 && $file && $type > 0 ) {
+            $service = Service::find( $id );
+            if( $service ) {
+                $destinationPath = public_path(self::PATH_VOUCHER );
+                $nameImage = 'voucher-upload-' . time();
+                $newImage = $nameImage . '.' . $file->getClientOriginalExtension();
+                if( $file->move( $destinationPath, $newImage ) ) {
+                    $attachment = new ServiceAttachment();
+                    $attachment->services_id = $id;
+                    $attachment->name = $nameImage;
+                    $attachment->file = $newImage;
+                    $attachment->type = $type;
+                    if( $attachment->save() ) {
+                        $response['status'] = true;
+                        $response['msg'] = 'OK.';
+                    }
+                }
+            }
+        }
+        return response()->json( $response, 200 );
     }
 }

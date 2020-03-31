@@ -61,6 +61,8 @@ class TaskObservedController extends Controller
             $row->name = $dataObervation->name;
             $row->description = $dataObervation->description;
             $row->reply = $dataObervation->reply;
+            $row->replyDate = $this->getDateComplete( $dataObervation->date_reply );
+            $row->replyLong = false;
             $row->status = $dataObervation->status;
             $row->statusName = $this->getStatus( 'observation', $dataObervation->status );
             $row->badge = $this->getClassBadge( $dataObervation->status );
