@@ -47,7 +47,8 @@ export default {
         address: '',
         attachmentServiceRequest: null,
         attachment: null,
-        typeSave: 'save'
+        typeSave: 'save',
+        voucherTemp: {}
     },
 
     getters:{
@@ -121,7 +122,10 @@ export default {
             state.serviceDetail.trafficLight = data.project.trafficLight;
             state.serviceDetail.percent = data.project.percent;
             state.tasks = data.project.tasks;
-        }
+        },
+        SET_FILE_VOUCHER( state, payload ) {
+            state.voucherTemp = payload.value;
+        },
     },
 
     actions: {
@@ -235,6 +239,32 @@ export default {
             }).catch( errors => {
                 console.log( errors );
             })
+        },
+        uploadVoucher({ commit, state }, parameters) {
+            return new Promise( ( resolve, reject ) => {
+                let params = parameters.data;
+                let url = '/service/' + params.idService + '/upload-voucher/';
+                let formData = new FormData();
+                formData.append('voucherFile', state.voucherTemp );
+                formData.append('orderPayTemp', params.orderPayTemp );
+                axios.post( url, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }).then(
+                    response => {
+                        if( response.status ) {
+                            commit( 'SET_FILE_VOUCHER', {} );
+                            resolve( response );
+                        }
+                        else {
+                            reject( response );
+                        }
+                    }
+                ).catch( errors => {
+                    reject( errors );
+                });
+            });
         }
     }
 }

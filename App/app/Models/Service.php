@@ -16,4 +16,8 @@ class Service extends Model
     public function serviceStages() {
         return $this->hasMany( 'App\Models\ServiceStage', 'services_id', 'id' );
     }
+
+    public function serviceAttachment() {
+        return $this->hasMany( 'App\Models\ServiceAttachment', 'services_id', 'id' );
+    }
 }
