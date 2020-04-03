@@ -17,6 +17,8 @@ class Controller extends BaseController
     const FORMAT_DATE = 'd/m/Y';
     const FORMAT_DATE_COMPLETE = 'd/m/Y h:i a';
 
+    const MAX_OBS_FOR_TASK = 3;
+
     protected $title = '';
     protected $description = 'Somos una empresa altamente competitiva en cuanto a diseño, fabricación y servicios de carpintería y ebanistería. Ofrecer excelente calidad en productos de línea clásica, innovadora y de arte sacro a nivel comercial, residencial e institucional.';
     protected $logoSocial = 'logo-social.png';

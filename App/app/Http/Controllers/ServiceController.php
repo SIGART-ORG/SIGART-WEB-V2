@@ -576,6 +576,8 @@ class ServiceController extends Controller
         $id = $request->id ? $request->id : 0;
         $file = $request->hasFile( 'voucherFile' ) ? $request->file( 'voucherFile' ) : null;
         $orderPayTemp = $request->orderPayTemp ? $request->orderPayTemp : 0;
+        $nunOper = $request->numOper ? $request->numOper : '';
+        $mount = $request->mount ? $request->mount : 0;
 
         $type = 0;
         switch( $orderPayTemp ) {
@@ -601,6 +603,8 @@ class ServiceController extends Controller
                     $attachment->name = $nameImage;
                     $attachment->file = $newImage;
                     $attachment->type = $type;
+                    $attachment->number_operation = $nunOper;
+                    $attachment->mount = $mount;
                     if( $attachment->save() ) {
                         $response['status'] = true;
                         $response['msg'] = 'OK.';

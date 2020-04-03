@@ -65,6 +65,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get( '/task/{task}/observations', 'TaskObservedController@listObservations' );
 
         Route::post( '/{id}/upload-voucher', 'ServiceController@uploadVoucher' );
+        Route::get( '/{id}/vouchers', 'ServiceAttachmentController@listServiceAttachment' );
     });
 
     Route::get( '/products', 'ProductController@getProducts' );

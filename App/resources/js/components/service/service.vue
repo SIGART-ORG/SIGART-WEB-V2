@@ -71,7 +71,7 @@
                         <br v-if="item.referenceTerm.approved === 0">
                         <span v-if="item.orderPay === 1 || item.orderPay === 3" class="badge badge-warning">Pendiento de pago</span>
                         <div class="mw-100 d-flex justify-content-around">
-                            <a href="javascript:;" class="text-info w-100">{{ item.voucherFiles }} voucher(s)</a>
+                            <a href="javascript:;" class="text-info w-100" @click="openModalVoucher( item )">{{ item.voucherFiles }} voucher(s)</a>
                         </div>
                         <div class="mw-100 d-flex justify-content-around">
                             <button type="button" class="btn btn-xs btn-outline-info" @click.prevent="modalUploadVoucher( item.id, item.orderPay )">
@@ -86,12 +86,35 @@
         <b-modal ref="upload" hide-footer :title="modalTitle" size="md" @ok="uploadVoucher" @hide="closeModal" @cancel="closeModal">
             <ValidationObserver ref="uploadVoucher" v-slot="{ invalid }">
                 <form>
+                    <diiv class="form-group">
+                        <span class="text-secondary"><i class="fa fa-exclamation-triangle"></i> Subir el voucher de pago de servicio.</span>
+                    </diiv>
                     <div class="form-group">
-                        <label>Voucher</label>
+                        <label>N° Operación<strong class="text-danger">(*)</strong></label>
+                        <ValidationProvider name="N° Operación" rules="required|min:5" v-slot="{ errors }">
+                            <input type="text" v-model="numOperTemp" class="form-control">
+                            <span class="text-danger">{{ errors[0] }}</span>
+                        </ValidationProvider>
+                    </div>
+                    <div class="form-group">
+                        <label>Monto<strong class="text-danger">(*)</strong></label>
+                        <ValidationProvider name="Monto" rules="required|min_value:1" v-slot="{ errors }">
+                            <input type="text" v-model="mountTemp" class="form-control">
+                            <span class="text-danger">{{ errors[0] }}</span>
+                        </ValidationProvider>
+                    </div>
+                    <div class="form-group">
+                        <label>Voucher<strong class="text-danger">(*)</strong></label>
                         <ValidationProvider name="voucher" rules="required|image" v-slot="{ errors, validate }">
                             <input type="file" class="form-control" @change="validateImage( $event ) || validate( $event )">
                             <span class="text-danger">{{ errors[0] }}</span>
                         </ValidationProvider>
+                    </div>
+                    <div class="form-group">
+                        <label>Leyenda:</label>
+                        <div class="form-control-feedback  rounded">
+                            <p class="font-italic"><strong class="text-danger">(*)</strong> Campo requerido</p>
+                        </div>
                     </div>
                     <div class="form-group">
                         <b-button class="mt-2" variant="outline-info" :disabled="!!( invalid || blockButton )" block @click="uploadVoucher( $event )">Subir voucher</b-button>
@@ -99,6 +122,36 @@
                     </div>
                 </form>
             </ValidationObserver>
+        </b-modal>
+        <b-modal ref="upload-voucher" hide-footer :title="modalTitle" size="lg" @cancel="closeModalVochers">
+            <table class="table table-responsive product-dashboard-table">
+                <thead>
+                <tr>
+                    <th>Item</th>
+                    <th class="text-center">Nombre</th>
+                    <th class="text-center">Archivo</th>
+                    <th class="text-center">Estado</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-if="vouchers.length > 0" v-for="( e, i ) in vouchers" :key="e.id">
+                    <td v-text="i + 1"></td>
+                    <td v-text="e.name"></td>
+                    <td>
+                        <a v-if="e.file.length > 0" :href="e.file" target="_blank" class="text-info">
+                            <i class="fa fa-link"></i> Ver archivo
+                        </a>
+                        <span v-else>---</span>
+                    </td>
+                    <td>
+                        <span v-if="e.valid === 0" class="badge badge-info">Por Validar</span>
+                        <span v-if="e.valid === 1" class="badge badge-success">Validado</span>
+                        <span v-if="e.valid === 2" class="badge badge-danger">Incorrecto</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <b-button class="mt-3" variant="outline-danger" block @click="closeModalVochers">Cerrar</b-button>
         </b-modal>
     </div>
 </template>
@@ -119,11 +172,16 @@
                 blockButton: true,
                 idServiceTemp: 0,
                 orderPayTemp: 0,
+                numOperTemp: '',
+                mountTemp: 0
             }
         },
         computed: {
             services() {
                 return this.$store.state.Service.services;
+            },
+            vouchers() {
+                return this.$store.state.Service.vouchers;
             }
         },
         methods: {
@@ -200,6 +258,8 @@
             uploadVoucher() {
                 let idServiceTemp = this.idServiceTemp;
                 let orderPayTemp = this.orderPayTemp;
+                let numOper = this.numOperTemp;
+                let mount = this.mountTemp;
                 this.$store.commit(
                     'SET_FILE_VOUCHER',
                     { value: this.imageInput }
@@ -208,7 +268,9 @@
                     type: 'uploadVoucher',
                     data: {
                         idService: idServiceTemp,
-                        orderPayTemp: orderPayTemp
+                        orderPayTemp: orderPayTemp,
+                        numOper: numOper,
+                        mount: mount
                     }
                 }).then( response => {
                     let result = response.data;
@@ -232,7 +294,23 @@
                 this.modalTitle = '';
                 this.idServiceTemp = 0;
                 this.orderPayTemp = 0;
+                this.numOperTemp = '';
+                this.mountTemp = 0;
                 this.$refs['upload'].hide();
+            },
+            closeModalVochers() {
+                this.$refs['upload-voucher'].hide();
+            },
+            openModalVoucher( data ) {
+                let idServiceTemp = data.id;
+                this.$store.dispatch({
+                    type: 'loadVouchers',
+                    data: {
+                        idService: idServiceTemp,
+                    }
+                });
+                this.modalTitle = data.document + ' - Vouchers de Pagos';
+                this.$refs['upload-voucher'].show();
             }
         }
     }
