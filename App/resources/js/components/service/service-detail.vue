@@ -227,8 +227,9 @@
                         <label for="observation" class="sr-only">Observación</label>
                         <ValidationProvider name="descripción" rules="required" v-slot="{ errors }">
                             <textarea v-model="formObservation.observation" class="form-control" id="observation" aria-describedby="observationHelp" placeholder="Observación"></textarea>
-                            <small id="observationHelp" class="form-text text-muted text-danger">{{ errors[0] }}</small>
+                            <small id="observationHelp" class="form-text text-danger">{{ errors[0] }}</small>
                         </ValidationProvider>
+                        <small v-if="msgError !== ''" class="form-text text-danger">{{ msgError }}</small>
                     </div>
                     <b-button class="mt-3" variant="outline-danger" block :disabled="invalid" @click.prevent="sendObservation">Enviar Observación</b-button>
                     <b-button class="mt-2" variant="outline-secondary" block @click="closeModal">Cancelar</b-button>
@@ -288,6 +289,7 @@
         data() {
             return {
                 modalTitle: '',
+                msgError: ''
             }
         },
         computed: {
@@ -353,6 +355,8 @@
                             showConfirmButton: false,
                             timer: 2500
                         })
+                    } else {
+                        this.msgError = result.msg;
                     }
                 }).catch( errors => {
                     console.log( errors );
@@ -372,6 +376,7 @@
             },
             closeModalObservation() {
                 this.modalTitle = '';
+                this.msgError = '';
                 this.CLEAR_OBSERVATIONS();
             },
             taskApproved( task, name ) {

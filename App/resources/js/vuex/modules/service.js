@@ -48,7 +48,8 @@ export default {
         attachmentServiceRequest: null,
         attachment: null,
         typeSave: 'save',
-        voucherTemp: {}
+        voucherTemp: {},
+        vouchers: []
     },
 
     getters:{
@@ -125,6 +126,9 @@ export default {
         },
         SET_FILE_VOUCHER( state, payload ) {
             state.voucherTemp = payload.value;
+        },
+        LOAD_VOUCHERS( state, data ) {
+            state.vouchers = data;
         },
     },
 
@@ -247,6 +251,8 @@ export default {
                 let formData = new FormData();
                 formData.append('voucherFile', state.voucherTemp );
                 formData.append('orderPayTemp', params.orderPayTemp );
+                formData.append('numOper', params.numOper );
+                formData.append('mount', params.mount );
                 axios.post( url, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -265,6 +271,16 @@ export default {
                     reject( errors );
                 });
             });
-        }
+        },
+        loadVouchers( { commit }, parameters ) {
+            let params = parameters.data;
+            let url = '/service/' + params.idService + '/vouchers/';
+            axios.get( url ).then( response => {
+                let result = response.data;
+                if( result.status ) {
+                    commit( 'LOAD_VOUCHERS', result.attachments );
+                }
+            });
+        },
     }
 }
