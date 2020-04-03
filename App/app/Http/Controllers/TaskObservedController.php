@@ -19,17 +19,23 @@ class TaskObservedController extends Controller
 
         $task = Task::find( $taskID );
         if( $task ) {
-            $observation = new TaskObserved();
-            $observation->tasks_id =  $taskID;
-            $observation->name =  $this->generateName( $taskID );
-            $observation->description = $description;
-            if( $observation->save() ) {
-                $task->status = 5;
-                $task->date_observed = date( 'Y-m-d H:i:s' );
-                if( $task->save() ) {
-                    $response['status'] = true;
-                    $response['msg'] = 'OK.';
+            if( $task->count_observerds < self::MAX_OBS_FOR_TASK ) {
+                $observation = new TaskObserved();
+                $observation->tasks_id = $taskID;
+                $observation->name = $this->generateName($taskID);
+                $observation->description = $description;
+                if ($observation->save()) {
+                    $task->status = 5;
+                    $task->date_observed = date('Y-m-d H:i:s');
+                    $task->count_observerds += 1;
+                    $task->date_last_observed = date('Y-m-d');
+                    if ($task->save()) {
+                        $response['status'] = true;
+                        $response['msg'] = 'OK.';
+                    }
                 }
+            } else {
+                $response['msg'] = 'Se superó el número máximo(' . self::MAX_OBS_FOR_TASK . ') de observaciones por tarea.';
             }
         }
 
