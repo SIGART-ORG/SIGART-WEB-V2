@@ -20,21 +20,19 @@
                     </div>
                 </div>
             </div>
-            <h2>Tareas</h2>
-            <h3>Por Iniciar <strong>({{ taskToStart.total }})</strong></h3>
+            <h2>Etapas</h2>
+            <h3>Por Iniciar <strong>({{ stageToStart.total }})</strong></h3>
             <table class="table table-responsive product-dashboard-table service-detail__table">
                 <thead>
                 <tr>
                     <th>Item</th>
-                    <th>Tarea</th>
                     <th>Descripción</th>
                     <th>Trabajadores</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-if="taskToStart.total > 0" v-for="( e, i ) in taskToStart.records" :key="e.id">
+                <tr v-if="stageToStart.total > 0" v-for="( e, i ) in stageToStart.records" :key="e.id">
                     <td class="item">{{ i + 1 }}</td>
-                    <td>{{ e.name }}</td>
                     <td>{{ e.description }}</td>
                     <td>
                         <ul v-if="e.users.total > 0">
@@ -44,21 +42,19 @@
                 </tr>
                 </tbody>
             </table>
-            <h3>En Proceso <strong>({{ taskInProcess.total }})</strong></h3>
+            <h3>En Proceso <strong>({{ stageInProcess.total }})</strong></h3>
             <table class="table table-responsive product-dashboard-table service-detail__table">
                 <thead>
                 <tr>
                     <th>Item</th>
-                    <th>Tarea</th>
                     <th>Descripción</th>
                     <th>Trabajadores</th>
                     <th>Inicio</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-if="taskInProcess.total > 0" v-for="( e, i ) in taskInProcess.records" :key="e.id">
+                <tr v-if="stageInProcess.total > 0" v-for="( e, i ) in stageInProcess.records" :key="e.id">
                     <td class="item">{{ i + 1 }}</td>
-                    <td>{{ e.name }}</td>
                     <td>
                         {{ e.description }}
                         <div class="content-obsevarvations">
@@ -82,12 +78,11 @@
                 </tr>
                 </tbody>
             </table>
-            <h3>Terminado <strong>({{ taskFinished.total }})</strong></h3>
+            <h3>Terminado <strong>({{ stageFinished.total }})</strong></h3>
             <table class="table table-responsive product-dashboard-table service-detail__table">
                 <thead>
                 <tr>
                     <th>Item</th>
-                    <th>Tarea</th>
                     <th>Descripción</th>
                     <th>Trabajadores</th>
                     <th>Inicio</th>
@@ -96,9 +91,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-if="taskFinished.total > 0" v-for="( e, i ) in taskFinished.records" :key="e.id">
+                <tr v-if="stageFinished.total > 0" v-for="( e, i ) in stageFinished.records" :key="e.id">
                     <td class="item">{{ i + 1 }}</td>
-                    <td>{{ e.name }}</td>
                     <td>
                         {{ e.description }}
                         <div class="content-obsevarvations">
@@ -121,7 +115,7 @@
                     <td>{{ e.start }}</td>
                     <td>{{ e.end }}</td>
                     <td class="action">
-                        <ul class="list-inline justify-content-around">
+                        <ul class="list-inline justify-content-around" v-if="isValidateCustomer">
                             <li class="list-inline-item">
                                 <a class="view" @click="taskApproved( e.id, e.name )">
                                     <i class="fa fa-check"></i>
@@ -137,21 +131,19 @@
                 </tr>
                 </tbody>
             </table>
-            <h3>Tareas en observación <strong>({{ taskObserved.total }})</strong></h3>
+            <h3>Tareas en observación <strong>({{ stageObserved.total }})</strong></h3>
             <table class="table table-responsive product-dashboard-table service-detail__table">
                 <thead>
                 <tr>
                     <th>Item</th>
-                    <th>Tarea</th>
                     <th>Descripción</th>
                     <th>Trabajadores</th>
                     <th>Observaciones</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-if="taskObserved.total > 0" v-for="( e, i ) in taskObserved.records" :key="e.id">
+                <tr v-if="stageObserved.total > 0" v-for="( e, i ) in stageObserved.records" :key="e.id">
                     <td class="item">{{ i + 1 }}</td>
-                    <td>{{ e.name }}</td>
                     <td>{{ e.description }}</td>
                     <td>
                         <ul v-if="e.users.total > 0">
@@ -177,12 +169,11 @@
                 </tr>
                 </tbody>
             </table>
-            <h3>Tareas Finalizadas <strong>({{ taskFinalized.total }})</strong></h3>
+            <h3>Tareas Finalizadas <strong>({{ stageFinalized.total }})</strong></h3>
             <table class="table table-responsive product-dashboard-table service-detail__table">
                 <thead>
                 <tr>
                     <th>Item</th>
-                    <th>Tarea</th>
                     <th>Descripción</th>
                     <th>Trabajadores</th>
                     <th>Inicio</th>
@@ -191,9 +182,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-if="taskFinalized.total > 0" v-for="( e, i ) in taskFinalized.records" :key="e.id">
+                <tr v-if="stageFinalized.total > 0" v-for="( e, i ) in stageFinalized.records" :key="e.id">
                     <td class="item">{{ i + 1 }}</td>
-                    <td>{{ e.name }}</td>
                     <td>
                         {{ e.description }}
                         <div class="content-obsevarvations">
@@ -281,6 +271,7 @@
     import Swal from 'sweetalert2';
     import 'sweetalert2/src/sweetalert2.scss';
     import 'vue-datetime/dist/vue-datetime.css';
+    import Observed from "../../vuex/modules/observed";
     export default {
         name: "service-detail",
         created() {
@@ -298,49 +289,54 @@
                     return this.$store.state.Service.serviceDetail;
                 }
             },
-            taskToStart: {
+            stageToStart: {
                 get:function() {
-                    return this.$store.state.Service.tasks.toStart;
+                    return this.$store.state.Service.stages.toStart;
                 }
             },
-            taskInProcess: {
+            stageInProcess: {
                 get:function() {
-                    return this.$store.state.Service.tasks.inProcess;
+                    return this.$store.state.Service.stages.inProcess;
                 }
             },
-            taskFinished: {
+            stageFinished: {
                 get:function() {
-                    return this.$store.state.Service.tasks.finished;
+                    return this.$store.state.Service.stages.finished;
                 }
             },
-            taskObserved: {
+            stageObserved: {
                 get:function() {
-                    return this.$store.state.Service.tasks.observed;
+                    return this.$store.state.Service.stages.observed;
                 }
             },
-            taskFinalized: {
+            stageFinalized: {
                 get:function() {
-                    return this.$store.state.Service.tasks.finalized;
+                    return this.$store.state.Service.stages.finalized;
+                }
+            },
+            isValidateCustomer: {
+                get: function() {
+                    return this.$store.state.Service.isValidateCustomer;
                 }
             },
             formObservation: {
                 get: function () {
-                    return this.$store.state.Task.formObservation;
+                    return this.$store.state.Observed.formObservation;
                 },
                 set: function( newValue ) {
-                    this.$store.state.Task.formObservation = newValue;
+                    this.$store.state.Observed.formObservation = newValue;
                 }
             },
             observations: {
                 get: function() {
-                    return this.$store.state.Task.observations;
+                    return this.$store.state.Observed.observations;
                 }
             },
         },
         methods: {
-            ...mapMutations(['CLEAR_FORM_OBSERVATION', 'CHANGE_TASK_ID', 'CLEAR_OBSERVATIONS']),
+            ...mapMutations(['CLEAR_FORM_OBSERVATION', 'CHANGE_STAGE_ID', 'CLEAR_OBSERVATIONS']),
             showModal( id ) {
-                this.CHANGE_TASK_ID( id );
+                this.CHANGE_STAGE_ID( id );
                 this.$refs['my-modal'].show();
             },
             sendObservation() {
@@ -366,9 +362,9 @@
                 this.$refs['my-modal'].hide();
                 this.CLEAR_FORM_OBSERVATION();
             },
-            openObervations( task, name ) {
+            openObervations( stage, name ) {
                 this.modalTitle = name + ' - Observaciones';
-                this.CHANGE_TASK_ID( task );
+                this.CHANGE_STAGE_ID( stage );
                 this.$store.dispatch( 'observations' ).catch( errors => {
                     console.log( errors );
                 });

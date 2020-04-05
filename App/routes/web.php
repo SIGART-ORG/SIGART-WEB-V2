@@ -60,9 +60,9 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post( '/service-order-action/', 'ServiceController@approvedSO' )->name('service.service-order.approved');
 
         Route::get( '/{id}/detail/all', 'ServiceController@detailAll' );
-        Route::post( '/task/{task}/observation', 'TaskObservedController@store' );
+        Route::post( '/stage/{stage}/observation', 'StageObservedController@store' );
         Route::post( '/task/{task}/approved', 'TaskController@approved' );
-        Route::get( '/task/{task}/observations', 'TaskObservedController@listObservations' );
+        Route::get( '/stage/{stage}/observations', 'StageObservedController@listObservations' );
 
         Route::post( '/{id}/upload-voucher', 'ServiceController@uploadVoucher' );
         Route::get( '/{id}/vouchers', 'ServiceAttachmentController@listServiceAttachment' );

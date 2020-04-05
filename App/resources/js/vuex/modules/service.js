@@ -10,7 +10,7 @@ export default {
             trafficLight: 0,
             percent: 0,
         },
-        tasks: {
+        stages: {
             toStart: {
                 total: 0,
                 records: [],
@@ -32,6 +32,7 @@ export default {
                 records: [],
             }
         },
+        isValidateCustomer: false,
         serviceRequests: [],
         serviceRequestDetails: [],
         arrDetServiceRequest: [],
@@ -122,7 +123,8 @@ export default {
             state.serviceDetail.total = data.total;
             state.serviceDetail.trafficLight = data.project.trafficLight;
             state.serviceDetail.percent = data.project.percent;
-            state.tasks = data.project.tasks;
+            state.stages = data.project.stages;
+            state.isValidateCustomer = data.project.isValidateCustomer;
         },
         SET_FILE_VOUCHER( state, payload ) {
             state.voucherTemp = payload.value;

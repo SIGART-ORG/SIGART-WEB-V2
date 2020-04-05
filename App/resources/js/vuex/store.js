@@ -8,6 +8,7 @@ import StaticData from './modules/static';
 import Customer from './modules/customer.js'
 import SaleQuotation from './modules/sale-quotation';
 import Task from './modules/task';
+import Observed from './modules/observed';
 
 Vue.use( Vuex );
 
@@ -19,6 +20,7 @@ export default new Vuex.Store({
         StaticData,
         Customer,
         SaleQuotation,
-        Task
+        Task,
+        Observed
     }
 });
