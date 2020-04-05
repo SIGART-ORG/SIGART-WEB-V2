@@ -18,6 +18,10 @@ class ServiceStage extends Model
         return $this->hasMany( 'App\Models\Task', 'service_stages_id', 'id' );
     }
 
+    public function observeds() {
+        return $this->hasMany( 'App\Models\StageObserved', 'service_stages_id', 'id' );
+    }
+
     public static function setStateStage( $id ) {
         $stage = self::find( $id );
 
@@ -28,6 +32,7 @@ class ServiceStage extends Model
             ->pluck('total','status')->all();
 
         $status = 1;
+        $total = 0;
         $statusArreglo = [
             1 => 0,
             3 => 0,
@@ -36,18 +41,33 @@ class ServiceStage extends Model
             6 => 0
         ];
 
-        foreach ( $tasks as $idx => $task ) {
-            $statusArreglo[$idx] = $task;
+        if( $total > 0 ) {
+            if ($statusArreglo[1] === $total) {
+                $status = 1;
+            }
+
+            if ($statusArreglo[4] === $total) {
+                $status = 4;
+            }
+
+            if ($statusArreglo[6] === $total) {
+                $status = 6;
+            }
+
+            if ($statusArreglo[3] > 0) {
+                $status = 3;
+            }
+
+            if ($statusArreglo[5] > 0) {
+                $status = 5;
+            }
+        }
+        $countObs = $stage->observeds->where( 'status', 1 )->count();
+        if( $countObs > 0 ) {
+            $status = 5;
         }
 
-        if( $statusArreglo[3] > 0 || $statusArreglo[4] > 0 || $statusArreglo[5] > 0 ) {
-            $status = 3;
-        }
-
-        if( $statusArreglo[6] > 0 && ( $statusArreglo[3] === 0 && $statusArreglo[4] === 0 && $statusArreglo[5] === 0 ) ) {
-            $status = 4;
-        }
-
+        StageStatusDate::generateStatus( $id, $stage->status, $status );
         $stage->status = $status;
         $stage->save();
 
