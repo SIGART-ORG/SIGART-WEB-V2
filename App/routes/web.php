@@ -61,11 +61,13 @@ Route::group(['middleware' => ['auth']], function(){
 
         Route::get( '/{id}/detail/all', 'ServiceController@detailAll' );
         Route::post( '/stage/{stage}/observation', 'StageObservedController@store' );
-        Route::post( '/task/{task}/approved', 'TaskController@approved' );
+        Route::post( '/stage/{stage}/approved', 'ServiceStageController@approved' );
         Route::get( '/stage/{stage}/observations', 'StageObservedController@listObservations' );
 
         Route::post( '/{id}/upload-voucher', 'ServiceController@uploadVoucher' );
         Route::get( '/{id}/vouchers', 'ServiceAttachmentController@listServiceAttachment' );
+
+        Route::post( '/observation/{id}/approved/', 'StageObservedController@approvedReply' );
     });
 
     Route::get( '/products', 'ProductController@getProducts' );

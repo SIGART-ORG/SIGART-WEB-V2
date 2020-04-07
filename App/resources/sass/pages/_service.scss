@@ -105,3 +105,119 @@
         justify-content: space-around;
     }
 }
+
+.information {
+    &__warning {
+        font-style: italic;
+        font-size: 14px;
+        text-align: justify;
+        padding: 10px;
+        background-color: #FFF3CD;
+        border-radius: .30rem;
+        border: 1px solid $red2;
+        .fa {
+            color: $yellow;
+            font-size: 20px;
+            margin-right: 5px;
+        }
+    }
+}
+
+.reply {
+    &__content {
+        max-width: 100%;
+        background-color: $blue-light;
+        margin: 10px 15px;
+        padding: 10px 15px;
+        border-radius: .30rem;
+        border: 2px solid $blue-dark;
+
+        .title {
+            width: 100%;
+            text-align: center;
+            color: $gray-light2;
+            max-width: 100%;
+            display: inline-block;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 16px;
+            @include maxw( $mb ) {
+                font-size: 12px;
+            }
+        }
+
+        .excerpt {
+            text-align: justify;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        .excerpt code {
+            font-style: initial;
+            font-size: 13px;
+            font-weight: bold;
+            background-color: $white;
+            border: 1px solid $pink2;
+        }
+
+        .excerpt .fa {
+            color: $blue-dark;
+            font-size: 20px;
+            margin-right: 5px;
+        }
+
+        .excerpt.mobile {
+            visibility: hidden;
+            display: none;
+            @include maxw( $mb ) {
+                visibility: visible;
+                display: block;
+            }
+        }
+
+        .excerpt.mobile .fa {
+            text-align: center;
+            border-bottom: 1px dotted $blue-dark;
+        }
+
+        .excerpt.desktop {
+            visibility: visible;
+            @include maxw( $mb ) {
+                visibility: hidden;
+            }
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+        }
+
+        .buttons button {
+            padding: 0.5em 3em;
+            display: inline-block;
+            border: 0.16em solid $blue-dark;
+            margin: 0 0.3em 0.3em 0;
+            box-sizing: border-box;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-family: 'Roboto',sans-serif;
+            font-weight: bold;
+            color: $blue-dark;
+            text-align: center;
+            transition: all 0.15s;
+            @include maxw( $mb ) {
+                display: block;
+                margin: 0;
+                font-size: 10px;
+                padding: 0.5em 0;
+            }
+        }
+
+        .buttons button:hover {
+            color: $blue-light;
+            background-color: $blue-dark;
+            border-color: $blue-dark;
+        }
+    }
+}

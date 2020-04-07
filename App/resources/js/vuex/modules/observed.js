@@ -1,6 +1,7 @@
 export default {
     state: {
         idStage: 0,
+        idObserved: 0,
         formObservation: {
             id: 0,
             observation: ''
@@ -18,6 +19,9 @@ export default {
         },
         CHANGE_STAGE_ID( state, newId ) {
             state.idStage = newId;
+        },
+        CHANGE_OBS_ID( state, newId ) {
+            state.idObserved = newId;
         },
         CLEAR_OBSERVATIONS( state ) {
             state.idStage = 0;
@@ -65,5 +69,23 @@ export default {
                 });
             });
         },
+        approvedReply({ commit, state }) {
+            return new Promise( ( resolve, reject ) => {
+                let url = '/service/observation/' + state.idObserved + '/approved/';
+                axios.post( url ).then(
+                    response => {
+                        if( response.status ) {
+                            commit( 'CHANGE_OBS_ID', 0 );
+                            resolve( response );
+                        }
+                        else {
+                            reject( response );
+                        }
+                    }
+                ).catch( errors => {
+                    reject( errors );
+                });
+            });
+        }
     }
 }

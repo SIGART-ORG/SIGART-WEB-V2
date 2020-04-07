@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ServiceStage;
 use App\Models\StageObserved;
 use App\Models\StageStatusDate;
+use App\Models\Task;
 use Illuminate\Http\Request;
 
 class StageObservedController extends Controller
@@ -34,6 +35,7 @@ class StageObservedController extends Controller
             $row->status = $dataObervation->status;
             $row->statusName = $this->getStatus( 'observation', $dataObervation->status );
             $row->badge = $this->getClassBadge( $dataObervation->status );
+            $row->isValidate = $dataObervation->is_validate_reply === 1 ? true : false;
             $response['observations'][] = $row;
         }
         return response()->json( $response );
@@ -77,5 +79,29 @@ class StageObservedController extends Controller
     private function generateName( $stage ) {
         $count = StageObserved::where( 'service_stages_id', $stage )->count();
         return 'OBS-' . $stage . '-' . ( $count + 1 );
+    }
+
+    public function approvedReply( Request $request ) {
+        $response = [
+            'status' => false,
+            'msg' => 'No se puede realizar la operación.'
+        ];
+
+        $id = $request->id ? $request->id : 0;
+        $observation = StageObserved::find( $id );
+        if(  $observation && $observation->status === 4 && $observation->is_validate_reply === 0 ) {
+            $observation->is_validate_reply = 1;
+            $observation->validate_date = date( 'Y-m-d H:i:s' );
+            if( $observation->save() ) {
+
+                Task::approvedAllTasksByStage( $observation->service_stages_id );
+                ServiceStage::setStateStage( $observation->service_stages_id );
+
+                $response['status'] = true;
+                $response['msg'] = 'OK.';
+            }
+        }
+
+        return response()->json( $response, 200 );
     }
 }
