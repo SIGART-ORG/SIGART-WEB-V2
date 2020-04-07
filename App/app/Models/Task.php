@@ -20,4 +20,10 @@ class Task extends Model
     public function taskObserveds() {
         return $this->hasMany( 'App\Models\TaskObserved', 'tasks_id', 'id' );
     }
+
+    public static function approvedAllTasksByStage( $stage, $status = 6 ) {
+        self::where( 'service_stages_id', $stage )
+            ->whereNotIn( 'status', [0,2] )
+            ->update(['status' => $status]);
+    }
 }

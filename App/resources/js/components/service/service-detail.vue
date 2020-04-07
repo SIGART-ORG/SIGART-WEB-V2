@@ -20,21 +20,19 @@
                     </div>
                 </div>
             </div>
-            <h2>Tareas</h2>
-            <h3>Por Iniciar <strong>({{ taskToStart.total }})</strong></h3>
+            <h2>Etapas</h2>
+            <h3>Por Iniciar <strong>({{ stageToStart.total }})</strong></h3>
             <table class="table table-responsive product-dashboard-table service-detail__table">
                 <thead>
                 <tr>
                     <th>Item</th>
-                    <th>Tarea</th>
                     <th>Descripción</th>
                     <th>Trabajadores</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-if="taskToStart.total > 0" v-for="( e, i ) in taskToStart.records" :key="e.id">
+                <tr v-if="stageToStart.total > 0" v-for="( e, i ) in stageToStart.records" :key="e.id">
                     <td class="item">{{ i + 1 }}</td>
-                    <td>{{ e.name }}</td>
                     <td>{{ e.description }}</td>
                     <td>
                         <ul v-if="e.users.total > 0">
@@ -44,23 +42,26 @@
                 </tr>
                 </tbody>
             </table>
-            <h3>En Proceso <strong>({{ taskInProcess.total }})</strong></h3>
+            <h3>En Proceso <strong>({{ stageInProcess.total }})</strong></h3>
             <table class="table table-responsive product-dashboard-table service-detail__table">
                 <thead>
                 <tr>
                     <th>Item</th>
-                    <th>Tarea</th>
                     <th>Descripción</th>
                     <th>Trabajadores</th>
                     <th>Inicio</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-if="taskInProcess.total > 0" v-for="( e, i ) in taskInProcess.records" :key="e.id">
+                <tr v-if="stageInProcess.total > 0" v-for="( e, i ) in stageInProcess.records" :key="e.id">
                     <td class="item">{{ i + 1 }}</td>
-                    <td>{{ e.name }}</td>
                     <td>
                         {{ e.description }}
+                        <div class="content-obsevarvations" v-if="e.observeds.forApproved > 0">
+                            <a class="text-warning" href="javascript:;" @click.prevent="openObervations( e.id, e.name )">
+                                <i class="fa fa-info"></i>&nbsp;Tiene {{ e.observeds.denied }} respuesta(s) por validar.
+                            </a>
+                        </div>
                         <div class="content-obsevarvations">
                             <a v-if="e.observeds.sent > 0" class="text-warning" href="javascript:;" @click.prevent="openObervations( e.id, e.name )">
                                 <i class="fa fa-exclamation-triangle"></i>&nbsp;{{ e.observeds.sent }}
@@ -82,25 +83,27 @@
                 </tr>
                 </tbody>
             </table>
-            <h3>Terminado <strong>({{ taskFinished.total }})</strong></h3>
+            <h3>Terminado <strong>({{ stageFinished.total }})</strong></h3>
             <table class="table table-responsive product-dashboard-table service-detail__table">
                 <thead>
                 <tr>
                     <th>Item</th>
-                    <th>Tarea</th>
                     <th>Descripción</th>
                     <th>Trabajadores</th>
-                    <th>Inicio</th>
-                    <th>Fin</th>
+                    <th>Registro</th>
                     <th>Validar</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-if="taskFinished.total > 0" v-for="( e, i ) in taskFinished.records" :key="e.id">
+                <tr v-if="stageFinished.total > 0" v-for="( e, i ) in stageFinished.records" :key="e.id">
                     <td class="item">{{ i + 1 }}</td>
-                    <td>{{ e.name }}</td>
                     <td>
                         {{ e.description }}
+                        <div class="content-obsevarvations" v-if="e.observeds.forApproved > 0">
+                            <a class="text-warning" href="javascript:;" @click.prevent="openObervations( e.id, e.name )">
+                                <i class="fa fa-info"></i>&nbsp;Tiene {{ e.observeds.denied }} respuesta(s) por validar.
+                            </a>
+                        </div>
                         <div class="content-obsevarvations">
                             <a v-if="e.observeds.sent > 0" class="text-warning" href="javascript:;" @click.prevent="openObervations( e.id, e.name )">
                                 <i class="fa fa-exclamation-triangle"></i>&nbsp;{{ e.observeds.sent }}
@@ -119,16 +122,15 @@
                         </ul>
                     </td>
                     <td>{{ e.start }}</td>
-                    <td>{{ e.end }}</td>
                     <td class="action">
-                        <ul class="list-inline justify-content-around">
+                        <ul class="list-inline justify-content-around" v-if="isValidateCustomer">
                             <li class="list-inline-item">
                                 <a class="view" @click="taskApproved( e.id, e.name )">
                                     <i class="fa fa-check"></i>
                                 </a>
                             </li>
                             <li class="list-inline-item">
-                                <a class="delete" @click.prevent="showModal( e.id )">
+                                <a class="delete" @click.prevent="showModal( e.id, e.observeds.total )">
                                     <i class="fa fa-close"></i>
                                 </a>
                             </li>
@@ -137,22 +139,27 @@
                 </tr>
                 </tbody>
             </table>
-            <h3>Tareas en observación <strong>({{ taskObserved.total }})</strong></h3>
+            <h3>Tareas en observación <strong>({{ stageObserved.total }})</strong></h3>
             <table class="table table-responsive product-dashboard-table service-detail__table">
                 <thead>
                 <tr>
                     <th>Item</th>
-                    <th>Tarea</th>
                     <th>Descripción</th>
                     <th>Trabajadores</th>
                     <th>Observaciones</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-if="taskObserved.total > 0" v-for="( e, i ) in taskObserved.records" :key="e.id">
+                <tr v-if="stageObserved.total > 0" v-for="( e, i ) in stageObserved.records" :key="e.id">
                     <td class="item">{{ i + 1 }}</td>
-                    <td>{{ e.name }}</td>
-                    <td>{{ e.description }}</td>
+                    <td>
+                        {{ e.description }}
+                        <div class="content-obsevarvations" v-if="e.observeds.forApproved > 0">
+                            <a class="text-warning" href="javascript:;" @click.prevent="openObervations( e.id, e.name )">
+                                <i class="fa fa-info"></i>&nbsp;Tiene {{ e.observeds.denied }} respuesta(s) por validar.
+                            </a>
+                        </div>
+                    </td>
                     <td>
                         <ul v-if="e.users.total > 0">
                             <li v-for="u in e.users.records" :key="u.id">{{ u.name }}</li>
@@ -160,7 +167,7 @@
                     </td>
                     <td>
                         <div class="content-obsevarvations">
-                            <a class="text-primary" href="javascript:;" @click.prevent="showModal( e.id )">
+                            <a class="text-primary" href="javascript:;" @click.prevent="showModal( e.id, e.observeds.total )">
                                 <i class="fa fa-plus"></i> Observación
                             </a>
                             <a v-if="e.observeds.sent > 0" class="text-warning" href="javascript:;" @click.prevent="openObervations( e.id, e.name )">
@@ -177,12 +184,11 @@
                 </tr>
                 </tbody>
             </table>
-            <h3>Tareas Finalizadas <strong>({{ taskFinalized.total }})</strong></h3>
+            <h3>Tareas Finalizadas <strong>({{ stageFinalized.total }})</strong></h3>
             <table class="table table-responsive product-dashboard-table service-detail__table">
                 <thead>
                 <tr>
                     <th>Item</th>
-                    <th>Tarea</th>
                     <th>Descripción</th>
                     <th>Trabajadores</th>
                     <th>Inicio</th>
@@ -191,9 +197,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-if="taskFinalized.total > 0" v-for="( e, i ) in taskFinalized.records" :key="e.id">
+                <tr v-if="stageFinalized.total > 0" v-for="( e, i ) in stageFinalized.records" :key="e.id">
                     <td class="item">{{ i + 1 }}</td>
-                    <td>{{ e.name }}</td>
                     <td>
                         {{ e.description }}
                         <div class="content-obsevarvations">
@@ -223,7 +228,20 @@
         <b-modal ref="my-modal" hide-footer title="Registrar observación" @hide="closeModal">
             <ValidationObserver ref="registerObervation" v-slot="{ invalid }">
                 <form>
-                    <div class="form-group">
+                    <div v-if="maxObs < 3" class="form-group information__warning">
+                        <i class="fa fa-exclamation-triangle"></i>Se le informa que por Etapa solo podrá ingresar un <strong class="text-danger">máximo
+                        de 3 observaciones</strong>, al finalizar el servicio tendrá un <strong class="text-danger">plazo máximo de 4 días</strong> para aprobar esta
+                        etapa de lo contrario se aprobará automáticamente.<br/>
+                        Observaciones enviadas: <strong>{{ maxObs }}</strong>
+                    </div>
+                    <div v-else class="form-group information__warning">
+                        <i class="fa fa-close"></i>La cantidad de <strong class="text-danger">observaciones ingresadas a sobrepasado el limite
+                        permitido</strong>, si no se encuentra conforme con la última respuesta a su observación, se le sugiere
+                        comunicarse con un representante de la empresa mediante cualquiera de los medios brindados,
+                        al finalizar el servicio tendrá un <strong class="text-danger">plazo máximo de 4 días</strong> para aprobar
+                        esta etapa de lo contrario se aprobará automáticamente, asumiendo que todo está conforme.
+                    </div>
+                    <div class="form-group" v-if="maxObs < 3">
                         <label for="observation" class="sr-only">Observación</label>
                         <ValidationProvider name="descripción" rules="required" v-slot="{ errors }">
                             <textarea v-model="formObservation.observation" class="form-control" id="observation" aria-describedby="observationHelp" placeholder="Observación"></textarea>
@@ -231,7 +249,7 @@
                         </ValidationProvider>
                         <small v-if="msgError !== ''" class="form-text text-danger">{{ msgError }}</small>
                     </div>
-                    <b-button class="mt-3" variant="outline-danger" block :disabled="invalid" @click.prevent="sendObservation">Enviar Observación</b-button>
+                    <b-button v-if="maxObs < 3" class="mt-3" variant="outline-danger" block :disabled="invalid" @click.prevent="sendObservation">Enviar Observación</b-button>
                     <b-button class="mt-2" variant="outline-secondary" block @click="closeModal">Cancelar</b-button>
                 </form>
             </ValidationObserver>
@@ -254,6 +272,24 @@
                     <td v-text="o.name"></td>
                     <td>
                         {{ o.description }}
+                        <div class="reply__content" v-if="o.status === 4 && !o.isValidate">
+                            <div class="title">Validación de recepción de respuesta</div>
+                            <div class="excerpt mobile">
+                                <i class="fa fa-info"></i>
+                            </div>
+                            <div class="excerpt desktop">
+                                <i class="fa fa-info"></i>Se le informa que respuesta a su observación fue enviada la fecha
+                                <code v-text="o.replyDate"></code>.<br/>
+                                Ud. <strong class="text-danger">tendrá un máximo de 4 días</strong>
+                                para validar la recepción de la misma, de lo contrario se validará automáticamente. Si no se encuentra conforme con la última respuesta a su observación, se le sugiere
+                                comunicarse con un representante de la empresa mediante cualquiera de los medios brindados
+                            </div>
+                            <div class="buttons">
+                                <button @click="taskApprovedReply( o )">
+                                    <i class="fa fa-check"></i> Validar recepción de respuesta
+                                </button>
+                            </div>
+                        </div>
                         <div v-if="o.reply" class="bd-callout" :class="o.status === 3 ? 'bd-callout-primary' : 'bd-callout-danger'">
                             <h6>Rpta:</h6>
                             <p v-if="typeof o.replyLong === 'undefined' || o.replyLong === false">
@@ -281,6 +317,7 @@
     import Swal from 'sweetalert2';
     import 'sweetalert2/src/sweetalert2.scss';
     import 'vue-datetime/dist/vue-datetime.css';
+    import Observed from "../../vuex/modules/observed";
     export default {
         name: "service-detail",
         created() {
@@ -289,7 +326,8 @@
         data() {
             return {
                 modalTitle: '',
-                msgError: ''
+                msgError: '',
+                maxObs: 0,
             }
         },
         computed: {
@@ -298,49 +336,55 @@
                     return this.$store.state.Service.serviceDetail;
                 }
             },
-            taskToStart: {
+            stageToStart: {
                 get:function() {
-                    return this.$store.state.Service.tasks.toStart;
+                    return this.$store.state.Service.stages.toStart;
                 }
             },
-            taskInProcess: {
+            stageInProcess: {
                 get:function() {
-                    return this.$store.state.Service.tasks.inProcess;
+                    return this.$store.state.Service.stages.inProcess;
                 }
             },
-            taskFinished: {
+            stageFinished: {
                 get:function() {
-                    return this.$store.state.Service.tasks.finished;
+                    return this.$store.state.Service.stages.finished;
                 }
             },
-            taskObserved: {
+            stageObserved: {
                 get:function() {
-                    return this.$store.state.Service.tasks.observed;
+                    return this.$store.state.Service.stages.observed;
                 }
             },
-            taskFinalized: {
+            stageFinalized: {
                 get:function() {
-                    return this.$store.state.Service.tasks.finalized;
+                    return this.$store.state.Service.stages.finalized;
+                }
+            },
+            isValidateCustomer: {
+                get: function() {
+                    return this.$store.state.Service.isValidateCustomer;
                 }
             },
             formObservation: {
                 get: function () {
-                    return this.$store.state.Task.formObservation;
+                    return this.$store.state.Observed.formObservation;
                 },
                 set: function( newValue ) {
-                    this.$store.state.Task.formObservation = newValue;
+                    this.$store.state.Observed.formObservation = newValue;
                 }
             },
             observations: {
                 get: function() {
-                    return this.$store.state.Task.observations;
+                    return this.$store.state.Observed.observations;
                 }
             },
         },
         methods: {
-            ...mapMutations(['CLEAR_FORM_OBSERVATION', 'CHANGE_TASK_ID', 'CLEAR_OBSERVATIONS']),
-            showModal( id ) {
-                this.CHANGE_TASK_ID( id );
+            ...mapMutations(['CLEAR_FORM_OBSERVATION', 'CHANGE_STAGE_ID', 'CLEAR_OBSERVATIONS', 'CHANGE_OBS_ID']),
+            showModal( id, numObs ) {
+                this.CHANGE_STAGE_ID( id );
+                this.maxObs = numObs;
                 this.$refs['my-modal'].show();
             },
             sendObservation() {
@@ -366,9 +410,9 @@
                 this.$refs['my-modal'].hide();
                 this.CLEAR_FORM_OBSERVATION();
             },
-            openObervations( task, name ) {
+            openObervations( stage, name ) {
                 this.modalTitle = name + ' - Observaciones';
-                this.CHANGE_TASK_ID( task );
+                this.CHANGE_STAGE_ID( stage );
                 this.$store.dispatch( 'observations' ).catch( errors => {
                     console.log( errors );
                 });
@@ -397,12 +441,12 @@
                     }
                 })
             },
-            sendApproved( task, name ) {
-                this.CHANGE_TASK_ID( task );
+            sendApproved( stage, name ) {
+                this.CHANGE_STAGE_ID( stage );
                 this.$store.dispatch( 'approved' ).then( response => {
-                    let result = response.data;
-                    if( result.status ) {
+                    if( response.status ) {
                         this.$store.dispatch( 'loadServiceDetail' );
+                        this.CHANGE_STAGE_ID( 0 );
                         Swal.fire({
                             type: 'success',
                             showCloseButton: true,
@@ -420,6 +464,31 @@
             },
             contractText( index ) {
                 this.observations[index].replyLong = false;
+            },
+            taskApprovedReply( data ){
+                let me = this;
+                Swal.fire({
+                    title: '<strong>Validar respuesta</strong>',
+                    type: 'question',
+                    html: '¿Esta a punto de validar la respuesta a tu observación <u>' + data.name + '</u>?',
+                    showCloseButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="fa fa-check-circle-o"></i> Aprobar',
+                    cancelButtonText: '<i class="fa fa-close"></i> Cancelar',
+                    confirmButtonColor: '#5672F9',
+                    cancelButtonColor: '#FF5252',
+                }).then((result) => {
+                    if( result.value ) {
+                        me.CHANGE_OBS_ID( data.id );
+                        me.$store.dispatch( 'approvedReply' ).then( response => {
+                            let resultReply = response.data;
+                            if( resultReply.status ) {
+                                me.$store.dispatch( 'observations' );
+                                me.$store.dispatch( 'loadServiceDetail' );
+                            }
+                        });
+                    }
+                })
             }
         }
     }

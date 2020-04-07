@@ -1,0 +1,16 @@
+$xs: 576px;
+$mb: 768px;
+$tbl: 992px;
+$dkt: 1200px;
+
+@mixin minw( $breakpoint ) {
+    @media ( min-width: $breakpoint ) {
+        @content;
+    }
+}
+
+@mixin maxw( $breakpoint ) {
+    @media ( max-width: $breakpoint ) {
+        @content;
+    }
+}

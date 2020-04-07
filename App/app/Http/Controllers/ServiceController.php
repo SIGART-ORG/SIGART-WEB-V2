@@ -316,7 +316,7 @@ class ServiceController extends Controller
 
 
         foreach( $services as $service ) {
-            $dataTasks = $this->getTasKs( $service, true );
+            $dataTasks = $this->getStages( $service, true );
 
             $row = new \stdClass();
             $row->id = $service->id;
@@ -348,7 +348,7 @@ class ServiceController extends Controller
             $row->project = new \stdClass();
             $row->project->trafficLight = $dataTasks['trafficLight'];
             $row->project->percent = $dataTasks['percent'];
-            $row->project->tasks = $dataTasks['tasks'];
+            $row->project->tasks = $dataTasks['stage'];
 
             $response['services'][] = $row;
         }
@@ -413,7 +413,7 @@ class ServiceController extends Controller
         $service = Service::find( $id );
 
         if( $service ) {
-            $dataTasks = $this->getTasKs( $service );
+            $dataStage = $this->getStages( $service );
 
             $data = new \stdClass();
             $data->id = $service->id;
@@ -422,9 +422,10 @@ class ServiceController extends Controller
             $data->end = $this->getDate( $service->end_date );
             $data->total = $service->total;
             $data->project = new \stdClass();
-            $data->project->trafficLight = $dataTasks['trafficLight'];
-            $data->project->percent = $dataTasks['percent'];
-            $data->project->tasks = $dataTasks['tasks'];
+            $data->project->trafficLight = $dataStage['trafficLight'];
+            $data->project->percent = $dataStage['percent'];
+            $data->project->isValidateCustomer = $dataStage['isValidateCustomer'];
+            $data->project->stages = $dataStage['stage'];
 
             $response['status'] = true;
             $response['service'] = $data;
@@ -433,7 +434,9 @@ class ServiceController extends Controller
         return response()->json( $response );
     }
 
-    public function getTasKs( $service, $onlyTotal = false ) {
+    private function getStages( $service, $onlyTotal = false ) {
+
+        $isValidateCustomer = false;
 
         $stageTask = [
             0 => 0,/*Total*/
@@ -444,7 +447,7 @@ class ServiceController extends Controller
             5 => 0,/*finalized*/
         ];
 
-        $tasks = [
+        $stagesSummary = [
             'toStart' => ['total' => 0, 'records' => []],
             'inProcess' => ['total' => 0, 'records' => []],
             'finished' => ['total' => 0, 'records' => []],
@@ -453,59 +456,64 @@ class ServiceController extends Controller
         ];
 
         $stages = $service->serviceStages->whereNotIn('status', [0,2]);
-
         foreach ( $stages as $stage ) {
             $dataTasks = $stage->tasks->whereNotIn('status', [0,2]);
 
+            $users = [
+                'total' => 0,
+                'records' => []
+            ];
             foreach ( $dataTasks as $data_task ) {
-                $row = new \stdClass();
-                if( !$onlyTotal ) {
-                    $row->id = $data_task->id;
-                    $row->stage = $stage->name;
-                    $row->name = $data_task->name;
-                    $row->description = $data_task->description;
-                    $row->status = $data_task->status;
-                    $row->statusName = $this->getStatus('task', $data_task->status);
-                    $row->users = $this->assignedWorkers($data_task);
-                    $row->start = $this->getDateComplete($data_task->date_start);
-                    $row->end = $this->getDateComplete($data_task->date_end);
-                    $row->observed = $this->getDateComplete($data_task->date_observed);
-                    $row->validate = $this->getDateComplete($data_task->date_validate_customer);
-                    $row->observeds = $this->observeds($data_task);
-                }
+                $users['records'] = $this->assignedWorkers($data_task, $users['records']);
+            }
+            $users['total'] = count( $users['records'] );
 
-                switch ( $data_task->status ) {
-                    case 1:
-                        $tasks['toStart']['total']++;
-                        $tasks['toStart']['records'][] = $row;
-                        $stageTask[0]++;
-                        $stageTask[1]++;
-                        break;
-                    case 3:
-                        $tasks['inProcess']['total']++;
-                        $tasks['inProcess']['records'][] = $row;
-                        $stageTask[0]++;
-                        $stageTask[2]++;
-                        break;
-                    case 4:
-                        $tasks['finished']['total']++;
-                        $tasks['finished']['records'][] = $row;
-                        $stageTask[0]++;
-                        $stageTask[3]++;
-                        break;
-                    case 5:
-                        $tasks['observed']['total']++;
-                        $tasks['observed']['records'][] = $row;
-                        $stageTask[0]++;
-                        $stageTask[4]++;
-                        break;
-                    case 6:
-                        $tasks['finalized']['total']++;
-                        $tasks['finalized']['records'][] = $row;
-                        $stageTask[0]++;
-                        $stageTask[5]++;
-                        break;
-                }
+            $row = new \stdClass();
+            if( !$onlyTotal ) {
+                $dateStage = $this->stageStartAndEnd( $stage );
+
+                $row->id = $stage->id;
+                $row->name = $stage->name;
+                $row->description = $stage->description;
+                $row->status = $stage->status;
+                $row->statusName = $this->getStatus('stage', $stage->status);
+                $row->start = $dateStage->start;
+                $row->end = $dateStage->end;
+                $row->users = $users;
+                $row->observeds = $this->observeds( $stage );
+            }
+
+            switch ( $stage->status ) {
+                case 1:
+                    $stagesSummary['toStart']['total']++;
+                    $stagesSummary['toStart']['records'][] = $row;
+                    $stageTask[0]++;
+                    $stageTask[1]++;
+                    break;
+                case 3:
+                    $stagesSummary['inProcess']['total']++;
+                    $stagesSummary['inProcess']['records'][] = $row;
+                    $stageTask[0]++;
+                    $stageTask[2]++;
+                    break;
+                case 4:
+                    $stagesSummary['finished']['total']++;
+                    $stagesSummary['finished']['records'][] = $row;
+                    $stageTask[0]++;
+                    $stageTask[3]++;
+                    break;
+                case 5:
+                    $stagesSummary['observed']['total']++;
+                    $stagesSummary['observed']['records'][] = $row;
+                    $stageTask[0]++;
+                    $stageTask[4]++;
+                    break;
+                case 6:
+                    $stagesSummary['finalized']['total']++;
+                    $stagesSummary['finalized']['records'][] = $row;
+                    $stageTask[0]++;
+                    $stageTask[5]++;
+                    break;
             }
         }
 
@@ -534,36 +542,70 @@ class ServiceController extends Controller
             }
         }
 
+        if( $stageTask[0] > 0 && ( $stageTask[0] - $stageTask[4] - $stageTask[5] ) === $stageTask[3] ) {
+            $isValidateCustomer = true;
+        }
+
         $data = [
             'trafficLight' => $trafficLight,
-            'tasks' => $tasks,
-            'percent' => $percent
+            'stage' => $stagesSummary,
+            'percent' => $percent,
+            'isValidateCustomer' => $isValidateCustomer
         ];
 
         return $data;
     }
 
-    public function assignedWorkers( $task ) {
-        $assignedWorkers = $task->assignedWorkers->where( 'status', 1 );
+    public function stageStartAndEnd( $stage ) {
+        $status = $stage->status;
+        $start = $stage->statusdate->where( 'stage_status', $status )
+            ->where( 'status', 1 )->where( 'type', 1 )
+            ->sortByDesc( 'register' )
+            ->first();
+        $startDate = $start ? $start->register : null;
+
+        $end = $stage->statusdate->where( 'stage_status', $status )
+            ->where( 'status', 1 )->where( 'type', 2 )
+            ->sortByDesc( 'register' )
+            ->first();
+        $endDate = $end ? $end->register : null;
 
         $data = new \stdClass();
-        $data->total = 0;
-        $data->records = [];
-
-        foreach ( $assignedWorkers as $assigned_worker ) {
-            $data->total++;
-            $data->records[] = $this->getDataUser( $assigned_worker->user );
-        }
+        $data->start = $this->getDateComplete( $startDate );
+        $data->end = $this->getDateComplete( $endDate );
 
         return $data;
     }
 
-    public function observeds( $task ) {
-        $data = new \stdClass();
-        $data->sent = $task ? $task->taskObserveds->where('status', 1)->count() : 0;
-        $data->solved = $task ? $task->taskObserveds->where('status', 3)->count() : 0;;
-        $data->denied = $task ? $task->taskObserveds->where('status', 4)->count() : 0;;
+    public function assignedWorkers( $task, $users ) {
 
+        $idExist = array_column( $users, 'id' );
+
+        if( count( $idExist ) > 0 ) {
+            $assignedWorkers = $task->assignedWorkers->whereNotIn( 'users_id', $idExist )->where( 'status', 1 );
+        } else {
+            $assignedWorkers = $task->assignedWorkers->where( 'status', 1 );
+        }
+
+        foreach ( $assignedWorkers as $assigned_worker ) {
+            $users[] = $this->getDataUser( $assigned_worker->user );
+        }
+
+        return $users;
+    }
+
+    public function observeds( $stage ) {
+        $data = new \stdClass();
+
+        $sent = $stage ? $stage->observeds->where('status', 1)->count() : 0;
+        $solved = $stage ? $stage->observeds->where('status', 3)->count() : 0;
+        $denied = $stage ? $stage->observeds->where('status', 4)->count() : 0;
+
+        $data->sent = $sent;
+        $data->solved = $solved;
+        $data->denied = $denied;
+        $data->forApproved = $stage ? $stage->observeds->where('status', 4)->where('is_validate_reply', 0)->count() : 0;
+        $data->total = $sent + $solved + $denied;
         return $data;
     }
 
