@@ -38,7 +38,7 @@ class StageStatusDate extends Model
         return true;
     }
 
-    private static function registerStatus( $stage, $status, $type, $comment = '' ) {
+    public static function registerStatus( $stage, $status, $type, $comment = '' ) {
         $newStatus = new self();
         $newStatus->service_stages_id = $stage;
         $newStatus->stage_status = $status;

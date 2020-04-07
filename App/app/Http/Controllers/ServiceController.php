@@ -470,13 +470,15 @@ class ServiceController extends Controller
 
             $row = new \stdClass();
             if( !$onlyTotal ) {
+                $dateStage = $this->stageStartAndEnd( $stage );
+
                 $row->id = $stage->id;
                 $row->name = $stage->name;
                 $row->description = $stage->description;
                 $row->status = $stage->status;
                 $row->statusName = $this->getStatus('stage', $stage->status);
-                $row->start = $this->getDateComplete( null );
-                $row->end = $this->getDateComplete( null );
+                $row->start = $dateStage->start;
+                $row->end = $dateStage->end;
                 $row->users = $users;
                 $row->observeds = $this->observeds( $stage );
             }
@@ -554,6 +556,27 @@ class ServiceController extends Controller
         return $data;
     }
 
+    public function stageStartAndEnd( $stage ) {
+        $status = $stage->status;
+        $start = $stage->statusdate->where( 'stage_status', $status )
+            ->where( 'status', 1 )->where( 'type', 1 )
+            ->sortByDesc( 'register' )
+            ->first();
+        $startDate = $start ? $start->register : null;
+
+        $end = $stage->statusdate->where( 'stage_status', $status )
+            ->where( 'status', 1 )->where( 'type', 2 )
+            ->sortByDesc( 'register' )
+            ->first();
+        $endDate = $end ? $end->register : null;
+
+        $data = new \stdClass();
+        $data->start = $this->getDateComplete( $startDate );
+        $data->end = $this->getDateComplete( $endDate );
+
+        return $data;
+    }
+
     public function assignedWorkers( $task, $users ) {
 
         $idExist = array_column( $users, 'id' );
@@ -573,10 +596,16 @@ class ServiceController extends Controller
 
     public function observeds( $stage ) {
         $data = new \stdClass();
-        $data->sent = $stage ? $stage->observeds->where('status', 1)->count() : 0;
-        $data->solved = $stage ? $stage->observeds->where('status', 3)->count() : 0;;
-        $data->denied = $stage ? $stage->observeds->where('status', 4)->count() : 0;;
 
+        $sent = $stage ? $stage->observeds->where('status', 1)->count() : 0;
+        $solved = $stage ? $stage->observeds->where('status', 3)->count() : 0;
+        $denied = $stage ? $stage->observeds->where('status', 4)->count() : 0;
+
+        $data->sent = $sent;
+        $data->solved = $solved;
+        $data->denied = $denied;
+        $data->forApproved = $stage ? $stage->observeds->where('status', 4)->where('is_validate_reply', 0)->count() : 0;
+        $data->total = $sent + $solved + $denied;
         return $data;
     }
 
