@@ -70,14 +70,18 @@ class Controller extends BaseController
     }
 
     public function sendMail( $to, $subject, $template, $vars, $from = 'Automatic' ) {
-        $dataMail            = new \stdClass();
-        $dataMail->from      = $from;
-        $dataMail->to        = $to;
-        $dataMail->subject   = $subject;
-        $dataMail->body      = '';
-        $dataMail->vars      = $vars;
+        try {
+            $dataMail            = new \stdClass();
+            $dataMail->from      = $from;
+            $dataMail->to        = $to;
+            $dataMail->subject   = $subject;
+            $dataMail->body      = '';
+            $dataMail->vars      = $vars;
 
-        \Mail::to( $to )->send( new SendMail( $dataMail, $template ) );
+            \Mail::to( $to )->send( new SendMail( $dataMail, $template ) );
+        } catch ( \Exception $e ) {
+            return $e;
+        }
     }
 
     protected function getDate( $date ) {
