@@ -50,8 +50,11 @@ class StageObservedController extends Controller
         $stageID = $request->stage ? $request->stage : 0;
         $description = $request->observation ? $request->observation : 0;
 
+        $countObservedPend =  StageObserved::where( 'service_stages_id', $stageID  )
+            ->where('status', 1 )->count();
+
         $stage = ServiceStage::find( $stageID );
-        if( $stage ) {
+        if( $stage && $countObservedPend === 0 ) {
             if( $stage->count_observerds < self::MAX_OBS_FOR_TASK ) {
                 $observation = new StageObserved();
                 $observation->service_stages_id = $stageID;

@@ -129,7 +129,7 @@
                                     <i class="fa fa-check"></i>
                                 </a>
                             </li>
-                            <li class="list-inline-item">
+                            <li class="list-inline-item" v-if="e.observeds.isRegister">
                                 <a class="delete" @click.prevent="showModal( e.id, e.observeds.total )">
                                     <i class="fa fa-close"></i>
                                 </a>
@@ -167,7 +167,7 @@
                     </td>
                     <td>
                         <div class="content-obsevarvations">
-                            <a class="text-primary" href="javascript:;" @click.prevent="showModal( e.id, e.observeds.total )">
+                            <a v-if="e.observeds.isRegister && e.observeds.total < 3" class="text-primary" href="javascript:;" @click.prevent="showModal( e.id, e.observeds.total )">
                                 <i class="fa fa-plus"></i> Observación
                             </a>
                             <a v-if="e.observeds.sent > 0" class="text-warning" href="javascript:;" @click.prevent="openObervations( e.id, e.name )">

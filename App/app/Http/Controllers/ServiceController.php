@@ -606,6 +606,7 @@ class ServiceController extends Controller
         $data->denied = $denied;
         $data->forApproved = $stage ? $stage->observeds->where('status', 4)->where('is_validate_reply', 0)->count() : 0;
         $data->total = $sent + $solved + $denied;
+        $data->isRegister = $sent > 0 ? false : true;
         return $data;
     }
 
