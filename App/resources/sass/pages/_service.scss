@@ -1,0 +1,223 @@
+.service {
+    table tbody td {
+        padding: 5px 0 !important;
+    }
+    .widget {
+        margin-bottom: 0px;
+    }
+}
+
+.content-traffic-light {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    border: 1px $gray-dark solid;
+
+    & > div {
+        height: 10px;
+        width: 16.66%;
+    }
+
+    .red,.yellow,.green {
+        background-color: #c0c0c0;
+    }
+
+    .border-right {
+        border-right: 1px $gray-dark solid !important;
+    }
+
+    .red.active {
+        background-color: $red;
+    }
+
+    .yellow.active {
+        background-color: $yellow;
+    }
+
+    .green.active {
+        background-color: $green;
+    }
+
+    &__head {
+        padding: 20px 0 0 0;
+        font-size: 25px;
+        font-weight: bold;
+        color: $blue;
+    }
+}
+
+.service-detail {
+
+    color: $gray-light2;
+
+    h1 {
+        font-size: 25px !important;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    h2 {
+        font-size: 20px !important;
+        text-transform: capitalize;
+    }
+
+    h3 {
+        font-size: 18px !important;
+        text-transform: capitalize;
+    }
+
+    .title {
+        strong {
+            color: $blue-dark;
+        }
+    }
+
+    &__table {
+        thead th {
+            color: $black;
+            font-size: 12px !important;
+            background-color: $blue-light;
+        }
+        tbody td {
+            padding: 10px 5px !important;
+            font-size: 13px !important;
+        }
+
+        td.item {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        ul > li {
+            font-style: oblique;
+            font-size: 13px;
+        }
+
+        .action {
+            width: auto !important;
+        }
+    }
+
+    .content-obsevarvations {
+        max-width: 100%;
+        display: flex;
+        justify-content: space-around;
+    }
+}
+
+.information {
+    &__warning {
+        font-style: italic;
+        font-size: 14px;
+        text-align: justify;
+        padding: 10px;
+        background-color: #FFF3CD;
+        border-radius: .30rem;
+        border: 1px solid $red2;
+        .fa {
+            color: $yellow;
+            font-size: 20px;
+            margin-right: 5px;
+        }
+    }
+}
+
+.reply {
+    &__content {
+        max-width: 100%;
+        background-color: $blue-light;
+        margin: 10px 15px;
+        padding: 10px 15px;
+        border-radius: .30rem;
+        border: 2px solid $blue-dark;
+
+        .title {
+            width: 100%;
+            text-align: center;
+            color: $gray-light2;
+            max-width: 100%;
+            display: inline-block;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 16px;
+            @include maxw( $mb ) {
+                font-size: 12px;
+            }
+        }
+
+        .excerpt {
+            text-align: justify;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        .excerpt code {
+            font-style: initial;
+            font-size: 13px;
+            font-weight: bold;
+            background-color: $white;
+            border: 1px solid $pink2;
+        }
+
+        .excerpt .fa {
+            color: $blue-dark;
+            font-size: 20px;
+            margin-right: 5px;
+        }
+
+        .excerpt.mobile {
+            visibility: hidden;
+            display: none;
+            @include maxw( $mb ) {
+                visibility: visible;
+                display: block;
+            }
+        }
+
+        .excerpt.mobile .fa {
+            text-align: center;
+            border-bottom: 1px dotted $blue-dark;
+        }
+
+        .excerpt.desktop {
+            visibility: visible;
+            @include maxw( $mb ) {
+                visibility: hidden;
+            }
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+        }
+
+        .buttons button {
+            padding: 0.5em 3em;
+            display: inline-block;
+            border: 0.16em solid $blue-dark;
+            margin: 0 0.3em 0.3em 0;
+            box-sizing: border-box;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-family: 'Roboto',sans-serif;
+            font-weight: bold;
+            color: $blue-dark;
+            text-align: center;
+            transition: all 0.15s;
+            @include maxw( $mb ) {
+                display: block;
+                margin: 0;
+                font-size: 10px;
+                padding: 0.5em 0;
+            }
+        }
+
+        .buttons button:hover {
+            color: $blue-light;
+            background-color: $blue-dark;
+            border-color: $blue-dark;
+        }
+    }
+}

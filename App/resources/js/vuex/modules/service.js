@@ -1,10 +1,43 @@
 export default {
     state: {
         services: [],
+        serviceDetail: {
+            id: 0,
+            document: '',
+            start: '',
+            end: '',
+            total: 0,
+            trafficLight: 0,
+            percent: 0,
+        },
+        stages: {
+            toStart: {
+                total: 0,
+                records: [],
+            },
+            inProcess: {
+                total: 0,
+                records: [],
+            },
+            finished: {
+                total: 0,
+                records: [],
+            },
+            observed: {
+                total: 0,
+                records: [],
+            },
+            finalized: {
+                total: 0,
+                records: [],
+            }
+        },
+        isValidateCustomer: false,
         serviceRequests: [],
         serviceRequestDetails: [],
         arrDetServiceRequest: [],
         idServiceRequest: 0,
+        idService: 0,
         nameServiceRequest: '',
         formDate: '',
         ubigeo: {
@@ -15,7 +48,9 @@ export default {
         address: '',
         attachmentServiceRequest: null,
         attachment: null,
-        typeSave: 'save'
+        typeSave: 'save',
+        voucherTemp: {},
+        vouchers: []
     },
 
     getters:{
@@ -76,6 +111,26 @@ export default {
         },
         SET_FILE( state, payload ) {
             state.attachmentServiceRequest = payload.value;
+        },
+        SET_SERVICE_ID( state, id ) {
+            state.idService = id;
+        },
+        LOAD_DATA_SERVICE_DETAIL( state, data ) {
+            state.serviceDetail.id = data.id;
+            state.serviceDetail.document = data.document;
+            state.serviceDetail.start = data.start;
+            state.serviceDetail.end = data.end;
+            state.serviceDetail.total = data.total;
+            state.serviceDetail.trafficLight = data.project.trafficLight;
+            state.serviceDetail.percent = data.project.percent;
+            state.stages = data.project.stages;
+            state.isValidateCustomer = data.project.isValidateCustomer;
+        },
+        SET_FILE_VOUCHER( state, payload ) {
+            state.voucherTemp = payload.value;
+        },
+        LOAD_VOUCHERS( state, data ) {
+            state.vouchers = data;
         },
     },
 
@@ -148,9 +203,8 @@ export default {
                 });
             });
         },
-        getDetailServiceRequest( { commit }, parameters ) {
-            let id = parameters.data.id;
-            let url = '/service-request/' + id + '/edit/';
+        getDetailServiceRequest( { commit, state } ) {
+            let url = '/service-request/' + state.idServiceRequest + '/edit/';
             axios.get( url ).then( response => {
                 commit( 'LOAD_DATA_SERVICE_REQUEST', response.data );
             });
@@ -178,6 +232,57 @@ export default {
                     reject( errors );
                 })
             });
-        }
+        },
+        loadServiceDetail({ commit, state }) {
+            let url = '/service/' + state.idService + '/detail/all/';
+            axios.get( url ).then( response => {
+                let result = response.data;
+                if( result.status ) {
+                    commit( 'LOAD_DATA_SERVICE_DETAIL', result.service );
+                } else {
+                    console.log( result.msg );
+                }
+            }).catch( errors => {
+                console.log( errors );
+            })
+        },
+        uploadVoucher({ commit, state }, parameters) {
+            return new Promise( ( resolve, reject ) => {
+                let params = parameters.data;
+                let url = '/service/' + params.idService + '/upload-voucher/';
+                let formData = new FormData();
+                formData.append('voucherFile', state.voucherTemp );
+                formData.append('orderPayTemp', params.orderPayTemp );
+                formData.append('numOper', params.numOper );
+                formData.append('mount', params.mount );
+                axios.post( url, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }).then(
+                    response => {
+                        if( response.status ) {
+                            commit( 'SET_FILE_VOUCHER', {} );
+                            resolve( response );
+                        }
+                        else {
+                            reject( response );
+                        }
+                    }
+                ).catch( errors => {
+                    reject( errors );
+                });
+            });
+        },
+        loadVouchers( { commit }, parameters ) {
+            let params = parameters.data;
+            let url = '/service/' + params.idService + '/vouchers/';
+            axios.get( url ).then( response => {
+                let result = response.data;
+                if( result.status ) {
+                    commit( 'LOAD_VOUCHERS', result.attachments );
+                }
+            });
+        },
     }
 }

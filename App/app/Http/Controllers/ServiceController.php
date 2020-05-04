@@ -6,6 +6,7 @@ use App\Models\Customer;
 use App\Models\Referenceterm;
 use App\Models\SaleQuotation;
 use App\Models\Service;
+use App\Models\ServiceAttachment;
 use App\Models\ServiceRequest;
 use App\Models\ServiceRequestDetail;
 use App\Models\SiteVoucher;
@@ -192,6 +193,7 @@ class ServiceController extends Controller
             }
         }
 
+        $district = \FormatUbigeo::complete( $district );
         $ubigeoBD = \FormatUbigeo::ubigeo( $district );
 
         $ubigeo = new \stdClass();
@@ -314,6 +316,8 @@ class ServiceController extends Controller
 
 
         foreach( $services as $service ) {
+            $dataTasks = $this->getStages( $service, true );
+
             $row = new \stdClass();
             $row->id = $service->id;
             $row->status = $service->status;
@@ -322,6 +326,9 @@ class ServiceController extends Controller
             $row->total = $service->total;
             $row->document = $service->serial_doc . '-' . $service->number_doc;
             $row->orderPay = $service->is_send_order_pay;
+            $row->start = $this->getDate( $service->start_date );
+            $row->end = $this->getDate( $service->end_date );
+            $row->voucherFiles = $service->serviceAttachment->whereIn( 'type', [1, 2] )->where( 'status', 1 )->count();
 
             $servicerequest = $service->serviceRequest;
             $row->servicerequest = new \stdClass();
@@ -337,6 +344,11 @@ class ServiceController extends Controller
             $row->referenceTerm->pdf = $referenceterm->pdf_os;
             $row->referenceTerm->approved = $referenceterm->os_type_approved_customer;
             $row->referenceTerm->ejecution = $referenceterm->execution_time_days;
+
+            $row->project = new \stdClass();
+            $row->project->trafficLight = $dataTasks['trafficLight'];
+            $row->project->percent = $dataTasks['percent'];
+            $row->project->tasks = $dataTasks['stage'];
 
             $response['services'][] = $row;
         }
@@ -388,5 +400,261 @@ class ServiceController extends Controller
             $service->date_aproved_customer = date( 'Y-m-d' );
             $service->save();
         }
+    }
+
+    public function detailAll( Request $request ) {
+        $response = [
+            'status' => false,
+            'service' => []
+        ];
+
+        $id = $request->id ? $request->id : 0;
+
+        $service = Service::find( $id );
+
+        if( $service ) {
+            $dataStage = $this->getStages( $service );
+
+            $data = new \stdClass();
+            $data->id = $service->id;
+            $data->document = $service->serial_doc . '-' . $service->number_doc;
+            $data->start = $this->getDate( $service->start_date );
+            $data->end = $this->getDate( $service->end_date );
+            $data->total = $service->total;
+            $data->project = new \stdClass();
+            $data->project->trafficLight = $dataStage['trafficLight'];
+            $data->project->percent = $dataStage['percent'];
+            $data->project->isValidateCustomer = $dataStage['isValidateCustomer'];
+            $data->project->stages = $dataStage['stage'];
+
+            $response['status'] = true;
+            $response['service'] = $data;
+        }
+
+        return response()->json( $response );
+    }
+
+    private function getStages( $service, $onlyTotal = false ) {
+
+        $isValidateCustomer = false;
+
+        $stageTask = [
+            0 => 0,/*Total*/
+            1 => 0,/*toStart*/
+            2 => 0,/*inProcess*/
+            3 => 0,/*finished*/
+            4 => 0,/*observed*/
+            5 => 0,/*finalized*/
+        ];
+
+        $stagesSummary = [
+            'toStart' => ['total' => 0, 'records' => []],
+            'inProcess' => ['total' => 0, 'records' => []],
+            'finished' => ['total' => 0, 'records' => []],
+            'observed' => ['total' => 0, 'records' => []],
+            'finalized' => ['total' => 0, 'records' => []],
+        ];
+
+        $stages = $service->serviceStages->whereNotIn('status', [0,2]);
+        foreach ( $stages as $stage ) {
+            $dataTasks = $stage->tasks->whereNotIn('status', [0,2]);
+
+            $users = [
+                'total' => 0,
+                'records' => []
+            ];
+            foreach ( $dataTasks as $data_task ) {
+                $users['records'] = $this->assignedWorkers($data_task, $users['records']);
+            }
+            $users['total'] = count( $users['records'] );
+
+            $row = new \stdClass();
+            if( !$onlyTotal ) {
+                $dateStage = $this->stageStartAndEnd( $stage );
+
+                $row->id = $stage->id;
+                $row->name = $stage->name;
+                $row->description = $stage->description;
+                $row->status = $stage->status;
+                $row->statusName = $this->getStatus('stage', $stage->status);
+                $row->start = $dateStage->start;
+                $row->end = $dateStage->end;
+                $row->users = $users;
+                $row->observeds = $this->observeds( $stage );
+            }
+
+            switch ( $stage->status ) {
+                case 1:
+                    $stagesSummary['toStart']['total']++;
+                    $stagesSummary['toStart']['records'][] = $row;
+                    $stageTask[0]++;
+                    $stageTask[1]++;
+                    break;
+                case 3:
+                    $stagesSummary['inProcess']['total']++;
+                    $stagesSummary['inProcess']['records'][] = $row;
+                    $stageTask[0]++;
+                    $stageTask[2]++;
+                    break;
+                case 4:
+                    $stagesSummary['finished']['total']++;
+                    $stagesSummary['finished']['records'][] = $row;
+                    $stageTask[0]++;
+                    $stageTask[3]++;
+                    break;
+                case 5:
+                    $stagesSummary['observed']['total']++;
+                    $stagesSummary['observed']['records'][] = $row;
+                    $stageTask[0]++;
+                    $stageTask[4]++;
+                    break;
+                case 6:
+                    $stagesSummary['finalized']['total']++;
+                    $stagesSummary['finalized']['records'][] = $row;
+                    $stageTask[0]++;
+                    $stageTask[5]++;
+                    break;
+            }
+        }
+
+        $trafficLight = 0;
+        $percent = 0;
+
+        if( $stageTask[0] > 0 ) {
+            $totalPoint = $stageTask[0] * 3;
+            $points = ( $stageTask[1] * 0 ) + ( $stageTask[2] * 1 ) + ( $stageTask[3] * 2 ) + ( $stageTask[4] * 2 ) + ( $stageTask[5] * 3 );
+
+            if( $totalPoint > 0 ) {
+                $percent = round( ( $points/ $totalPoint ) * 100, 2 );
+            }
+            if( $percent <= 16.67 ) {
+                $trafficLight = 1;
+            } else if( $percent > 16.67 && $percent <= 33.33 ) {
+                $trafficLight = 2;
+            } else if( $percent > 33.33 && $percent <= 50 ) {
+                $trafficLight = 3;
+            } else if( $percent > 50 && $percent <= 66.6 ) {
+                $trafficLight = 4;
+            } else if( $percent > 66.66 && $percent <= 83.33 ) {
+                $trafficLight = 5;
+            } else {
+                $trafficLight = 6;
+            }
+        }
+
+        if( $stageTask[0] > 0 && ( $stageTask[0] - $stageTask[4] - $stageTask[5] ) === $stageTask[3] ) {
+            $isValidateCustomer = true;
+        }
+
+        $data = [
+            'trafficLight' => $trafficLight,
+            'stage' => $stagesSummary,
+            'percent' => $percent,
+            'isValidateCustomer' => $isValidateCustomer
+        ];
+
+        return $data;
+    }
+
+    public function stageStartAndEnd( $stage ) {
+        $status = $stage->status;
+        $start = $stage->statusdate->where( 'stage_status', $status )
+            ->where( 'status', 1 )->where( 'type', 1 )
+            ->sortByDesc( 'register' )
+            ->first();
+        $startDate = $start ? $start->register : null;
+
+        $end = $stage->statusdate->where( 'stage_status', $status )
+            ->where( 'status', 1 )->where( 'type', 2 )
+            ->sortByDesc( 'register' )
+            ->first();
+        $endDate = $end ? $end->register : null;
+
+        $data = new \stdClass();
+        $data->start = $this->getDateComplete( $startDate );
+        $data->end = $this->getDateComplete( $endDate );
+
+        return $data;
+    }
+
+    public function assignedWorkers( $task, $users ) {
+
+        $idExist = array_column( $users, 'id' );
+
+        if( count( $idExist ) > 0 ) {
+            $assignedWorkers = $task->assignedWorkers->whereNotIn( 'users_id', $idExist )->where( 'status', 1 );
+        } else {
+            $assignedWorkers = $task->assignedWorkers->where( 'status', 1 );
+        }
+
+        foreach ( $assignedWorkers as $assigned_worker ) {
+            $users[] = $this->getDataUser( $assigned_worker->user );
+        }
+
+        return $users;
+    }
+
+    public function observeds( $stage ) {
+        $data = new \stdClass();
+
+        $sent = $stage ? $stage->observeds->where('status', 1)->count() : 0;
+        $solved = $stage ? $stage->observeds->where('status', 3)->count() : 0;
+        $denied = $stage ? $stage->observeds->where('status', 4)->count() : 0;
+
+        $data->sent = $sent;
+        $data->solved = $solved;
+        $data->denied = $denied;
+        $data->forApproved = $stage ? $stage->observeds->where('status', 4)->where('is_validate_reply', 0)->count() : 0;
+        $data->total = $sent + $solved + $denied;
+        $data->isRegister = $sent > 0 ? false : true;
+        return $data;
+    }
+
+    public function uploadVoucher( Request $request ) {
+        $response = [
+            'status' => false,
+            'msg' => 'No se puede realizar la operación.'
+        ];
+
+        $id = $request->id ? $request->id : 0;
+        $file = $request->hasFile( 'voucherFile' ) ? $request->file( 'voucherFile' ) : null;
+        $orderPayTemp = $request->orderPayTemp ? $request->orderPayTemp : 0;
+        $nunOper = $request->numOper ? $request->numOper : '';
+        $mount = $request->mount ? $request->mount : 0;
+
+        $type = 0;
+        switch( $orderPayTemp ) {
+            case 1:
+            case 2:
+                $type = 1;/*Primera orden de pago*/
+                break;
+            case 3:
+            case 4:
+                $type = 2;/*Primera orden de pago*/
+                break;
+        }
+
+        if( $id > 0 && $file && $type > 0 ) {
+            $service = Service::find( $id );
+            if( $service ) {
+                $destinationPath = public_path(self::PATH_VOUCHER );
+                $nameImage = 'voucher-upload-' . time();
+                $newImage = $nameImage . '.' . $file->getClientOriginalExtension();
+                if( $file->move( $destinationPath, $newImage ) ) {
+                    $attachment = new ServiceAttachment();
+                    $attachment->services_id = $id;
+                    $attachment->name = $nameImage;
+                    $attachment->file = $newImage;
+                    $attachment->type = $type;
+                    $attachment->number_operation = $nunOper;
+                    $attachment->mount = $mount;
+                    if( $attachment->save() ) {
+                        $response['status'] = true;
+                        $response['msg'] = 'OK.';
+                    }
+                }
+            }
+        }
+        return response()->json( $response, 200 );
     }
 }

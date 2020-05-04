@@ -58,12 +58,25 @@ Route::group(['middleware' => ['auth']], function(){
     Route::prefix( 'service' )->group( function () {
         Route::get( '/', 'ServiceController@listServices' )->name('service');
         Route::post( '/service-order-action/', 'ServiceController@approvedSO' )->name('service.service-order.approved');
+
+        Route::get( '/{id}/detail/all', 'ServiceController@detailAll' );
+        Route::post( '/stage/{stage}/observation', 'StageObservedController@store' );
+        Route::post( '/stage/{stage}/approved', 'ServiceStageController@approved' );
+        Route::get( '/stage/{stage}/observations', 'StageObservedController@listObservations' );
+
+        Route::post( '/{id}/upload-voucher', 'ServiceController@uploadVoucher' );
+        Route::get( '/{id}/vouchers', 'ServiceAttachmentController@listServiceAttachment' );
+
+        Route::post( '/observation/{id}/approved/', 'StageObservedController@approvedReply' );
     });
 
     Route::get( '/products', 'ProductController@getProducts' );
     Route::get( '/departaments/', 'StaticController@loadDepartament' );
+    Route::get( '/departaments/v2', 'StaticController@loadDepartamentV2' );
     Route::get( '/provinces/{departament}', 'StaticController@loadProvince' );
+    Route::get( '/provinces/{departament}/v2', 'StaticController@loadProvinceV2' );
     Route::get( '/districts/{departament}/{province}/', 'StaticController@loadDistrict' );
+    Route::get( '/districts/{departament}/{province}/v2', 'StaticController@loadDistrictV2' );
     Route::get( '/type-document/', 'StaticController@loadTypeDocument' );
     Route::get( '/type-person/', 'StaticController@loadTypePerson' );
 

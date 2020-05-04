@@ -14,6 +14,14 @@ import es from "vee-validate/dist/locale/es.json";
 
 window.Vue = require('vue');
 
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
+
+Vue.use(BootstrapVue);
+Vue.use(IconsPlugin);
+
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -44,6 +52,7 @@ import CompleteCustomerData from "./components/dashboard/complete-customer-data"
 import SaleQuotationList from './components/sale-quotation/list';
 import SaleQuotationListApproved from './components/sale-quotation/list-approved';
 import Service from './components/service/service';
+import ServiceDetail from './components/service/service-detail';
 
 Vue.component( 'dashboard', Dashboard );
 Vue.component( 'comp-customer-data', CompleteCustomerData );
@@ -52,11 +61,13 @@ Vue.component( 'servicerequestform', ServiceRequestForm );
 Vue.component( 'SaleQuotationList', SaleQuotationList );
 Vue.component( 'SaleQuotationListApproved', SaleQuotationListApproved );
 Vue.component( 'Service', Service );
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
+require( './src/helper' );
 
 const app = new Vue({
     store,

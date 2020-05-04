@@ -4,8 +4,8 @@
         <div class="widget dashboard-container my-adslist">
             <h3 class="widget-header">Mis solicitudes de servicios</h3>
             <div class="row">
-                <div class="col-md-12">
-                    <button class="btn btn-success pull-right btn btn-transparent" @click.prevent="CHANGE_CURRENT( 'new-service-request' )">
+                <div class="col-md-12 mb-10">
+                    <button class="btn pull-right custom__btn" @click.prevent="CHANGE_CURRENT( 'new-service-request' )">
                         <i class="fa fa-plus-circle"></i> Solicitud
                     </button>
                 </div>
@@ -81,6 +81,8 @@
     import { mapMutations } from 'vuex';
     import Swal from 'sweetalert2';
     import 'sweetalert2/src/sweetalert2.scss';
+    import io from 'socket.io-client';
+    const socket = io( API_URL );
     export default {
         name: "servicerequest",
         created() {
@@ -89,6 +91,11 @@
         computed: {
             serviceRequests() {
                 return this.$store.state.Service.serviceRequests;
+            },
+            userData: {
+                get:function() {
+                    return this.$store.state.Settings.userData;
+                }
             }
         },
         methods: {
@@ -119,6 +126,7 @@
                             }
                         }).then( response => {
                             if( response.status ) {
+                                socket.emit( 'create-notification-client', 'sendServiceRequest', this.userData.id, 'Nuevo solicitud de cotización servicio' );
                                 this.$store.dispatch( 'loadServiceRequest' );
                                 Swal.fire(
                                     'Enviado!',

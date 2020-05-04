@@ -42,7 +42,7 @@
                             @else
                             <li class="nav-item dropdown dropdown-slide">
                                 <a class="nav-link dropdown-toggle" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    {{ Auth::user()->name }}</span>
+                                    <span>{{ Auth::user()->name }}</span>
                                 </a>
                                 <!-- Dropdown list -->
                                 <div class="dropdown-menu dropdown-menu-right">

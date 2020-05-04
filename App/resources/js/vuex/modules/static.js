@@ -32,16 +32,34 @@ export default {
                     context.commit( 'LOAD_DEPARTAMENTS', response.data );
                 });
         },
+        loadDepartamentsV2( context ) {
+            axios.get( '/departaments/v2/' )
+                .then( response => {
+                    context.commit( 'LOAD_DEPARTAMENTS', response.data.departaments );
+                });
+        },
         loadProvinces( { commit }, parameters ) {
             axios.get( '/provinces/' + parameters.data.departament )
                 .then( response => {
                     commit( 'LOAD_PROVINCES', response.data )
                 });
         },
+        loadProvincesv2( { commit }, parameters ) {
+            axios.get( '/provinces/' + parameters.data.departament + '/v2/' )
+                .then( response => {
+                    commit( 'LOAD_PROVINCES', response.data.provinces )
+                });
+        },
         loadDistrict( { commit }, parameters ) {
             axios.get( '/districts/' + parameters.data.departament + '/' + parameters.data.province )
                 .then( response => {
                     commit( 'LOAD_DISTRICTS', response.data );
+                });
+        },
+        loadDistrictv2( { commit }, parameters ) {
+            axios.get( '/districts/' + parameters.data.departament + '/' + parameters.data.province + '/v2/' )
+                .then( response => {
+                    commit( 'LOAD_DISTRICTS', response.data.districts );
                 });
         },
         loadTypeDocument( context ) {
