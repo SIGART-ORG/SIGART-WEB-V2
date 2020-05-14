@@ -10,6 +10,7 @@ import SaleQuotation from './modules/sale-quotation';
 import Task from './modules/task';
 import Observed from './modules/observed';
 import Stage from './modules/stage';
+import User from './modules/user';
 
 Vue.use( Vuex );
 
@@ -23,6 +24,7 @@ export default new Vuex.Store({
         SaleQuotation,
         Stage,
         Task,
-        Observed
+        Observed,
+        User
     }
 });
