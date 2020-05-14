@@ -60,20 +60,25 @@ class LoginController extends Controller
             'password' => 'required|string'
         ]);
 
+        $response = [
+            'status' => false,
+            'msg' => trans( 'auth.failed' )
+        ];
+
         if ( Auth::attempt( $credentials ) ) {
             $session = Auth::user();
             if( $session->status === 1 || $session->status === 3 ) {
-                return redirect()->route('dashboard');
+                $response['status'] = true;
+                $response['msg'] = 'Bienvenido ' . $session->name . '.';
+                return response()->json( $response, 200 );
             } else {
                 Auth::logout();
-
-                return back()->withErrors( ['email' => 'Por favor, valida tu cuenta.'] )
-                    ->withInput( request(['email']) );
+                $response['msg'] = 'Por favor, valida tu cuenta.';
+                return response()->json( $response, 200 );
             }
         };
 
-        return back()->withErrors( ['email' => trans( 'auth.failed' )] )
-            ->withInput( request(['email']) );
+        return response()->json( $response, 200);
     }
 
     public function logout() {
