@@ -53,6 +53,7 @@ import SaleQuotationList from './components/sale-quotation/list';
 import SaleQuotationListApproved from './components/sale-quotation/list-approved';
 import Service from './components/service/service';
 import ServiceDetail from './components/service/service-detail';
+import Login from './components/login/login';
 
 Vue.component( 'dashboard', Dashboard );
 Vue.component( 'comp-customer-data', CompleteCustomerData );
@@ -61,6 +62,7 @@ Vue.component( 'servicerequestform', ServiceRequestForm );
 Vue.component( 'SaleQuotationList', SaleQuotationList );
 Vue.component( 'SaleQuotationListApproved', SaleQuotationListApproved );
 Vue.component( 'Service', Service );
+Vue.component( 'Login', Login );
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
