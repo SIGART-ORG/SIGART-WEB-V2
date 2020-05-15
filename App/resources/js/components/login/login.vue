@@ -5,7 +5,7 @@
                 <h1 class="title">Bienvenido de nuevo</h1>
                 <ValidationProvider name="Correo Electrónico" rules="required|email" v-slot="{ errors }">
                     <input type="email" placeholder="Correo Electrónico" v-model="email" autofocus/>
-                    <i class="fa fa-user"></i>
+                    <i class="fa fa-envelope"></i>
                     <span class="msg-error" v-show="errors[0]"><i class="fa fa-close"></i>{{ errors[0] }}</span>
                 </ValidationProvider>
                 <ValidationProvider name="Contraseña" rules="required|min:8" v-slot="{ errors }">
