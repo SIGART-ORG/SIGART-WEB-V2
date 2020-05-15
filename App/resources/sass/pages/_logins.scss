@@ -19,7 +19,6 @@
         justify-content: center;
         width: 100%;
         min-height: 100%;
-        //padding: 20px;
         background: rgba(darken($primary,40%), 0.4);
     }
 
@@ -69,6 +68,34 @@
             }
         }
 
+        .content-input{
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        select {
+            display: block;
+            padding: 15px 10px;
+            width: 100%;
+            border: 1px solid #ddd;
+            color: $gray-light2;
+            border-radius: 2px;
+            transition: border-width 0.2s ease;
+            appearance: none;
+
+            &::-ms-expand {
+                display: none;
+            }
+
+            &:focus {
+                border-color: #aaa;
+                box-shadow: 0 0 1px 3px rgba(59, 153, 252, .7);
+                box-shadow: 0 0 0 3px -moz-mac-focusring;
+                color: #222;
+                outline: none;
+            }
+        }
+
         input {
             display: block;
             padding: 15px 10px;
@@ -77,7 +104,7 @@
             border: 1px solid #ddd;
             transition: border-width 0.2s ease;
             border-radius: 2px;
-            color: #ccc;
+            color: $gray-light2;
 
             &+ i.fa {
                 color: #fff;

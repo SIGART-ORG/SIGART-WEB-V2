@@ -15,14 +15,21 @@ Route::get('/', 'HomeController@index')->name( 'home.index' );
 Route::get('/terms-and-conditions', 'PublicController@termsAndConditions')->name( 'tyc' );
 Route::get('/about-us', 'PublicController@aboutUs')->name( 'about-us' );
 Route::get('/contact-us', 'ContactUsController@dashboard')->name( 'contact-us' );
-Route::get('/confimation/{token}', 'DashboardController@confirmation')->name( 'confirmation' );
+//Route::get('/confimation/{token}', 'DashboardController@confirmation')->name( 'confirmation' );
 
 Route::group(['middleware' => ['guest']], function(){
 
-    Route::get('/register', 'Auth\RegisterController@showRegistrationForm')->name( 'login.register' );
-    Route::post('/register', 'Auth\RegisterController@register')->name( 'login.register.post' );
+//    Route::get('/register', 'Auth\RegisterController@showRegistrationForm')->name( 'login.register' );
+//    Route::post('/register', 'Auth\RegisterController@register')->name( 'login.register.post' );
     Route::get('/login', 'Auth\LoginController@showLoginForm')->name( 'login.form' );
     Route::post('/login', 'Auth\LoginController@login')->name( 'login.request' );
+
+    Route::prefix('register')->group( function() {
+        Route::get('/', 'Auth\RegisterController@showRegistrationForm')->name( 'login.register' );
+        Route::post('first-step', 'Auth\RegisterController@firstStep')->name( 'register.first' );
+        Route::get('{token}', 'Auth\RegisterController@confirmation')->name( 'confirmation' );
+        Route::post('complete', 'Auth\RegisterController@secondStep')->name( 'register.second' );
+    });
 
 });
 

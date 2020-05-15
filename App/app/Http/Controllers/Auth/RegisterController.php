@@ -165,4 +165,225 @@ class RegisterController extends Controller
         return false;
     }
 
+    protected function validatorFirst(array $data)
+    {
+        $range = 8;
+        if( (int)$data['typeDocument'] === 2 ) {
+            $range = 11;
+        }
+
+        $validator = [
+            'typeDocument' => ['required', 'numeric'],
+            'document' => ['required', 'string', 'min:' . $range, 'max:' . $range, 'unique:customers,document'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:customer_login,email'],
+        ];
+
+        return Validator::make($data, $validator);
+    }
+
+    protected function validatorSecond(array $data)
+    {
+
+        $validator = [
+            'password' => 'required|min:8',
+            'confirm' => 'required|min:8|same:password',
+        ];
+
+        return Validator::make($data, $validator);
+    }
+
+    public function firstStep( Request $request ) {
+
+        $typeDocument = $request->typeDocument;
+        $document = $request->document;
+        $email = $request->email;
+
+        $data = [
+            'typeDocument' => $typeDocument,
+            'document' => $document,
+            'email' => $email,
+        ];
+
+        $validator = $this->validatorFirst( $data );
+
+        $response = [
+            'status' => false,
+            'msg' => 'No se pudo realizar el registro.'
+        ];
+
+        if ( $validator->fails() ) {
+            $msg = $this->formatMessagesErrors( $validator->errors(), [
+                'typeDocument', 'document', 'email'
+            ]);
+            $response['msg'] = $msg;
+            return response()->json( $response, 200);
+        }
+
+        $idCustomer = 0;
+        $customerName = '';
+
+        $apiToken = env( 'APISPERU' );
+        $urlApi = 'https://dniruc.apisperu.com/api/v1/';
+
+        if( $typeDocument === 1 ) {
+            $urlApi .= 'dni/' . $document . '?token=' . $apiToken;
+        } else {
+            $urlApi .= 'ruc/' . $document . '?token=' . $apiToken;
+        }
+
+        $apiRespuest = file_get_contents($urlApi);
+        $apiRespuestJson = json_decode( $apiRespuest, false );
+
+        if( !empty( $apiRespuest ) ) {
+            switch ($typeDocument) {
+                case 1:
+                    if (!empty($apiRespuestJson->nombres)) {
+                        $customers = new Customer();
+                        $customers->name = $apiRespuestJson->nombres;
+                        $customers->lastname = $apiRespuestJson->apellidoPaterno . ' ' . $apiRespuestJson->apellidoMaterno;
+                        $customers->type_document = 1;
+                        $customers->document = $document;
+                        $customers->email = $email;
+                        $customers->status = '3';
+                        if ($customers->save()) {
+                            $idCustomer = $customers->id;
+                            $customerName = $apiRespuestJson->nombres;
+                        }
+                    }
+                    break;
+                case 2:
+                    if (!empty($apiRespuestJson->razonSocial)) {
+                        $customers = new Customer();
+                        $customers->name = $apiRespuestJson->razonSocial;
+                        $customers->lastname = $apiRespuestJson->nombreComercial;
+                        $customers->type_document = 2;
+                        $customers->document = $document;
+                        $customers->email = $email;
+                        $customers->status = '3';
+                        $customers->type_person = 2;
+                        $customers->address = $apiRespuestJson->direccion;
+                        if ($customers->save()) {
+                            $idCustomer = $customers->id;
+                            $customerName = $apiRespuestJson->razonSocial;
+                        }
+                    }
+                    break;
+            }
+        } else {
+            $response['msg'] = 'No se encontro registros.';
+        }
+
+        if( $idCustomer > 0 ) {
+            $token = Str::random(60);
+
+            $customerLogin = new CustomerLogin();
+            $customerLogin->name = $customerName;
+            $customerLogin->email = $email;
+            $customerLogin->password = '';
+            $customerLogin->customers_id = $idCustomer;
+            $customerLogin->valid_code = $token;
+            if( $customerLogin->save() ) {
+
+                $subject = $customerName . ', te damos la bienvenida a tu nueva cuenta en D\'Pintart';
+                $vars = [
+                    'subject'   => $subject,
+                    'name'      => $customerName,
+                    'urlConfirmation' => url()->route('confirmation', $token)
+                ];
+
+                $this->sendMail( $email, $subject, 'registration-first', $vars );
+
+                $response['status'] = true;
+                $response['msg'] = 'Se te envió un correo para verificar tu cuenta.';
+            }
+        }
+
+        return response()->json( $response, 200);
+    }
+
+    public function secondStep( Request $request ) {
+        $response = [
+            'status' => false,
+            'msg' => 'No se pudo realizar el registro.'
+        ];
+
+        $password = $request->password;
+        $confirm = $request->confirm;
+        $token = $request->token;
+
+        $data = [
+            'password' => $password,
+            'confirm' => $confirm,
+            'token' => $token
+        ];
+
+        $validator = $this->validatorSecond( $data );
+
+        if ( $validator->fails() ) {
+            $msg = $this->formatMessagesErrors( $validator->errors(), [
+                'typeDocument', 'document', 'email'
+            ]);
+            $response['msg'] = $msg;
+            return response()->json( $response, 200);
+        }
+
+        $customerLogin = CustomerLogin::where('valid_code', $token)->first();
+
+        if( $customerLogin && $customerLogin->status === 0 ) {
+
+            $customerLogin->status = 3;
+            $customerLogin->password = Hash::make( $password );
+            $customerLogin->email_verified_at = date( 'Y-m-d H:i:s' );
+            $customerLogin->valid_code = NULL;
+
+            if( $customerLogin->save() ) {
+                $subject = $customerLogin->name . ', ¡Empieza a usar D\'Pintart!';
+                $vars = [
+                    'subject' => $subject,
+                    'name' => $customerLogin->name,
+                    'urlConfirmation' => url()->route('login.form')
+                ];
+
+                $this->sendMail($customerLogin->email, $subject, 'registration-second', $vars);
+                $response['status'] = true;
+                $response['msg'] = 'Registro exitoso, ya puedes ingresar a su cuenta.';
+            } else {
+                $response['msg'] = 'No se pudieron actualizar tus registros.';
+            }
+        }
+
+        return response()->json( $response, 200);
+    }
+
+    public function confirmation( Request $request ) {
+        $hash = $request->token;
+
+        $customerLogin = CustomerLogin::where('valid_code', $hash)->first();
+
+        if( $customerLogin && $customerLogin->status === 0 ) {
+
+            $data = [
+                'activeSide' => 'register',
+                'token' => $hash,
+            ];
+            return view( 'classimax.pages.register-second', $data );
+
+        } else {
+            return redirect()->route('home.index');
+        }
+    }
+
+    private function formatMessagesErrors( $errors, $inputs ) {
+
+        $formartMessages = [];
+
+        foreach ( $inputs as $input ) {
+            foreach ($errors->get( $input ) as $message) {
+                $formartMessages[] = $message;
+            }
+        }
+
+        return implode(' ', $formartMessages );
+    }
+
 }
