@@ -11,6 +11,7 @@ import Task from './modules/task';
 import Observed from './modules/observed';
 import Stage from './modules/stage';
 import User from './modules/user';
+import Register from './modules/register';
 
 Vue.use( Vuex );
 
@@ -25,6 +26,7 @@ export default new Vuex.Store({
         Stage,
         Task,
         Observed,
-        User
+        User,
+        Register
     }
 });
