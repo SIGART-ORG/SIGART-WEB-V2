@@ -45,6 +45,14 @@ Vue.component('ValidationProvider', ValidationProvider);
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
+extend('password', {
+    params: ['target'],
+    validate(value, { target }) {
+        return value === target;
+    },
+    message: 'La confirmación de contraseña no coincide.'
+});
+
 import Dashboard from './components/dashboard/dashboard.vue';
 import ServiceRequestr from './components/dashboard/ServiceRequest.vue';
 import ServiceRequestForm from "./components/dashboard/ServiceRequestForm";
@@ -54,6 +62,8 @@ import SaleQuotationListApproved from './components/sale-quotation/list-approved
 import Service from './components/service/service';
 import ServiceDetail from './components/service/service-detail';
 import Login from './components/login/login';
+import Register from './components/register/register';
+import RegisterSecond from './components/register/register-second';
 
 Vue.component( 'dashboard', Dashboard );
 Vue.component( 'comp-customer-data', CompleteCustomerData );
@@ -63,6 +73,8 @@ Vue.component( 'SaleQuotationList', SaleQuotationList );
 Vue.component( 'SaleQuotationListApproved', SaleQuotationListApproved );
 Vue.component( 'Service', Service );
 Vue.component( 'Login', Login );
+Vue.component( 'Register', Register );
+Vue.component( 'register-second', RegisterSecond );
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
