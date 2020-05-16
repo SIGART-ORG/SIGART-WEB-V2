@@ -255,7 +255,7 @@ class RegisterController extends Controller
                     if (!empty($apiRespuestJson->razonSocial)) {
                         $customers = new Customer();
                         $customers->name = $apiRespuestJson->razonSocial;
-                        $customers->lastname = $apiRespuestJson->nombreComercial;
+                        $customers->business_name = $apiRespuestJson->nombreComercial;
                         $customers->type_document = 2;
                         $customers->document = $document;
                         $customers->email = $email;
