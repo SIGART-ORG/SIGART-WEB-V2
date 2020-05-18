@@ -23,7 +23,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- PLUGINS CSS STYLE -->
-    <link href="{{ asset( '/assets/classimax/plugins/jquery-ui/jquery-ui.min.css' ) }}" rel="stylesheet">
+{{--    <link href="{{ asset( '/assets/classimax/plugins/jquery-ui/jquery-ui.min.css' ) }}" rel="stylesheet">--}}
     <!-- Bootstrap -->
     <link href="{{ asset( '/assets/classimax/plugins/bootstrap/dist/css/bootstrap.min.css' ) }}" rel="stylesheet">
     <!-- Font Awesome -->

@@ -1,0 +1,129 @@
+.v2-container {
+
+    p {
+        font-size: 40px;
+        @include minw( $tbl ) {
+            font-size: 14px;
+        }
+    }
+
+    a {
+        font-size: 40px;
+        @include minw( $tbl ) {
+            font-size: 1rem;
+        }
+    }
+
+    h1.title {
+        text-transform: uppercase;
+        font-size: 60px;
+        @include minw( $tbl ) {
+            font-size: 25px;
+        }
+    }
+
+    h2.sub-title {
+        text-transform: uppercase;
+        font-size: 2.5rem;
+        @include minw( $tbl ) {
+            font-size: 1.5rem;
+        }
+    }
+
+    .btn {
+        text-decoration: none;
+        background-color: $blue-dark;
+        color: $white;
+        text-align: center;
+        vertical-align: middle;
+        cursor: pointer;
+        border: 1px solid transparent;
+        line-height: 1.5;
+        border-radius: 1.25rem;
+        @include maxw( $tbl ) {
+            padding: 20px;
+            font-size: 40px;
+        }
+        @include minw( $tbl ) {
+            border-radius: 0.25rem;
+        }
+        &:hover {
+            background-color: $blue-dark2;
+            color: $white;
+        }
+    }
+
+    .custom__btn {
+
+    }
+
+    .user-dashboard-menu li a {
+        font-size: 35px;
+        padding: 15px;
+        @include minw( $tbl ) {
+            font-size: 15px;
+            padding: 10px;
+        }
+
+        &:hover {
+            text-decoration: none;
+        }
+
+        span {
+            background-color: $blue-dark2;
+            color: $blue-light;
+            font-size: 30px;
+            border-radius: 65px;
+            padding: 3px 14px;
+            @include minw( $tbl ) {
+                font-size: 10px;
+                border-radius: 8px;
+                padding: 3px 8px;
+            }
+        }
+    }
+
+    .user-dashboard-menu li.active a span {
+        background-color: $blue-light;
+        color: $blue-dark2;
+    }
+
+    .custom-sidebar-item span {
+        right: 25px !important;
+        @include minw( $tbl ) {
+            right: 5px !important;
+        }
+    }
+
+    img.image__profile {
+        height: 300px;
+        width: 300px;
+        @include minw( $tbl ) {
+            height: 150px;
+            width: 150px;
+        }
+    }
+
+    .tablle__custom {
+        @include maxw( $tbl ) {
+            &.table-responsive {
+                display: block !important;
+                overflow: scroll;
+                overflow-x: scroll;
+            }
+            th {
+                font-size: 30px !important;
+            }
+            td {
+                padding: 10px 5px;
+                font-size: 2rem;
+            }
+
+            td .title {
+                text-transform: uppercase;
+                font-size: inherit !important;
+                font-weight: bold;
+            }
+        }
+    }
+}
