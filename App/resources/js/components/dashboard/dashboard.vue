@@ -1,15 +1,15 @@
 <template>
-    <div class="row">
+    <div class="row v2-container">
         <div class="col-md-10 offset-md-1 col-lg-3 offset-lg-0">
             <div class="sidebar">
                 <!-- User Widget -->
                 <div class="widget user-dashboard-profile">
                     <!-- User Image -->
                     <div class="profile-thumb">
-                        <img :alt="user.name" :src="user.avatar" class="rounded-circle">
+                        <img :alt="user.name" :src="user.avatar" class="rounded-circle image__profile">
                     </div>
                     <!-- User Name -->
-                    <h5 class="text-center">{{ user.name }}</h5>
+                    <h1 class="text-center title">{{ user.name }}</h1>
                     <p>Unido {{ user.joined }}</p>
                     <a :href="'#' + urlProfile" class="btn btn-main-sm" v-if="urlProfile === 'datos-del-cliente'">Completar
                         Información</a>

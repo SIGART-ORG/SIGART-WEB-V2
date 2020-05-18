@@ -2,7 +2,7 @@
     <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-0">
         <!-- Recently Favorited -->
         <div class="widget dashboard-container my-adslist">
-            <h3 class="widget-header">Mis solicitudes de servicios</h3>
+            <h2 class="sub-title widget-header">Mis solicitudes de servicios</h2>
             <div class="row">
                 <div class="col-md-12 mb-10">
                     <button class="btn pull-right custom__btn" @click.prevent="CHANGE_CURRENT( 'new-service-request' )">
@@ -11,7 +11,7 @@
                 </div>
             </div>
 
-            <table class="table table-responsive product-dashboard-table">
+            <table class="table table-responsive product-dashboard-table tablle__custom">
                 <thead>
                 <tr>
                     <th>Item</th>
@@ -27,7 +27,7 @@
                 <tr v-for="( sr, idx ) in serviceRequests">
                     <td>{{ idx + 1 }}</td>
                     <td class="product-details">
-                        <h3 class="title">{{ sr.description }}</h3>
+                        <div class="title">{{ sr.description }}</div>
                     </td>
                     <td class="product-category"><span class="categories">{{ sr.dateRegFormat }}</span></td>
                     <td class="product-category"><span class="categories">{{ sr.dateSendFormat }}</span></td>
