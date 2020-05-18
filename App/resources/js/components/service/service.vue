@@ -11,8 +11,6 @@
                     <th class="text-center">Servicio</th>
                     <th class="text-center">Solicitud</th>
                     <th class="text-center">Duración</th>
-                    <th class="text-center">Sub Total<br>(S/)</th>
-                    <th class="text-center">IGV<br>(18%)</th>
                     <th class="text-center">Total<br>(S/)</th>
                     <th class="text-center">Estado</th>
                     <th class="text-center"></th>
@@ -34,8 +32,6 @@
                     <td>
                         <strong v-text="item.referenceTerm.ejecution"></strong> <small>día(s) hábiles( Lunes a Sabado ).</small>
                     </td>
-                    <td>{{ item.subTotal }}</td>
-                    <td>{{ item.igv }}</td>
                     <td>{{ item.total }}</td>
                     <td>
                         <span v-if="item.status === 1" class="badge badge-info">Por Aprobar</span>
@@ -70,10 +66,10 @@
                         </ul>
                         <br v-if="item.referenceTerm.approved === 0">
                         <span v-if="item.orderPay === 1 || item.orderPay === 3" class="badge badge-warning">Pendiento de pago</span>
-                        <div class="mw-100 d-flex justify-content-around">
+                        <div class="mw-100 d-flex justify-content-around" v-if="item.orderPay > 0">
                             <a href="javascript:;" class="text-info w-100" @click="openModalVoucher( item )">{{ item.voucherFiles }} voucher(s)</a>
                         </div>
-                        <div class="mw-100 d-flex justify-content-around">
+                        <div class="mw-100 d-flex justify-content-around" v-if="item.orderPay > 0">
                             <button type="button" class="btn btn-xs btn-outline-info" @click.prevent="modalUploadVoucher( item.id, item.orderPay )">
                                 <i class="fa fa-upload"></i> Subir voucher
                             </button>
@@ -225,8 +221,8 @@
                                     'Se realizó correctamente la operación.',
                                     'success'
                                 );
-                                this.$store.dispatch( 'loadServices' );
                                 this.$store.dispatch( 'loadSettings' );
+                                this.$store.dispatch( 'loadServices' );
                             } else {
                                 Swal.fire(
                                     'Error!',
