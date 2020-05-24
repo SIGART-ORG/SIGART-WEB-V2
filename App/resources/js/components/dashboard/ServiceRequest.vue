@@ -86,6 +86,7 @@
     export default {
         name: "servicerequest",
         created() {
+            this.connectApi();
             this.$store.dispatch( 'loadServiceRequest' );
         },
         computed: {
@@ -217,6 +218,9 @@
                     );
                     console.log( errors );
                 });
+            },
+            connectApi() {
+                socket.emit( 'load-user');
             }
         },
         mounted() {
