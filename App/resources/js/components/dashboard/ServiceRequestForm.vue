@@ -212,6 +212,7 @@ import Swal from "sweetalert2";
             datetime: Datetime
         },
         created() {
+            this.connectApi();
             this.$store.dispatch('loadDepartamentsV2');
         },
         computed: {
@@ -367,6 +368,9 @@ import Swal from "sweetalert2";
                         }
                     )
                 }
+            },
+            connectApi() {
+                socket.emit( 'load-user');
             }
         },
         mounted() {
