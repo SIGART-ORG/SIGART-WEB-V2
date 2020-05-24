@@ -36,6 +36,12 @@ class ServiceController extends Controller
     }
 
     public function generateServiceRequest( Request $request ) {
+
+        $response = [
+            'status'    => true,
+            'message'   => 'OK'
+        ];
+
         $type         = $request->type;
         $id         = $request->id;
         $name       = $request->name;
@@ -106,6 +112,8 @@ class ServiceController extends Controller
 
             if( $ServiceRequestClass->save() ) {
 
+                $response['document'] = $ServiceRequestClass->num_request;
+
                 $SiteVoucherClass->increaseCorrelative( $typeVoucher );
 
                 if( $id > 0 && $ServiceRequestClass->id > 0 ) {
@@ -142,10 +150,7 @@ class ServiceController extends Controller
                 }
             }
 
-            return response()->json([
-                'status'    => true,
-                'message'   => 'OK'
-            ]);
+            return response()->json( $response );
         }
 
         return response()->json([
@@ -253,7 +258,8 @@ class ServiceController extends Controller
             $serviceRequest->save();
 
             return response()->json([
-                'status' => true
+                'status' => true,
+                'document' => $serviceRequest->num_request
             ]);
         }
 

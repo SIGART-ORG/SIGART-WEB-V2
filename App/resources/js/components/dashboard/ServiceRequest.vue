@@ -126,7 +126,11 @@
                             }
                         }).then( response => {
                             if( response.status ) {
-                                socket.emit( 'create-notification-client', 'sendServiceRequest', this.userData.id, 'Nuevo solicitud de cotización servicio' );
+                                socket.emit(
+                                    'create-notification-client',
+                                    'sendServiceRequest',
+                                    this.userData.id,
+                                    'Nueva solicitud de cotización servicio enviada - ' + response.document );
                                 this.$store.dispatch( 'loadServiceRequest' );
                                 Swal.fire(
                                     'Enviado!',
