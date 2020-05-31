@@ -24,6 +24,14 @@ class Presentation extends Model
         'status'
     ];
 
+    public function product() {
+        return $this->belongsTo( Product::class, 'products_id', 'id' );
+    }
+
+    public function brand() {
+        return $this->belongsTo( Brand::class, 'brands_id', 'id' );
+    }
+
     public function listData() {
 
         $data = DB::table( self::TABLE_NAME )

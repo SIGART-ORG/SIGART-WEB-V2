@@ -64,6 +64,7 @@ import ServiceDetail from './components/service/service-detail';
 import Login from './components/login/login';
 import Register from './components/register/register';
 import RegisterSecond from './components/register/register-second';
+import ProductsIndex from "./components/products/ProductsIndex";
 
 Vue.component( 'dashboard', Dashboard );
 Vue.component( 'comp-customer-data', CompleteCustomerData );
@@ -75,6 +76,7 @@ Vue.component( 'Service', Service );
 Vue.component( 'Login', Login );
 Vue.component( 'Register', Register );
 Vue.component( 'register-second', RegisterSecond );
+Vue.component( 'products-index', ProductsIndex );
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
