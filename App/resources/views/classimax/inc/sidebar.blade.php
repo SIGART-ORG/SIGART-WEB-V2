@@ -17,8 +17,8 @@
                             <li class="nav-item @if( $activeSide === 'about-us' ) active @endif">
                                 <a class="nav-link" href="{{ route('about-us') }}">¿Quiénes somos?</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Servicios</a>
+                            <li class="nav-item @if( $activeSide === 'products' ) active @endif">
+                                <a class="nav-link" href="{{ route( 'products' ) }}">Productos</a>
                             </li>
                             <li class="nav-item @if( $activeSide === 'contact-us' ) active @endif">
                                 <a class="nav-link" href="{{ route( 'contact-us' ) }}">Contáctanos</a>
