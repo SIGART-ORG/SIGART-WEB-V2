@@ -86,6 +86,7 @@
     export default {
         name: "servicerequest",
         created() {
+            this.connectApi();
             this.$store.dispatch( 'loadServiceRequest' );
         },
         computed: {
@@ -126,11 +127,13 @@
                             }
                         }).then( response => {
                             if( response.status ) {
+                                console.log( '2 entra api---------');
                                 socket.emit(
                                     'create-notification-client',
                                     'sendServiceRequest',
                                     this.userData.id,
                                     'Nueva solicitud de cotización servicio enviada - ' + response.document );
+                                console.log( '2 entra api---------');
                                 this.$store.dispatch( 'loadServiceRequest' );
                                 Swal.fire(
                                     'Enviado!',
@@ -215,6 +218,9 @@
                     );
                     console.log( errors );
                 });
+            },
+            connectApi() {
+                socket.emit( 'load-user');
             }
         },
         mounted() {

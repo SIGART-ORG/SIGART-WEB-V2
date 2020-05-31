@@ -15,7 +15,11 @@ Route::get('/', 'HomeController@index')->name( 'home.index' );
 Route::get('/terms-and-conditions', 'PublicController@termsAndConditions')->name( 'tyc' );
 Route::get('/about-us', 'PublicController@aboutUs')->name( 'about-us' );
 Route::get('/contact-us', 'ContactUsController@dashboard')->name( 'contact-us' );
-//Route::get('/confimation/{token}', 'DashboardController@confirmation')->name( 'confirmation' );
+Route::prefix( 'products' )->group( function() {
+    Route::get('/dashboard', 'ProductController@dashboard')->name( 'products' );
+    Route::get('/list', 'ProductController@index')->name( 'products.list' );
+    Route::get('/{slug}', 'ProductController@detail')->name( 'products.detail' );
+});
 
 Route::group(['middleware' => ['guest']], function(){
 
