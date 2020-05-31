@@ -187,6 +187,8 @@ import Swal from "sweetalert2";
     import Swal from 'sweetalert2';
     import 'sweetalert2/src/sweetalert2.scss';
     import 'vue-datetime/dist/vue-datetime.css';
+    import io from 'socket.io-client';
+    const socket = io( API_URL );
 
     Settings.defaultLocale = 'es';
 
@@ -210,6 +212,7 @@ import Swal from "sweetalert2";
             datetime: Datetime
         },
         created() {
+            this.connectApi();
             this.$store.dispatch('loadDepartamentsV2');
         },
         computed: {
@@ -274,6 +277,11 @@ import Swal from "sweetalert2";
             arrDistricts() {
                 return this.$store.state.StaticData.arrDistricts;
             },
+            userData: {
+                get:function() {
+                    return this.$store.state.Settings.userData;
+                }
+            }
         },
 
         methods: {
@@ -327,6 +335,15 @@ import Swal from "sweetalert2";
                     if ( result.status ) {
                         this.CHANGE_CURRENT('mis-solicitudes');
                         this.$store.dispatch('loadSettings');
+                        if( type === 'send' ) {
+                            console.log( '1 entra api---------');
+                            socket.emit(
+                                'create-notification-client',
+                                'sendServiceRequest',
+                                this.userData.id,
+                                'Se registró nueva solic. de cotización de servicio - ' + result.document );
+                            console.log( '1 sal api---------');
+                        }
                     }
                 }).catch(errors => {
                     console.log(errors);
@@ -351,6 +368,9 @@ import Swal from "sweetalert2";
                         }
                     )
                 }
+            },
+            connectApi() {
+                socket.emit( 'load-user');
             }
         },
         mounted() {

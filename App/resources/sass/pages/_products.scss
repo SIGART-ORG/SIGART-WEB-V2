@@ -1,0 +1,94 @@
+.products {
+    .page-search {
+        background-color: $red2;
+
+        .form-control {
+            border-radius: 2px;
+            color: $gray-dark;
+        }
+
+        .form-control::placeholder {
+            color: $brand;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 0.2rem rgba(250, 0, 0, 0.25);
+        }
+    }
+    button.btn-custom {
+        background-color: $red2;
+        color: $white;
+        border-radius: 0;
+        border: 2px solid $white;
+
+        &:active, &:focus {
+            background-color: $red2;
+            color: $white;
+            box-shadow: none;
+        }
+
+        &:hover {
+            background-color: $gray-dark2;
+            color: $white;
+        }
+    }
+
+    h4.widget-header {
+        color: $gray-dark2;
+        font-weight: bold;
+    }
+
+    ul.category-list li a {
+        text-decoration: none;
+        color: $gray-dark2;
+
+        &:hover, &:active {
+            color: $red2;
+            font-weight: bold;
+
+            span {
+                background-color: $red2;
+                color: $white;
+            }
+        }
+    }
+
+    .ad-listing-list {
+        a {
+            text-decoration: none;
+        }
+
+        &:hover {
+            box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.2);
+        }
+    }
+
+    .ad-listing-content {
+        .font-weight-bold {
+            color: $red2;
+        }
+
+        .list-inline-item a {
+            color: $gray-dark2;
+        }
+    }
+
+    ul.pagination {
+        li a {
+            color: $red2;
+        }
+
+        li a:hover {
+            background-color: $red !important;
+        }
+
+        .active a {
+            background-color: $red2 !important;
+            color: $white !important;
+        }
+    }
+
+    .list-inline-item.selected {
+        color: $yellow;
+    }
+}
