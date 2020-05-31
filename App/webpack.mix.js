@@ -16,6 +16,12 @@ mix.js('resources/js/app.js', 'public/js')
     .sass('resources/sass/app.scss', 'public/css')
     .copyDirectory( 'resources/images/', 'public/images/');
 
+mix.js([
+    'resources/js/plugins/1.jquery.js',
+    'resources/js/plugins/2.floating.whatsapp.js',
+    'resources/js/plugins/3.whatsapp.js',
+], 'public/js/plugins.js');
+
 mix.webpackConfig({
     node: {
         fs: 'empty'

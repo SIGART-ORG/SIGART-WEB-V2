@@ -16,6 +16,7 @@ class Controller extends BaseController
     const PATH_VOUCHER = 'uploads/voucher/';
     const FORMAT_DATE = 'd/m/Y';
     const FORMAT_DATE_COMPLETE = 'd/m/Y h:i a';
+    const PAGINATE = 20;
 
     const MAX_OBS_FOR_TASK = 3;
 
