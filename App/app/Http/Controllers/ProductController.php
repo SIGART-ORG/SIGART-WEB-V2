@@ -94,6 +94,8 @@ class ProductController extends Controller
                 'id' => $product->category ? $product->category->id : 0,
                 'name' => $product->category ? $product->category->name : '',
             ];
+
+            $row->images = $record->images->where( 'status', 1 );
             $presentations[] = $row;
         }
 

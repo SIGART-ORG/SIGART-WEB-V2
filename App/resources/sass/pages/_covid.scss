@@ -1,0 +1,256 @@
+.covid19 {
+    background-color: $red2;
+    color: $white;
+    font-weight: unset;
+    text-align: center;
+    font-family: "Muli", sans-serif;
+
+    @include minw( $mb ) {
+        font-weight: bold;
+    }
+
+    .content {
+        padding: 15px 10px;
+        @include minw( $mb ) {
+            padding: 15px 30px;
+        }
+    }
+
+    code, strong {
+        font-size: .9rem;
+        font-weight: bold;
+
+        @include minw( $mb ) {
+            font-size: 1.1rem;
+            font-weight: unset;
+        }
+    }
+
+    a {
+        text-decoration: none;
+        color: $white;
+    }
+}
+
+section.message-container {
+    padding-left: 40px;
+    padding-right: 40px;
+    background-color: #f3f5f7;
+
+    .content {
+        width: 1080px;
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .article {
+        padding-top: 30px;
+    }
+
+    .breadcrumb {
+        background-color: transparent;
+        align-items: center;
+        margin-bottom: 0;
+        padding: 10px;
+    }
+
+    .link__arrow {
+        position: relative;
+        font-size: 14px;
+        text-decoration: none;
+        display: inline-block;
+        color: #8f919d;
+        margin: 0 7px 7px 0;
+        padding-right: 16px;
+        top: -6px;
+
+        a {
+            color: $black;
+            text-decoration: none;
+        }
+
+        a::after {
+            content: ' ';
+            position: absolute;
+            display: block;
+            top: 50%;
+            margin-top: -5px;
+            right: 0;
+            width: 7px;
+            height: 12px;
+            font-size: 36px;
+            color: #acb8c2;
+            background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAYCAYAAADKx8xXAAAAqUlEQVR4AbXUNRLCABSEYbTC3a6BU8ftBlyA+/dscHYii+TN/OUXzyvFEx1PdbRFzZI4MaqiAwqQidoqXN3QPQt1FLhAPmEbdRU8Q14C7it4moAdNFDwOAG7aKTgEXIT8FjBgwTsoamC+8hJwDMF95BN2EcLBXeQRXhVDJQvNeHh2MrD4dfhqK+DPwBG498/OfkjF34rRv1vfuReIauDl5WlLitejy3VnAHtSsjA994UIwAAAABJRU5ErkJggg==) no-repeat;
+            background-size: 100%;
+        }
+
+    }
+
+    .paper {
+        background-color: $white;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        position: relative;
+        z-index: 3;
+        text-decoration: none;
+        overflow: hidden;
+        width: 100%;
+        display: block;
+        outline: none;
+
+        &__large {
+            padding: 25px 20px;
+            @include minw( $mb ) {
+                padding: 60px;
+            }
+        }
+    }
+
+    .content__narrow {
+        width: 640px;
+    }
+
+    .intercom-force-break {
+        font-size: 17px;
+        line-height: 1.53;
+    }
+
+    .article__meta {
+        margin-bottom: 30px;
+    }
+
+    .t__h1 {
+        margin: 0 0 17px;
+        font-size: 34px;
+        font-weight: normal;
+        @include minw( $mb ) {
+            font-size: 33px;
+        }
+    }
+
+    .article__desc {
+        font-size: 20px;
+        line-height: 1.35;
+        margin-bottom: 17px;
+        color: #8F919D;
+    }
+
+    .avatar {
+        font-size: 13px;
+        color: #8f919d;
+        margin-top: 4px;
+        &:before, &:after {
+            content: ' ';
+            display: table;
+        }
+
+        &:after {
+            clear: both;
+        }
+
+        &__info, &__photo {
+            line-height: 1.4;
+        }
+
+        &__photo {
+            margin-right: 10px;
+            float: left;
+        }
+
+        &__image {
+            width: 40px;
+            height: 40px;
+            vertical-align: bottom;
+            border-radius: 50%;
+            -webkit-box-shadow: 0 0 0 2px white;
+            box-shadow: 0 0 0 2px #4f5e6b;
+            position: relative;
+            z-index: 4;
+        }
+    }
+
+    .c__darker {
+        color: #4f5e6b;
+    }
+
+    article {
+        padding: 0;
+        font-size: 17px;
+        color: #565867;
+        white-space: pre-wrap;
+        white-space: break-spaces;
+        box-shadow: unset;
+
+        & > :first-child {
+            margin-top: 0 !important;
+        }
+
+        a {
+            text-decoration: none;
+            color: $red2;
+            font-weight: bold;
+            &:hover, &:active {
+                color: $black;
+            }
+        }
+
+    }
+
+    .intercom-align-left {
+        text-align: left !important;
+    }
+
+    p {
+        white-space: initial;
+        font-size: 13px;
+        @include minw( $mb ) {
+            font-size: 16px;
+        }
+    }
+
+    .intercom-reaction-picker {
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        padding: 12px;
+        text-align: center;
+        color: #777;
+        background-color: #f0f3f5;
+        margin: 60px -44px -44px -44px;
+        border-radius: 8px;
+
+        @include maxw( $mb ) {
+            margin: 30px -8px -12px -8px;
+            border-radius: 8px;
+        }
+
+        .intercom-reaction-prompt {
+            padding-top: 9px;
+            padding-bottom: 4px;
+            text-align: center;
+        }
+
+        .intercom-reaction {
+            background: none;
+            color: inherit;
+            border: none;
+            padding: 0;
+            font: inherit;
+            cursor: pointer;
+            width: 50px;
+            height: 100%;
+            display: inline-block;
+            text-align: center;
+            font-size: 32px;
+            -webkit-transition: -webkit-transform 0.16s cubic-bezier(0.65, 0.61, 0.18, 1.8) 0.02s,-webkit-filter 0.32s linear;
+            transition: -webkit-transform 0.16s cubic-bezier(0.65, 0.61, 0.18, 1.8) 0.02s,-webkit-filter 0.32s linear;
+            -o-transition: transform 0.16s cubic-bezier(0.65, 0.61, 0.18, 1.8) 0.02s,filter 0.32s linear;
+            transition: transform 0.16s cubic-bezier(0.65, 0.61, 0.18, 1.8) 0.02s,filter 0.32s linear;
+            transition: transform 0.16s cubic-bezier(0.65, 0.61, 0.18, 1.8) 0.02s,filter 0.32s linear,-webkit-transform 0.16s cubic-bezier(0.65, 0.61, 0.18, 1.8) 0.02s,-webkit-filter 0.32s linear;
+            cursor: pointer;
+            -webkit-transform-origin: 50% 60%;
+            -ms-transform-origin: 50% 60%;
+            transform-origin: 50% 60%;
+        }
+    }
+}

@@ -26,7 +26,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="search-result bg-gray">
-                            <h2 class="" v-if="resultSearch !== ''">Resultados para "Electrónica"</h2>
+                            <h2 class="top" v-if="resultSearch !== ''">Resultados para "Electrónica"</h2>
                             <p class=""><strong>{{ pagination.total }}</strong> Resultados encontrados.</p>
                         </div>
                     </div>
@@ -94,7 +94,8 @@
                             <div class="row p-lg-3 p-sm-5 p-4">
                                 <div class="col-lg-4 align-self-center">
                                     <a :href="pr.detail">
-                                        <img src="http://demo.themefisher.com/classimax/images/products/products-1.jpg" class="img-fluid" alt="">
+                                        <img v-if="pr.images.length > 0" :src="admin_url + 'uploads/presentations/' + pr.id + '/' + pr.images[0].image_original" class="img-fluid" :alt="pr.name">
+                                        <img v-else src="/images/theme/not-image.jpg" class="img-fluid" :alt="pr.name">
                                     </a>
                                 </div>
                                 <div class="col-lg-8">
@@ -173,6 +174,11 @@
     import {mapMutations} from 'vuex';
     export default {
         name: "ProductsIndex",
+        data() {
+            return {
+                admin_url: ADMIN_URL
+            }
+        },
         created() {
             this.$store.dispatch( 'loadProductsV2' );
         },
