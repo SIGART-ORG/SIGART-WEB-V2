@@ -32,6 +32,10 @@ class Presentation extends Model
         return $this->belongsTo( Brand::class, 'brands_id', 'id' );
     }
 
+    public function images() {
+        return $this->hasMany( PresentationImage::class, 'presentation_id', 'id' );
+    }
+
     public function listData() {
 
         $data = DB::table( self::TABLE_NAME )

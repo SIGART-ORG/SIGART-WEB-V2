@@ -92,3 +92,6 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get( '/type-person/', 'StaticController@loadTypePerson' );
 
 });
+
+/*Covid19*/
+Route::get( '/servicio-en-estado-de-emergencia', 'StaticController@covid' )->name( 'covid.19' );

@@ -79,3 +79,9 @@
         }
     }
 }
+section.padding-30 {
+    padding: 5px 20px;
+    @include minw( $mb ) {
+        padding: 30px 150px;
+    }
+}

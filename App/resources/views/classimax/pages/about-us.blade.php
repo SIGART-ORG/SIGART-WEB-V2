@@ -1,9 +1,6 @@
 @extends( 'classimax.main' )
 @section( 'content' )
     <style>
-        section.padding-30 {
-            padding: 30px 150px;
-        }
         ul.list-style {
             list-style: disc;
             line-height: 2em;
