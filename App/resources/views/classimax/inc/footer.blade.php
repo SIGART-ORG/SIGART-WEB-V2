@@ -6,7 +6,7 @@
                 <!-- About -->
                 <div class="block about">
                     <!-- footer logo -->
-                    <img src="{{ asset( '/images/theme/logo.png' ) }}" width="193" height="38" alt="{{ env( 'PROJECT_NAME' ) }}">
+                    <img src="{{ asset( '/images/theme/logo.svg' ) }}" width="193" height="38" alt="{{ env( 'PROJECT_NAME' ) }}">
                     <!-- description -->
                     <p class="alt-color">
                         Ser una empresa altamente competitiva en cuanto a diseño, fabricación y servicios de carpintería y ebanistería. Ofrecer excelente calidad en productos de línea clásica, innovadora y de arte sacro a nivel comercial, residencial e institucional.

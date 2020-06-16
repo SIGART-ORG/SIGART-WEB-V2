@@ -1,7 +1,8 @@
 <!-- JAVASCRIPTS -->
 <div id="WAButton"></div>
 <script>
-    var API_URL = '{{ env( 'API_NOTIFICATION') }}'
+    var API_URL = '{{ env( 'API_NOTIFICATION') }}';
+    var ADMIN_URL = '{{ env( 'ADMIN_URL') }}';
 </script>
 {{--<script src="{{ asset( '/assets/classimax/plugins/jquery/jquery.min.js' ) }}"></script>--}}
 {{--<script src="{{ asset( '/assets/classimax/plugins/jquery-ui/jquery-ui.min.js' ) }}"></script>--}}
