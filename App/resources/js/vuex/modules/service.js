@@ -1,5 +1,6 @@
 export default {
     state: {
+        force: false,
         services: [],
         serviceDetail: {
             id: 0,
@@ -40,6 +41,10 @@ export default {
         idService: 0,
         nameServiceRequest: '',
         formDate: '',
+        dateRegFormat: '',
+        dateSendFormat: '',
+        isSend: 0,
+        status: 0,
         ubigeo: {
             district: 0,
             province: 0,
@@ -82,6 +87,10 @@ export default {
             state.ubigeo.province = 0;
             state.ubigeo.departament = 0;
             state.address = '';
+            state.dateRegFormat = '';
+            state.dateSendFormat = '';
+            state.isSend = 0;
+            state.status = 0;
         },
         CHANGE_ID_SR( state, id ) {
             state.idServiceRequest = id;
@@ -96,6 +105,11 @@ export default {
                 state.formDate = data.serviceRequest.dateDelivery;
                 state.ubigeo = data.serviceRequest.ubigeo;
                 state.address = data.serviceRequest.address;
+                state.dateRegFormat = data.serviceRequest.dateRegFormat;
+                state.dateSendFormat = data.serviceRequest.dateSendFormat;
+                state.isSend = data.serviceRequest.isSend;
+                state.status = data.serviceRequest.status;
+                state.arrDetServiceRequest = [];
                 let detail = data.serviceRequest.detail;
                 detail.map( function( e ) {
                     state.arrDetServiceRequest.push({
@@ -204,10 +218,18 @@ export default {
             });
         },
         getDetailServiceRequest( { commit, state } ) {
-            let url = '/service-request/' + state.idServiceRequest + '/edit/';
-            axios.get( url ).then( response => {
-                commit( 'LOAD_DATA_SERVICE_REQUEST', response.data );
-            });
+            let idSR = state.idServiceRequest;
+            let url = '/service-request/' + idSR + '/edit/';
+
+            if( idSR > 0 ) {
+                axios.get(url, {
+                    params: {
+                        force: state.force
+                    }
+                }).then(response => {
+                    commit('LOAD_DATA_SERVICE_REQUEST', response.data);
+                });
+            }
         },
         sendSR( { commit }, parameters) {
             return new Promise( ( resolve, reject ) => {
