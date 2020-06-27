@@ -180,11 +180,10 @@ class ServiceController extends Controller
         $serviceRequestDetailClass = new ServiceRequestDetail();
 
         $serviceRequest = $serviceRequestClass::where( $serviceRequestClass::TABLE_NAME . '.status', 1 )
-            ->whereIn( $serviceRequestClass::TABLE_NAME . '.is_send', [0,2] )
+            ->isSend( $request->force )
             ->where( $serviceRequestClass::TABLE_NAME . '.id', $request->id )
             ->where( $serviceRequestClass::TABLE_NAME . '.customers_id', $user->customers_id )
             ->first();
-
 
         $district = $serviceRequest->district_id ? $serviceRequest->district_id : '';
         $address = $serviceRequest->address;
@@ -203,8 +202,11 @@ class ServiceController extends Controller
 
         $ubigeo = new \stdClass();
         $ubigeo->district = $ubigeoBD['district_id'];
+        $ubigeo->district_name = $ubigeoBD['district_name'];
         $ubigeo->province = $ubigeoBD['province_id'];
+        $ubigeo->province_name = $ubigeoBD['province_name'];
         $ubigeo->departament = $ubigeoBD['departament_id'];
+        $ubigeo->departament_name = $ubigeoBD['departament_name'];
 
         if ( $serviceRequest ) {
 
@@ -234,7 +236,10 @@ class ServiceController extends Controller
                 'address'   => $address,
                 'ubigeo'    => $ubigeo,
                 'detail'    => $arrDetail,
-                'attachment'=> $serviceRequest->attachment
+                'attachment'=> $serviceRequest->attachment,
+                'dateRegFormat' => date( 'd/m/Y', strtotime( $serviceRequest->date_reg ) ),
+                'dateSendFormat' => ( ! empty( $serviceRequest->date_send ) ? date( 'd/m/Y H:i:s', strtotime( $serviceRequest->date_send ) ) : '' ),
+                'status' => $serviceRequest->status
             ];
 
         }

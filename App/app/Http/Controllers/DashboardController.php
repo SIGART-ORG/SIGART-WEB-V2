@@ -104,34 +104,34 @@ class DashboardController extends Controller
                     'href' => '#',
                     'icon' => 'fa-calculator'
                 ],
-                [
-                    'id' => Str::slug('Mis cotizaciones archivadas'),
-                    'name' => 'Mis cotizaciones archivadas',
-                    'count' => $SaleQuotationClass->countArvhived(),
-                    'href' => '#',
-                    'icon' => 'fa-clipboard'
-                ],
-                [
-                    'id'    => Str::slug( 'Datos del cliente' ),
-                    'name'  => 'Datos del cliente',
-                    'count' => 0,
-                    'href'  => '#',
-                    'icon'  => 'fa-user'
-                ],
-                [
-                    'id' => Str::slug('Cerrar Sesión'),
-                    'name' => 'Cerrar Sesión',
-                    'count' => 0,
-                    'href' => '#',
-                    'icon' => 'fa-cog'
-                ],
-                [
-                    'id' => Str::slug('Eliminar cuenta'),
-                    'name' => 'Eliminar cuenta',
-                    'count' => 0,
-                    'href' => '#',
-                    'icon' => 'fa-power-off'
-                ]
+//                [
+//                    'id' => Str::slug('Mis cotizaciones archivadas'),
+//                    'name' => 'Mis cotizaciones archivadas',
+//                    'count' => $SaleQuotationClass->countArvhived(),
+//                    'href' => '#',
+//                    'icon' => 'fa-clipboard'
+//                ],
+//                [
+//                    'id'    => Str::slug( 'Datos del cliente' ),
+//                    'name'  => 'Datos del cliente',
+//                    'count' => 0,
+//                    'href'  => '#',
+//                    'icon'  => 'fa-user'
+//                ],
+//                [
+//                    'id' => Str::slug('Cerrar Sesión'),
+//                    'name' => 'Cerrar Sesión',
+//                    'count' => 0,
+//                    'href' => '#',
+//                    'icon' => 'fa-cog'
+//                ],
+//                [
+//                    'id' => Str::slug('Eliminar cuenta'),
+//                    'name' => 'Eliminar cuenta',
+//                    'count' => 0,
+//                    'href' => '#',
+//                    'icon' => 'fa-power-off'
+//                ]
             ];
         }
 

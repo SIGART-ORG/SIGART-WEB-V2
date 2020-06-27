@@ -336,13 +336,11 @@ import Swal from "sweetalert2";
                         this.CHANGE_CURRENT('mis-solicitudes');
                         this.$store.dispatch('loadSettings');
                         if( type === 'send' ) {
-                            console.log( '1 entra api---------');
                             socket.emit(
                                 'create-notification-client',
                                 'sendServiceRequest',
                                 this.userData.id,
                                 'Se registró nueva solic. de cotización de servicio - ' + result.document );
-                            console.log( '1 sal api---------');
                         }
                     }
                 }).catch(errors => {
