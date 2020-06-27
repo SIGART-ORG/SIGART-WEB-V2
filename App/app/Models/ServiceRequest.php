@@ -85,7 +85,10 @@ class ServiceRequest extends Model
 
     public function scopeIsSend( $query, $force ) {
         if( empty( $force ) ){
-            return $query->whereIn( self::TABLE_NAME . '.is_send', [0,2] );
+            return $query->whereIn( self::TABLE_NAME . '.is_send', [0,2] )
+                ->where( self::TABLE_NAME . '.status', '!=', 2 );
+        } else {
+            return $query->where( self::TABLE_NAME . '.status', 1 );
         }
     }
 }

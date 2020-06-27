@@ -46,7 +46,7 @@
                     <td class="action" data-title="Action">
                         <div class="">
                             <ul class="list-inline justify-content-center">
-                                <li v-if="sr.is_send !== 1" class="list-inline-item">
+                                <li v-if="sr.is_send !== 1 && sr.is_send !== 2" class="list-inline-item">
                                     <a data-toggle="tooltip" data-placement="top" title="Enviar Solicitud" class="edit" href="#" @click.prevent="sendServiceRequest( sr.id )">
                                         <i class="fa fa-send"></i>
                                     </a>
@@ -56,12 +56,12 @@
                                         <i class="fa fa-eye"></i>
                                     </a>
                                 </li>
-                                <li v-if="sr.is_send !== 1" class="list-inline-item">
+                                <li v-if="sr.is_send !== 1 && sr.is_send !== 2" class="list-inline-item">
                                     <a class="edit" href="#" @click.prevent="editServiceRequest( sr.id )">
                                         <i class="fa fa-pencil"></i>
                                     </a>
                                 </li>
-                                <li v-if="sr.is_send !== 1" class="list-inline-item">
+                                <li v-if="sr.is_send !== 1 && sr.is_send !== 2" class="list-inline-item">
                                     <a class="delete" href="#" @click.prevent="deleteServiceRequest( sr.id )">
                                         <i class="fa fa-trash"></i>
                                     </a>

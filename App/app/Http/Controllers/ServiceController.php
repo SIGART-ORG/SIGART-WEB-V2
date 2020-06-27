@@ -179,9 +179,8 @@ class ServiceController extends Controller
         $serviceRequestClass = new ServiceRequest();
         $serviceRequestDetailClass = new ServiceRequestDetail();
 
-        $serviceRequest = $serviceRequestClass::where( $serviceRequestClass::TABLE_NAME . '.status', 1 )
+        $serviceRequest = $serviceRequestClass::where( $serviceRequestClass::TABLE_NAME . '.id', $request->id )
             ->isSend( $request->force )
-            ->where( $serviceRequestClass::TABLE_NAME . '.id', $request->id )
             ->where( $serviceRequestClass::TABLE_NAME . '.customers_id', $user->customers_id )
             ->first();
 
