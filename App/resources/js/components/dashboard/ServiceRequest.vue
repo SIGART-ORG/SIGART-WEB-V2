@@ -26,7 +26,7 @@
                 <tbody>
                 <tr v-for="( sr, idx ) in serviceRequests">
                     <td>{{ idx + 1 }}</td>
-                    <td class="product-details">
+                    <td>
                         <div class="title">{{ sr.description }}</div>
                     </td>
                     <td class="product-category"><span class="categories">{{ sr.dateRegFormat }}</span></td>
@@ -52,7 +52,7 @@
                                     </a>
                                 </li>
                                 <li class="list-inline-item">
-                                    <a data-toggle="tooltip" data-placement="top" title="Ver detalle" class="view" href="">
+                                    <a data-toggle="tooltip" data-placement="top" title="Ver detalle" class="view" href="javascript:void(0);" @click.prevent="openDetail( sr.id )">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                 </li>
@@ -72,8 +72,75 @@
                 </tr>
                 </tbody>
             </table>
-
         </div>
+        <b-modal ref="viewDetails" hide-footer :title="modalTitle" size="xl" @hide="closeModalObservation">
+            <div class="row">
+                <div class="col-md-12">
+                    <h5>Datos Generales</h5>
+                    <table class="table table-responsive product-dashboard-table service-detail__table">
+                        <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Plazo de entrega</th>
+                            <th>Documentos Adjuntos</th>
+                            <th>Fecha de registro</th>
+                            <th>Fecha de envio</th>
+                            <th>Estado</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>{{ serviceRequestView.name }}</td>
+                            <td>{{ serviceRequestView.formDate }}</td>
+                            <td>
+                                <a v-if="serviceRequestView.attachment" class="btn btn-link" target="_blank" :href="serviceRequestView.attachment">
+                                    <i class="fa fa-link"></i> Adjunto
+                                </a>
+                            </td>
+                            <td>{{ serviceRequestView.dateRegFormat }}</td>
+                            <td>{{ serviceRequestView.dateSendFormat }}</td>
+                            <td>
+                                <span v-if="serviceRequestView.isSend === 0" class="badge badge-secondary">No enviado</span>
+                                <span v-if="serviceRequestView.isSend === 1 && serviceRequestView.status === 1" class="badge badge-info">Enviado</span>
+                                <span v-if="serviceRequestView.isSend === 1 && serviceRequestView.status === 3" class="badge badge-warning">Cotizando</span>
+                                <span v-if="serviceRequestView.isSend === 2" class="badge badge-success">Cotizado</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h5>Ubicación</h5>
+                    <div class="w-100 mw-100 pl-md-4 text-resalt">
+                        {{ serviceRequestView.address }} - {{ serviceRequestView.ubigeo.district_name }} -
+                        {{ serviceRequestView.ubigeo.province_name }} - {{ serviceRequestView.ubigeo.departament_name }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h5>Detalle de solicitud</h5>
+                    <table class="table table-responsive product-dashboard-table service-detail__table">
+                        <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Detalle</th>
+                            <th>Cantidad</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="( viewDet, idx ) in serviceRequestView.details">
+                            <td class="item">{{ idx + 1}}</td>
+                            <td>{{ viewDet.item }}</td>
+                            <td>{{ viewDet.count }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </b-modal>
     </div>
 </template>
 
@@ -85,6 +152,11 @@
     const socket = io( API_URL );
     export default {
         name: "servicerequest",
+        data() {
+            return {
+                modalTitle: ''
+            }
+        },
         created() {
             this.connectApi();
             this.$store.dispatch( 'loadServiceRequest' );
@@ -96,6 +168,39 @@
             userData: {
                 get:function() {
                     return this.$store.state.Settings.userData;
+                }
+            },
+            serviceRequestView: {
+                get: function() {
+                    let state = this.$store.state.Service;
+                    return {
+                        name: state.nameServiceRequest,
+                        attachment: state.attachment,
+                        formDate: state.formDate,
+                        ubigeo: state.ubigeo,
+                        address: state.address,
+                        details: state.arrDetServiceRequest,
+                        dateRegFormat: state.dateRegFormat,
+                        dateSendFormat: state.dateSendFormat,
+                        isSend: state.isSend,
+                        status: state.status,
+                    }
+                }
+            },
+            idSR: {
+                get: function() {
+                    return this.$store.state.Service.idServiceRequest;
+                },
+                set: function( id ) {
+                    this.$store.state.Service.idServiceRequest = id;
+                }
+            },
+            force: {
+                get: function() {
+                    return this.$store.state.Service.force;
+                },
+                set: function( force ) {
+                    this.$store.state.Service.force = force;
                 }
             }
         },
@@ -127,13 +232,11 @@
                             }
                         }).then( response => {
                             if( response.status ) {
-                                console.log( '2 entra api---------');
                                 socket.emit(
                                     'create-notification-client',
                                     'sendServiceRequest',
                                     this.userData.id,
                                     'Nueva solicitud de cotización servicio enviada - ' + response.document );
-                                console.log( '2 entra api---------');
                                 this.$store.dispatch( 'loadServiceRequest' );
                                 Swal.fire(
                                     'Enviado!',
@@ -221,6 +324,21 @@
             },
             connectApi() {
                 socket.emit( 'load-user');
+            },
+            openDetail( id ) {
+                let me = this;
+                this.idSR = id;
+                this.force = true;
+                this.$store.dispatch( 'getDetailServiceRequest' );
+                setTimeout( function() {
+                    me.modalTitle = me.serviceRequestView.name + ' - Detalle';
+                }, 100 );
+                this.$refs['viewDetails'].show();
+            },
+            closeModalObservation() {
+                this.idSR = 0;
+                this.modalTitle = '';
+                this.$refs['viewDetails'].hide();
             }
         },
         mounted() {
