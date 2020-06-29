@@ -103,26 +103,60 @@
                         <tr>
                             <th>Item</th>
                             <th>Descripción</th>
+                            <th>Cantidad</th>
+                            <th>Mano de obra</th>
+                            <th>Materiales</th>
                             <th>Costo</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td></td>
-                        </tr>
+                        <template v-for="( i, idx ) in salesQuotation.items">
+                            <tr>
+                                <td class="item">{{ idx+1 }}</td>
+                                <td>{{ i.description }}</td>
+                                <td>{{ i.quantity }}</td>
+                                <td>{{ i.workforce }}</td>
+                                <td>{{ i.total_products }}</td>
+                                <td class="text-right">{{ i.sub_total }}</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td colspan="4">
+                                    <table class="table table-responsive product-dashboard-table service-detail__table">
+                                        <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Cantidad</th>
+                                            <th>P/U</th>
+                                            <th>Importe</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr v-for="p in i.products" :key="p.id">
+                                            <td>{{ p.presentation }}</td>
+                                            <td>{{ p.quantity }}</td>
+                                            <td>{{ p.priceUnit }}</td>
+                                            <td>{{ p.subTotal }}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                                <td></td>
+                            </tr>
+                        </template>
                         </tbody>
                         <tfoot>
                         <tr>
-                            <th class="text-right" colspan="2">Sub-Total</th>
-                            <th class="text-right"></th>
+                            <td class="text-right" colspan="5">Sub-Total</td>
+                            <th class="text-right">{{ salesQuotation.subTotal }}</th>
                         </tr>
                         <tr>
-                            <th class="text-right" colspan="2">IGV (18%)</th>
-                            <th class="text-right"></th>
+                            <td class="text-right" colspan="5">IGV (18%)</td>
+                            <th class="text-right">{{ salesQuotation.igv }}</th>
                         </tr>
                         <tr>
-                            <th class="text-right" colspan="2">Total</th>
-                            <th class="text-right"></th>
+                            <td class="text-right" colspan="5">Total</td>
+                            <th class="text-right">{{ salesQuotation.total }}</th>
                         </tr>
                         </tfoot>
                     </table>
@@ -201,7 +235,7 @@
                                     'success'
                                 );
                                 this.$store.dispatch( 'loadSalesQuotations' );
-                                this.$store.dispatch( 'loadSettings' );
+                                this.$store.dispatch( 'loadSettingsv2' );
                             } else {
                                 Swal.fire(
                                     'Error!',

@@ -31,12 +31,18 @@
                     </td>
                     <td>
                         <strong v-text="item.referenceTerm.ejecution"></strong> <small>día(s) hábiles( Lunes a Sabado ).</small>
+                        <br>
+                        <small v-if="item.start !== '---'">Inicio: <strong>{{ item.start }}</strong></small>
+                        <small v-if="item.end !== '---'">Fin: <strong>{{ item.end }}</strong></small>
                     </td>
                     <td>{{ item.total }}</td>
                     <td>
                         <span v-if="item.status === 1" class="badge badge-info">Por Aprobar</span>
                         <span v-if="item.status === 3" class="badge badge-primary">Por Iniciar</span>
                         <span v-if="item.status === 4" class="badge badge-success">En Proceso</span>
+                        <span v-if="item.status === 5" class="badge badge-success">Terminado</span>
+                        <span v-if="item.status === 6" class="badge badge-dark">Pendiente de Pago</span>
+                        <span v-if="item.status === 7" class="badge badge-success">Cerrado</span>
                         <div class="content-traffic-light">
                             <div class="red border-right" :class="item.project.trafficLight > 0 ? 'active' : ''"></div>
                             <div class="red border-right" :class="item.project.trafficLight >= 2 ? 'active' : ''"></div>
@@ -65,11 +71,18 @@
                             </li>
                         </ul>
                         <br v-if="item.referenceTerm.approved === 0">
-                        <span v-if="item.orderPay === 1 || item.orderPay === 3" class="badge badge-warning">Pendiento de pago</span>
+                        <span v-if="item.orderPay === 1" class="badge badge-warning">
+                            Pendiento de pago<br/>
+                            Pago Mínimo: S/ {{ item.minPay }} - 50%
+                        </span>
+                        <span v-if="item.orderPay === 3" class="badge badge-warning">
+                            Pendiento de pago<br/>
+                            Pago Pendiente: S/ {{ item.difference }}
+                        </span>
                         <div class="mw-100 d-flex justify-content-around" v-if="item.orderPay > 0">
                             <a href="javascript:;" class="text-info w-100" @click="openModalVoucher( item )">{{ item.voucherFiles }} voucher(s)</a>
                         </div>
-                        <div class="mw-100 d-flex justify-content-around" v-if="item.orderPay > 0">
+                        <div class="mw-100 d-flex justify-content-around" v-if="item.orderPay > 0 && item.status !== 7">
                             <button type="button" class="btn btn-xs btn-outline-info" @click.prevent="modalUploadVoucher( item.id, item.orderPay )">
                                 <i class="fa fa-upload"></i> Subir voucher
                             </button>
@@ -125,6 +138,8 @@
                 <tr>
                     <th>Item</th>
                     <th class="text-center">Nombre</th>
+                    <th class="text-center">N° Operación</th>
+                    <th class="text-right">Monto</th>
                     <th class="text-center">Archivo</th>
                     <th class="text-center">Estado</th>
                 </tr>
@@ -133,6 +148,8 @@
                 <tr v-if="vouchers.length > 0" v-for="( e, i ) in vouchers" :key="e.id">
                     <td v-text="i + 1"></td>
                     <td v-text="e.name"></td>
+                    <td v-text="e.number_operation"></td>
+                    <td v-text="e.mount"></td>
                     <td>
                         <a v-if="e.file.length > 0" :href="e.file" target="_blank" class="text-info">
                             <i class="fa fa-link"></i> Ver archivo
@@ -143,6 +160,7 @@
                         <span v-if="e.valid === 0" class="badge badge-info">Por Validar</span>
                         <span v-if="e.valid === 1" class="badge badge-success">Validado</span>
                         <span v-if="e.valid === 2" class="badge badge-danger">Incorrecto</span>
+                        <span v-if="e.valid === 3" class="badge badge-success">Comprobante Generado</span>
                     </td>
                 </tr>
                 </tbody>
@@ -222,7 +240,7 @@
                                     'success'
                                 );
                                 this.$store.dispatch( 'loadSettings' );
-                                this.$store.dispatch( 'loadServices' );
+                                this.$store.dispatch( 'loadSettingsv2' );
                             } else {
                                 Swal.fire(
                                     'Error!',

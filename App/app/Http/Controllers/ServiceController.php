@@ -330,14 +330,20 @@ class ServiceController extends Controller
             $row = new \stdClass();
             $row->id = $service->id;
             $row->status = $service->status;
-            $row->subTotal = $service->sub_total;
-            $row->igv = $service->igv;
-            $row->total = $service->total;
+            $row->subTotal = number_format( $service->sub_total, 2 );
+            $row->igv = number_format( $service->igv, 2);
+            $row->total = number_format( $service->total, 2);
             $row->document = $service->serial_doc . '-' . $service->number_doc;
             $row->orderPay = $service->is_send_order_pay;
             $row->start = $this->getDate( $service->start_date );
             $row->end = $this->getDate( $service->end_date );
             $row->voucherFiles = $service->serviceAttachment->whereIn( 'type', [1, 2] )->where( 'status', 1 )->count();
+            $row->minPay = number_format( $service->pay_first, 2 );
+            $payments = $service->sales->where('status', 1)->sum( 'total' );
+            $difference = $service->total - $payments;
+            $row->payments = number_format( $payments, 2 );
+            $row->difference = $difference >= 0 ? number_format( $difference, 2 ) : number_format( 0, 2);
+
 
             $servicerequest = $service->serviceRequest;
             $row->servicerequest = new \stdClass();
