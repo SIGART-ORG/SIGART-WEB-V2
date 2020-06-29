@@ -28,6 +28,10 @@ class SaleQuotation extends Model
         return $this->hasMany( 'App\Models\Referenceterm', 'sales_quotations_id', 'id' );
     }
 
+    public function saleQuotationDetails() {
+        return $this->hasMany( SaleQuotationDetail::class, 'sales_quotations_id', 'id' );
+    }
+
     public function countSalesQuotationApproved() {
 
         $user = Auth::user();

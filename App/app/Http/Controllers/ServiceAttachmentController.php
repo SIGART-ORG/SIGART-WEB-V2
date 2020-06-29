@@ -21,6 +21,8 @@ class ServiceAttachmentController extends Controller
             $row = new \stdClass();
             $row->id = $attachment->id;
             $row->name = $attachment->name;
+            $row->number_operation = $attachment->number_operation;
+            $row->mount = number_format( $attachment->mount, 2 );
             $row->file = $attachment->file ? asset( self::PATH_VOUCHER . $attachment->file ) : '';
             $row->valid = $attachment->is_valid;
 
