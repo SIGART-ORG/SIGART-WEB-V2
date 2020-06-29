@@ -22,6 +22,10 @@ class Service extends Model
         return $this->hasMany( 'App\Models\ServiceAttachment', 'services_id', 'id' );
     }
 
+    public function sales() {
+        return $this->hasMany( Sale::class, 'services_id', 'id' );
+    }
+
     public static function setStatus( $id ) {
         $service = self::find( $id );
         $stages = ServiceStage::where( 'services_id',  $id )
@@ -54,7 +58,7 @@ class Service extends Model
                 $status = 5;
             }
 
-            if ($statusArreglo[3] > 0 || $statusArreglo[4] > 0 && $statusArreglo[5] > 0) {
+            if ($statusArreglo[3] > 0 || $statusArreglo[4] > 0 || $statusArreglo[5] > 0) {
                 $status = 4;
             }
         }
