@@ -184,30 +184,29 @@ class ServiceController extends Controller
             ->where( $serviceRequestClass::TABLE_NAME . '.customers_id', $user->customers_id )
             ->first();
 
-        $district = $serviceRequest->district_id ? $serviceRequest->district_id : '';
-        $address = $serviceRequest->address;
+        if( $serviceRequest ) {
+            $district = $serviceRequest->district_id ? $serviceRequest->district_id : '';
+            $address = $serviceRequest->address;
 
-        if( $district === '' || $address === '' ) {
-            $customer = Customer::find($user->customers_id);
+            if( $district === '' || $address === '' ) {
+                $customer = Customer::find($user->customers_id);
 
-            if ($customer) {
-                $district = $district === '' ? $customer->district_id : $district;
-                $address = $address === '' ? $customer->address : $address;
+                if ($customer) {
+                    $district = $district === '' ? $customer->district_id : $district;
+                    $address = $address === '' ? $customer->address : $address;
+                }
             }
-        }
 
-        $district = \FormatUbigeo::complete( $district );
-        $ubigeoBD = \FormatUbigeo::ubigeo( $district );
+            $district = \FormatUbigeo::complete( $district );
+            $ubigeoBD = \FormatUbigeo::ubigeo( $district );
 
-        $ubigeo = new \stdClass();
-        $ubigeo->district = $ubigeoBD['district_id'];
-        $ubigeo->district_name = $ubigeoBD['district_name'];
-        $ubigeo->province = $ubigeoBD['province_id'];
-        $ubigeo->province_name = $ubigeoBD['province_name'];
-        $ubigeo->departament = $ubigeoBD['departament_id'];
-        $ubigeo->departament_name = $ubigeoBD['departament_name'];
-
-        if ( $serviceRequest ) {
+            $ubigeo = new \stdClass();
+            $ubigeo->district = $ubigeoBD['district_id'];
+            $ubigeo->district_name = $ubigeoBD['district_name'];
+            $ubigeo->province = $ubigeoBD['province_id'];
+            $ubigeo->province_name = $ubigeoBD['province_name'];
+            $ubigeo->departament = $ubigeoBD['departament_id'];
+            $ubigeo->departament_name = $ubigeoBD['departament_name'];
 
             $serviceRequestDetail = $serviceRequestDetailClass::where( $serviceRequestDetailClass::TABLE_NAME . '.status', 1 )
                 ->where( $serviceRequestDetailClass::TABLE_NAME . '.service_requests_id', $serviceRequest->id )

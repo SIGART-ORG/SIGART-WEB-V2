@@ -50,7 +50,7 @@ class SaleQuotationController extends Controller
             $row->discountPorc = $saleQuotation->porc_dscto;
             $row->total = $saleQuotation->tot_gral;
             $row->execution = $saleQuotation->execution_time_days;
-
+            $row->showButton = ( strtotime( $saleQuotation->date_expiration ) > now()->timestamp ) ? true : false;
             $serviceRequest = $saleQuotation->serviceRequest;
             $row->serviceRequest = new \stdClass();
             $row->serviceRequest->id = $serviceRequest->id;
@@ -146,5 +146,40 @@ class SaleQuotationController extends Controller
         }
 
         return $response;
+    }
+
+    public function show( $id ) {
+        $response = [
+            'status' => false,
+            'saleQuotation' => []
+        ];
+
+        $saleQuotation = SaleQuotation::find( $id );
+        if( $saleQuotation ) {
+            $response['status'] = true;
+            $data = new \stdClass();
+            $data->id = $saleQuotation->id;
+            $data->document = $saleQuotation->num_serie . '-' . $saleQuotation->num_doc;
+            $data->approved = $saleQuotation->date_reply_second ? date( 'd/m/Y', strtotime( $saleQuotation->date_reply_second ) ) : '---';
+            $data->expiration = $saleQuotation->date_expiration ? date( 'd/m/Y', strtotime( $saleQuotation->date_expiration ) ) : '---';
+            $data->subTotal = $saleQuotation->subtot_sale;
+            $data->discount = $saleQuotation->tot_dscto;
+            $data->discountPorc = $saleQuotation->porc_dscto;
+            $data->total = $saleQuotation->tot_gral;
+            $data->execution = $saleQuotation->execution_time_days;
+            $data->warranty = $saleQuotation->warranty_num;
+            $data->showButton = ( strtotime( $saleQuotation->date_expiration ) > now()->timestamp ) ? true : false;
+            $serviceRequest = $saleQuotation->serviceRequest;
+            $data->serviceRequest = new \stdClass();
+            $data->serviceRequest->id = $serviceRequest->id;
+            $data->serviceRequest->title = $serviceRequest->description;
+            $data->serviceRequest->document = $serviceRequest->num_request;
+            $data->serviceRequest->send = $serviceRequest->date_send ? date( 'd/m/Y', strtotime( $serviceRequest->date_send ) ) : '---';
+
+            $response['saleQuotation'] = $data;
+        }
+
+
+        return response()->json($response);
     }
 }
